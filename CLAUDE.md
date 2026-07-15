@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 这是一个 Claude Code skills/plugin 仓库：产品本身是 `skills/` 下的 4 个 Markdown skill（"给模型看的程序"），没有传统应用代码。**改一行指令就可能改变 skill 的运行行为**，而结构校验和单元测试只能保证文件形态正确，行为质量必须靠 evals 真实运行来检验——这是本仓库三层防线设计的出发点。Python 只出现在质量保障脚本中（零第三方依赖，3.10+ 标准库）。
 
-领域：以 UbD 逆向设计为内核的 STEM 教材写作流水线。设计依据见 [docs/write-textbook-skill-PRD.md](docs/write-textbook-skill-PRD.md) 与 [docs/write-textbook-skill-调研.md](docs/write-textbook-skill-调研.md)。
+领域：以 UbD 逆向设计为内核的 STEM 教材写作流水线。设计依据源自 PRD 与前期调研（本地 `docs/` 目录留存，不纳入版本库）；版本库内可查的架构决策摘要见 [docs/adr/](docs/adr/README.md)。
 
 ## 常用命令
 

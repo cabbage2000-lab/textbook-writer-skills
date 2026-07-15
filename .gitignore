@@ -6,3 +6,7 @@ __pycache__/
 
 # skill 试跑与 eval 运行产物（evals/evals.json 用例定义要入库，运行结果不入库）
 evals/workspace/
+
+# docs 下只保留 adr/（架构决策记录）入库，其余（PRD、调研、超能力计划等本地文档）不入库
+docs/*
+!docs/adr/

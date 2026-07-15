@@ -73,7 +73,7 @@ python3 -m unittest discover -s tests                 # 单元测试
 2. CHANGELOG 的 Unreleased 段落固化为版本号 + 日期；
 3. 打 tag：`git tag v<version> && git push --tags`。
 
-## 红线约束（源自 [PRD](docs/write-textbook-skill-PRD.md)，任何改动不得突破)
+## 红线约束（源自 PRD，任何改动不得突破；PRD 原文为本地文档不纳入版本库，决策摘要见 [docs/adr/](docs/adr/README.md)）
 
 - STEM 例题答案必须真算验证，验证不了的明确标注 `⚠️ 需作者确认`，绝不假装已验证；
 - 阶段 2/3 双 gate 必须作者明确确认才放行，任何"优化"不得绕过；
