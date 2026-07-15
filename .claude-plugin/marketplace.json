@@ -1,0 +1,19 @@
+{
+  "name": "textbook-writer-skills",
+  "description": "UbD 逆向设计驱动的教材写作 skill 组合的分发 marketplace",
+  "owner": {
+    "name": "cabbage2000-lab"
+  },
+  "plugins": [
+    {
+      "name": "textbook-writer",
+      "description": "UbD 逆向设计驱动的教材写作 skill 组合：教学定位 → UbD 预期结果 → 章节树 → 四段式逐章写作 → 真算验证例题，产出有主线、有梯度、可评估的成体系 STEM 教材",
+      "version": "0.1.0",
+      "license": "MIT",
+      "source": "./",
+      "author": {
+        "name": "cabbage2000-lab"
+      }
+    }
+  ]
+}

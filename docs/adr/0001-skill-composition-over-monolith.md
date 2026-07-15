@@ -1,0 +1,31 @@
+# ADR 0001:拆成 1 主 + 3 子的 skill 组合,而非单一 skill
+
+## 状态
+
+已接受。
+
+## 背景
+
+写教材与写教程的关键差异是规模:教材是 10+ 章的多章节体系。[调研报告](../write-textbook-skill-调研.md)第三部分曾倾向保守路线——"v1 先做单 skill + 增量更新,跑通再考虑拆分"。但单 skill 路线把全书正文留在同一个会话里,面对三个结构性压力:
+
+1. **上下文爆炸**:10+ 章正文远超单会话预算,增量更新只能缓解、不能根治;
+2. **复用受限**:单章写作(深度技术文章)和例题生成(出练习题)在教材项目之外各有独立使用价值,焊死在单 skill 里就浪费了;
+3. **真算验证是独立的高难子任务**:STEM 例题的逐步推导与答案复核值得专项强化,混在写作流程里两头都做不好。
+
+## 决策
+
+[PRD §4.1](../write-textbook-skill-PRD.md) 拍板 v1 直接拆分,比调研结论更激进:
+
+- `write-textbook` 是主 skill,**只做调度**:驱动五阶段流程、读写状态、在阶段间传递交接契约,不亲自写内容;
+- 三个子 skill 各占一段流水线:`design-textbook-outline`(阶段 1–3,大纲设计)、`write-textbook-chapter`(阶段 4,单章写作)、`generate-textbook-exercises`(被单章 skill 调用,出题与验证);
+- 每个子 skill 都可脱离主 skill 独立使用(只做大纲 / 单写一章 / 只出题);
+- 子 skill 调用方式:Skill 工具优先,不可用时降级为直接读取对方 SKILL.md 并遵循执行;
+- 4 个 skill 是一个整体组合,跨 skill 以相对路径互引,需整体安装(见 [ADR 0008](0008-plugin-layout-and-distribution.md))。
+
+## 后果
+
+拆分换来长教材不爆上下文的**结构性**保证(输入规模与章数解耦),而不是靠增量更新技巧缓解;同时单章写作与例题生成获得独立复用价值。
+
+代价是工程复杂度显著上升,需要三件配套工程件,各有一篇 ADR:交接契约的单一权威定义([ADR 0003](0003-single-authoritative-handoff-contract.md))、单章写作的上下文隔离([ADR 0004](0004-context-isolation-for-chapters.md))、`.progress.json` 状态机([ADR 0005](0005-progress-state-machine-single-writer.md))。这个代价在 PRD 风险表中已明确接受。
+
+未来若调度逻辑复杂度失控,收敛方向是简化契约字段与阶段职责,而不是合并 skill——合并会同时失去上下文隔离和复用性,等于推翻本决策的两条动机。

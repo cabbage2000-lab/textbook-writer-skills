@@ -1,0 +1,21 @@
+# 结构校验 + 单元测试。零第三方依赖（仅 Python 标准库），秒级完成。
+# 校验内容见 scripts/validate_skills.py 模块 docstring。
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: 结构校验（skills + plugin 清单 + 仓库健康）
+        run: python3 scripts/validate_skills.py
+      - name: 单元测试
+        run: python3 -m unittest discover -s tests -v

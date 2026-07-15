@@ -1,0 +1,5 @@
+{
+  "comment": "MD024 允许不同版本段下的同名标题（Keep a Changelog 的 Added/Changed/Fixed 结构）；MD013 不限行长（中文散文语境下无意义）",
+  "MD024": { "siblings_only": true },
+  "MD013": false
+}
