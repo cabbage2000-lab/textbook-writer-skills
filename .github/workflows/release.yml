@@ -24,6 +24,11 @@ jobs:
           if [ -z "$TAG" ]; then TAG="${{ github.ref_name }}"; fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+      # 不指定 ref：push tag 时默认 checkout 该 tag 本身；workflow_dispatch 时默认 checkout
+      # 主分支。后者是有意的——回填历史 tag（如早于本脚本存在的 v0.1.0）需要主分支上
+      # 现存的 scripts/，CHANGELOG 的历史版本段落是累积保留的，从主分支读取内容不变。
+      # 不要把 ref 改回 ${{ steps.vars.outputs.tag }}，那样会导致历史 tag 回填必现
+      # "No such file or directory"（已实测触发过一次，见 commit f9da55c）。
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
@@ -40,5 +45,5 @@ jobs:
           if gh release view "$TAG" --repo "${{ github.repository }}" >/dev/null 2>&1; then
             gh release edit "$TAG" --repo "${{ github.repository }}" --title "$TAG" --notes-file /tmp/release-notes.md
           else
-            gh release create "$TAG" --repo "${{ github.repository }}" --title "$TAG" --notes-file /tmp/release-notes.md
+            gh release create "$TAG" --repo "${{ github.repository }}" --title "$TAG" --notes-file /tmp/release-notes.md --verify-tag
           fi
