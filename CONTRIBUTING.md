@@ -6,11 +6,11 @@
 
 ```text
 skills/
-├── write-textbook/                    # 主 skill：五阶段调度 + .progress.json 状态机
+├── textbook/                          # 主 skill：五阶段调度 + .progress.json 状态机
 │   └── references/handoff-contract.md # ⚠️ 全项目契约权威定义——4 个 skill 都依赖它
-├── design-textbook-outline/           # 阶段 1-3：教学定位 → UbD 五件套(gate) → 章节树(gate)
-├── write-textbook-chapter/            # 阶段 4：四段式单章写作
-└── generate-textbook-exercises/       # 被单章调用：三类题生成 + 真算验证
+├── textbook-outline/                  # 阶段 1-3：教学定位 → UbD 五件套(gate) → 章节树(gate)
+├── textbook-chapter/                  # 阶段 4：四段式单章写作
+└── textbook-exercises/                # 被单章调用：三类题生成 + 真算验证
 ```
 
 改动的影响半径从大到小：
@@ -41,10 +41,10 @@ python3 -m unittest discover -s tests                 # 单元测试
 
    | 改动位置 | 必跑用例 |
    | -------- | -------- |
-   | write-textbook（含 handoff-contract.md） | 1, 2, 3, 4 |
-   | design-textbook-outline | 1 |
-   | write-textbook-chapter | 2, 3 |
-   | generate-textbook-exercises | 2 |
+   | textbook（含 handoff-contract.md） | 1, 2, 3, 4 |
+   | textbook-outline | 1 |
+   | textbook-chapter | 2, 3 |
+   | textbook-exercises | 2 |
 
 4. 更新 [CHANGELOG.md](CHANGELOG.md) 的 Unreleased 段；
 5. 行为语义有变化时（gate 规则、契约字段、验证纪律），同步更新 README 与受影响 skill 的交叉引用。
@@ -62,7 +62,7 @@ python3 -m unittest discover -s tests                 # 单元测试
 1. 建 `skills/<new-skill>/SKILL.md`（+ 按需 `references/`），遵循上节规范；
 2. 在 [evals/evals.json](evals/evals.json) 为它追加至少 1 个带 assertions 的用例，并更新上面的映射表；
 3. 更新 README 架构图与目录结构小节；
-4. 若纳入 write-textbook 调度链，须在 handoff-contract.md 定义其输入/输出契约；
+4. 若纳入 textbook 调度链，须在 handoff-contract.md 定义其输入/输出契约；
 5. 校验 + 测试 + 新用例跑通，CHANGELOG 记录。
 
 ## 发版流程
