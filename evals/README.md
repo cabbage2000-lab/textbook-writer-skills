@@ -6,11 +6,11 @@
 
 | ID | 用例 | 里程碑 | 被测 skill | 预计耗时 |
 | --- | ------ | ------ | ----------- | -------- |
-| 1 | outline-double-gate | M2 | design-textbook-outline | ~10 分钟（含 2 次人工确认） |
-| 2 | exercises-verified-generation | M3 | generate-textbook-exercises | ~5 分钟（全自动） |
-| 3 | chapter-four-part-structure | M3 | write-textbook-chapter | ~15 分钟（全自动） |
-| 4 | e2e-resume-after-interrupt | M4 | write-textbook | 数小时（含人为中断步骤） |
-| 5 | second-subject-rerun | M5 | write-textbook | 数小时 |
+| 1 | outline-double-gate | M2 | textbook-outline | ~10 分钟（含 2 次人工确认） |
+| 2 | exercises-verified-generation | M3 | textbook-exercises | ~5 分钟（全自动） |
+| 3 | chapter-four-part-structure | M3 | textbook-chapter | ~15 分钟（全自动） |
+| 4 | e2e-resume-after-interrupt | M4 | textbook | 数小时（含人为中断步骤） |
+| 5 | second-subject-rerun | M5 | textbook | 数小时 |
 
 ## 怎么跑
 
