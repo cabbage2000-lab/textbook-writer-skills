@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要（重新）创建 Release 的 tag，例如 v0.1.0'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 解析 tag
+        id: vars
+        run: |
+          TAG="${{ inputs.tag }}"
+          if [ -z "$TAG" ]; then TAG="${{ github.ref_name }}"; fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.vars.outputs.tag }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: 结构校验（不通过则不发布 Release）
+        run: python3 scripts/validate_skills.py
+      - name: 提取 CHANGELOG 对应版本段
+        run: python3 scripts/extract_changelog_notes.py "${{ steps.vars.outputs.version }}" > /tmp/release-notes.md
+      - name: 创建或更新 GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.vars.outputs.tag }}"
+          if gh release view "$TAG" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            gh release edit "$TAG" --repo "${{ github.repository }}" --title "$TAG" --notes-file /tmp/release-notes.md
+          else
+            gh release create "$TAG" --repo "${{ github.repository }}" --title "$TAG" --notes-file /tmp/release-notes.md
+          fi
