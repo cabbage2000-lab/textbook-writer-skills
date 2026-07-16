@@ -14,6 +14,7 @@
 - 仓库健康检查：防止 `.claude-plugin` 被 .gitignore 忽略（分发清单必须入库）
 - MIT LICENSE，plugin.json / marketplace.json 补充 `license` 字段并纳入一致性校验
 - `docs/adr/`：8 篇架构决策记录（skill 组合拆分、UbD 双 gate、契约单源、上下文隔离、状态机单一写者、真算验证、三层防线、plugin 分发），固化核心决策的背景与取舍
+- Codex 基本支持：仓库根新增 `AGENTS.md` 作为入口指路文件（触发路由表 + 跨 skill 调用桥接说明 + 三条红线提醒），README 补充「在 Codex 中使用」小节；不改动任何 skill 行为与 `handoff-contract.md` 契约
 
 ### Changed
 
