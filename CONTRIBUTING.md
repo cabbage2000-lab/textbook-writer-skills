@@ -72,6 +72,7 @@ python3 -m unittest discover -s tests                 # 单元测试
 1. 同步升版 `.claude-plugin/plugin.json` 与 `marketplace.json` 的 `version`（两处不一致 CI 会拒绝）；
 2. CHANGELOG 的 Unreleased 段落固化为版本号 + 日期；
 3. 打 tag：`git tag v<version> && git push --tags`。
+4. push tag 后 GitHub Actions（[.github/workflows/release.yml](.github/workflows/release.yml)）会自动创建对应的 GitHub Release，说明文字取自 CHANGELOG 对应版本段；若需要给历史 tag 补建或更新 Release，手动触发 `gh workflow run release.yml -f tag=v<version>`。
 
 ## 红线约束（源自 PRD，任何改动不得突破；PRD 原文为本地文档不纳入版本库，决策摘要见 [docs/adr/](docs/adr/README.md)）
 
