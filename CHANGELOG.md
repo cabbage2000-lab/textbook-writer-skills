@@ -21,6 +21,7 @@
 - skills 从 `.claude/skills/` 迁至顶层 `skills/`（标准 plugin 布局，`.claude/skills` 改为本地软链）
 - 单元测试从 8 个扩充到 19 个，覆盖全部新增校验逻辑
 - **术语更名**：UbD 五件套相关表述统一改用仓库固有的描述性叫法（原隐喻沿自调研参照的开源项目，为避免误认沿袭而更换）。属**不兼容变更**：契约字段 `UbD五件套`，`00-教材设计.md` 落盘标题「## 二、UbD 五件套（已确认）」——旧标题落盘的存量教材项目重入前需手工改标题；独立模式改称"轻量版五件套"
+- **skill 全线改名**：统一为 `textbook-` 名词族——`write-textbook` → `textbook`、`design-textbook-outline` → `textbook-outline`、`write-textbook-chapter` → `textbook-chapter`、`generate-textbook-exercises` → `textbook-exercises`（plugin 名 `textbook-writer` 不变，决策记录见 [ADR 0009](docs/adr/0009-unified-skill-naming.md)）。属**不兼容变更**：旧 skill 名不再存在，已安装用户升级后按新名触发；契约字段、`.progress.json` 与落盘布局均不变
 
 ### Fixed
 
