@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-16
+
 ### Added
 
 - plugin 化分发：`.claude-plugin/plugin.json` + `marketplace.json`，支持 `/plugin marketplace add` 安装
