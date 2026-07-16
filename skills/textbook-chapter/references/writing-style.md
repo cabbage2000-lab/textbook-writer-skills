@@ -1,6 +1,6 @@
 # 教材正文撰写规范
 
-本文档是 write-textbook-chapter skill 撰写章节正文时遵循的文体规范，改造自 tutorial-writer 的同名文件：保留其经过验证的通用条款，替换教程特有条款为教材特有条款。
+本文档是 textbook-chapter skill 撰写章节正文时遵循的文体规范，改造自 tutorial-writer 的同名文件：保留其经过验证的通用条款，替换教程特有条款为教材特有条款。
 
 ## 1. 单线结构（线性叙事）——最高优先级原则
 

@@ -35,7 +35,7 @@
 - 表现性任务每项注明对应的迁移目标；
 - 梯度报告：层级×章节矩阵 + 告警处理结果。
 
-### 主 skill → write-textbook-chapter（逐章调用）
+### 主 skill → textbook-chapter（逐章调用）
 
 `{章号, 章标题, 该章大纲切片, UbD五件套, 术语表, 前章小结}`
 
@@ -44,21 +44,21 @@
 - 术语表 = 术语表.md 当前全文；
 - 前章小结 = 前一章文件的「## 本章小结」全节内容；第 1 章传空。
 
-### write-textbook-chapter → 主 skill
+### textbook-chapter → 主 skill
 
 `{章文件路径, 新增术语[], Bloom标注回写[]}`
 
 - 新增术语：本章首次引入、已按术语表格式写好的词条（主 skill 负责追加进术语表.md）；
 - Bloom标注回写每项：`{题目编号, 类型, Bloom层级}`（类型 ∈ 示范例题/引导练习/独立习题）——供阶段 5 复核**实际**梯度。
 
-### write-textbook-chapter → generate-textbook-exercises
+### textbook-chapter → textbook-exercises
 
 `{章上下文, 题目计划, 术语表}`
 
 - 章上下文 = `{章号, 章标题, 本章概念清单, 本章学习目标}`；
 - 题目计划 = 该章例题习题计划条目（`{主题, Bloom层级}` 列表 × 三类）。
 
-### generate-textbook-exercises → write-textbook-chapter
+### textbook-exercises → textbook-chapter
 
 `{题目[]}`，每题 `{编号, 类型, 题干, 解答或提示, Bloom层级, 验证状态}`
 
@@ -68,7 +68,7 @@
 
 ```text
 <教材名>/
-├── 00-教材设计.md      # 阶段 1–3 产出（design-textbook-outline 写入）
+├── 00-教材设计.md      # 阶段 1–3 产出（textbook-outline 写入）
 ├── 01-<章标题>.md       # 阶段 4 产出，逐章生成
 ├── 02-<章标题>.md
 ├── 术语表.md            # 全程维护（主 skill 追加写入）
@@ -85,7 +85,7 @@
 
 ## 4. `.progress.json` 状态机
 
-只由主 skill write-textbook 读写；子 skill 一律不碰（独立使用子 skill 时不产生此文件）。
+只由主 skill textbook 读写；子 skill 一律不碰（独立使用子 skill 时不产生此文件）。
 
 ### Schema（示例值）
 
@@ -127,11 +127,11 @@
 | `current_stage=4` | 从 `chapters.next` 继续逐章写作（已完成章不重写） |
 | `current_stage=5` | 重跑阶段 5 自检 |
 
-gate 重入的补充规则：重新呈现由主 skill 执行；作者提出修改时，委托 design-textbook-outline 执行修改并重新走确认循环（gate 的修改-再确认始终由该子 skill 负责），确认后由主 skill 更新状态。
+gate 重入的补充规则：重新呈现由主 skill 执行；作者提出修改时，委托 textbook-outline 执行修改并重新走确认循环（gate 的修改-再确认始终由该子 skill 负责），确认后由主 skill 更新状态。
 
 ## 5. 进度打印与 gate 停点格式
 
-- 阶段级进度：`▶ 阶段 N/M：<名称>`——M 为**当前 skill 自身的阶段总数**（write-textbook 为 5，design-textbook-outline 为 3）。被调度时两级并存、各有归属：全局阶段行（N/5）由主 skill 在进入阶段时打印，子 skill 打印自己的内层阶段行（N/3），不冲突、不互替。
+- 阶段级进度：`▶ 阶段 N/M：<名称>`——M 为**当前 skill 自身的阶段总数**（textbook 为 5，textbook-outline 为 3）。被调度时两级并存、各有归属：全局阶段行（N/5）由主 skill 在进入阶段时打印，子 skill 打印自己的内层阶段行（N/3），不冲突、不互替。
 - 章级进度：`▶ 第 N/M 章：<章标题>`
 - gate 停点（必须显式说明在等什么）：`⏸ 等待确认：<等什么>（回复"确认"<下一步>，或直接提出修改）`——`<下一步>` 由具体 gate 实例化（如"进入章节设计"）。
 

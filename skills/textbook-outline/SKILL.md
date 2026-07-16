@@ -1,24 +1,24 @@
 ---
-name: design-textbook-outline
-description: Use when a textbook project needs its teaching design — 教学定位、UbD 预期结果五件套（大概念/持久理解/核心问题/迁移目标/学习目标）、章节树与例题 Bloom 梯度规划 — e.g. "设计教材大纲"、"教材规划"、"课程体系设计". Usually orchestrated by write-textbook; can run standalone to produce 00-教材设计.md. Not for writing chapter prose or generating exercises.
+name: textbook-outline
+description: Use when a textbook project needs its teaching design — 教学定位、UbD 预期结果五件套（大概念/持久理解/核心问题/迁移目标/学习目标）、章节树与例题 Bloom 梯度规划 — e.g. "设计教材大纲"、"教材规划"、"课程体系设计". Usually orchestrated by textbook; can run standalone to produce 00-教材设计.md. Not for writing chapter prose or generating exercises.
 ---
 
-# design-textbook-outline
+# textbook-outline
 
 以 UbD 逆向设计完成教材的阶段 1–3：教学定位 → 预期结果设计（核心 gate）→ 评估与章节设计（次要 gate），产出 `00-教材设计.md`。本 skill 是"先想清楚学生该带走什么，再倒推章节和例题"的落地执行者。
 
 ## 何时不触发
 
-- 写章节正文（用 write-textbook-chapter）
-- 生成例题/习题（用 generate-textbook-exercises）
+- 写章节正文（用 textbook-chapter）
+- 生成例题/习题（用 textbook-exercises）
 - 单篇教程的大纲（用 tutorial-writer）
 
 ## 两种调用模式
 
-- **被 write-textbook 调度**（常规）：输入为 `{教材项目目录, 教材名}`；产出写入该目录，两个 gate 的确认结果回报主 skill（`.progress.json` 由主 skill 维护，本 skill 不碰）。
+- **被 textbook 调度**（常规）：输入为 `{教材项目目录, 教材名}`；产出写入该目录，两个 gate 的确认结果回报主 skill（`.progress.json` 由主 skill 维护，本 skill 不碰）。
 - **独立触发**：先用一轮提问确认教材名与落盘目录（默认 `./<教材名>/`），后续流程完全相同，产出 `00-教材设计.md`；不建 `.progress.json`——那是主 skill 的职责。
 
-交接契约、落盘布局、进度打印与 gate 停点格式的权威定义见 [../write-textbook/references/handoff-contract.md](../write-textbook/references/handoff-contract.md)，下文简称"契约文档"。本 skill 的进度行 `▶ 阶段 N/3` 是子 skill 内层标尺（契约文档第 5 节：N/M 中 M 为当前 skill 自身的阶段总数）；被调度时全局的 `▶ 阶段 N/5` 行由主 skill 打印，两级并存。
+交接契约、落盘布局、进度打印与 gate 停点格式的权威定义见 [../textbook/references/handoff-contract.md](../textbook/references/handoff-contract.md)，下文简称"契约文档"。本 skill 的进度行 `▶ 阶段 N/3` 是子 skill 内层标尺（契约文档第 5 节：N/M 中 M 为当前 skill 自身的阶段总数）；被调度时全局的 `▶ 阶段 N/5` 行由主 skill 打印，两级并存。
 
 ## 阶段 1/3：教学定位确认
 
@@ -80,7 +80,7 @@ description: Use when a textbook project needs its teaching design — 教学定
 
 1. **章节树**：每章 `{章号, 章标题, 一句话定位, 承载的持久理解编号[]}`，章数符合阶段 1 的篇幅规模。
    **对齐检查（双向，硬性）**：某章承载不了任何持久理解 → 砍掉或改造该章；某条持久理解没有任何章承载 → 补章，或向作者明示放弃该条。检查结果随章节树一并呈现。
-2. **例题习题计划**：每章三类题的 `{主题, Bloom层级}` 列表，数量参考四段式配额（示范例题 1–3 / 引导练习 1–3 / 独立习题 3–8，见 [../write-textbook-chapter/references/chapter-template.md](../write-textbook-chapter/references/chapter-template.md)）；层级分布参考 bloom-levels.md 第 7 节的经验默认。
+2. **例题习题计划**：每章三类题的 `{主题, Bloom层级}` 列表，数量参考四段式配额（示范例题 1–3 / 引导练习 1–3 / 独立习题 3–8，见 [../textbook-chapter/references/chapter-template.md](../textbook-chapter/references/chapter-template.md)）；层级分布参考 bloom-levels.md 第 7 节的经验默认。
 3. **梯度报告**：按 bloom-levels.md 第 5–6 节生成"层级×章节矩阵 + 合计 + 占比 + 检查结果"，执行三条检查规则。**有告警必须连同"建议在第 N 章补 X 层级题目"的可操作建议一起呈现**，不许只报问题不给出路。
 4. **表现性任务**：1–3 个综合性任务，每个注明对应哪条迁移目标（每条迁移目标至少被一个任务覆盖，否则回到五件套与作者商定取舍）。
 
@@ -94,7 +94,7 @@ Gate 规则与阶段 2 相同：修改后重新完整呈现，确认前绝不放
 
 - **落盘物**：完整的 `00-教材设计.md`，固定二级标题结构见契约文档第 3 节；
 - **回报上游**（被调度时）：契约 `{章节树[], 例题习题计划[], 表现性任务[], 梯度报告}` + 两个 gate 均已确认的显式声明；
-- 独立触发时，最后向作者说明：可用 write-textbook 从此设计文档继续逐章写作。
+- 独立触发时，最后向作者说明：可用 textbook 从此设计文档继续逐章写作。
 
 ## 真实性约束
 

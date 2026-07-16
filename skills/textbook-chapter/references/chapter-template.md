@@ -1,6 +1,6 @@
 # 教材章节模板：四段式 + 首尾件
 
-本文档是 write-textbook-chapter skill 的章节结构唯一权威来源。每章正文必须遵循本模板的骨架与各段要点。
+本文档是 textbook-chapter skill 的章节结构唯一权威来源。每章正文必须遵循本模板的骨架与各段要点。
 
 ## 1. 设计依据
 
@@ -24,7 +24,7 @@
 
 ## N.2 示范例题
 
-<1–3 道完整解题过程的例题，由 generate-textbook-exercises 生成并验证。>
+<1–3 道完整解题过程的例题，由 textbook-exercises 生成并验证。>
 
 ## N.3 引导练习
 
@@ -59,7 +59,7 @@
 ### 3.2 示范例题
 
 - 数量 1–3 道，完整解题过程（worked example），**每步给一行理由**——读者应能看懂"为什么这么做"而不只是"做了什么"；
-- 由 generate-textbook-exercises 生成并完成真算验证（设计与验证规范见 [../../generate-textbook-exercises/references/exercise-design.md](../../generate-textbook-exercises/references/exercise-design.md)）；
+- 由 textbook-exercises 生成并完成真算验证（设计与验证规范见 [../../textbook-exercises/references/exercise-design.md](../../textbook-exercises/references/exercise-design.md)）；
 - 题面紧贴 N.1 刚讲的概念，别引入未讲的知识；
 - 每道题末尾加一句"回顾：这道题用到了<概念>的<哪个性质>"。
 

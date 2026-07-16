@@ -1,6 +1,6 @@
 # Bloom 认知层级（修订版）：学习目标与例题梯度的标尺
 
-本文档是全项目 Bloom 层级的唯一权威来源：design-textbook-outline 用它写学习目标和梯度报告，generate-textbook-exercises 用它判定题目层级，write-textbook 主 skill 在阶段 5 用它复核实际梯度。
+本文档是全项目 Bloom 层级的唯一权威来源：textbook-outline 用它写学习目标和梯度报告，textbook-exercises 用它判定题目层级，textbook 主 skill 在阶段 5 用它复核实际梯度。
 
 ## 1. 六层级总览
 
