@@ -4,7 +4,7 @@
 
 ## 这是什么
 
-本仓库是一套以 UbD 逆向设计为内核的 STEM 教材写作 skill 组合：1 个主 skill（`textbook`）编排 3 个子 skill，驱动"教学定位 → UbD 预期结果 gate → 章节树 gate → 逐章写作 → 审核定稿"五阶段流程。4 个 skill 是一个整体组合，跨 skill 以相对路径互相引用，需整体使用，不得只启用其中一个而忽略其余。
+本仓库是一套以 UbD 逆向设计为内核的 STEM 教材写作 skill 组合：1 个主 skill（`textbook`）编排 3 个子 skill，驱动"教学定位 → UbD 预期结果 gate → 章节树 gate → 逐章写作 → 审核定稿"五阶段流程；另有 1 个独立辅助 skill（`textbook-init`）负责动笔前的工作目录规划，不入调度链。5 个 skill 是一个整体组合，跨 skill 以相对路径互相引用，需整体使用，不得只启用其中一个而忽略其余。
 
 ## 触发路由：用户想做什么，就读哪个 SKILL.md
 
@@ -16,6 +16,7 @@ Codex 没有 Claude Code 的 plugin/Skill 工具机制，不会自动加载 skil
 | 设计教材大纲 / 教材规划 / 课程体系设计 | `skills/textbook-outline/SKILL.md` |
 | 写第 X 章 / 按大纲写这一章 | `skills/textbook-chapter/SKILL.md` |
 | 出几道题 / 给这一章生成例题 | `skills/textbook-exercises/SKILL.md` |
+| 初始化教材项目 / 创建或规划教材工作目录 | `skills/textbook-init/SKILL.md` |
 
 ## 跨 skill 调用桥接
 

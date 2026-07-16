@@ -7,15 +7,16 @@
 ```text
 skills/
 ├── textbook/                          # 主 skill：五阶段调度 + .progress.json 状态机
-│   └── references/handoff-contract.md # ⚠️ 全项目契约权威定义——4 个 skill 都依赖它
+│   └── references/handoff-contract.md # ⚠️ 全项目契约权威定义——5 个 skill 都依赖它
 ├── textbook-outline/                  # 阶段 1-3：教学定位 → UbD 五件套(gate) → 章节树(gate)
 ├── textbook-chapter/                  # 阶段 4：四段式单章写作
-└── textbook-exercises/                # 被单章调用：三类题生成 + 真算验证
+├── textbook-exercises/                # 被单章调用：三类题生成 + 真算验证
+└── textbook-init/                     # 独立辅助（不入调度链）：动笔前规划并创建工作目录
 ```
 
 改动的影响半径从大到小：
 
-1. **handoff-contract.md**（契约/落盘布局/状态机/gate 判定）：牵动全部 4 个 skill，必须全量重跑 evals 用例 1–4；
+1. **handoff-contract.md**（契约/落盘布局/状态机/gate 判定）：牵动全部 5 个 skill，必须全量重跑 evals 用例 1–4；涉及第 3 节落盘布局时补跑 6（textbook-init 的方案呈现与 README 模板引用该节）；
 2. **SKILL.md 的调用契约段**（输入/输出契约、两种调用模式）：牵动调用方与被调用方两侧，重跑双方用例；
 3. **SKILL.md 的流程段 / references**：只影响本 skill，重跑对应用例即可；
 4. **scripts/ tests/ docs/**：不影响 skill 行为，CI 绿即可。
@@ -45,6 +46,9 @@ python3 -m unittest discover -s tests                 # 单元测试
    | textbook-outline | 1 |
    | textbook-chapter | 2, 3 |
    | textbook-exercises | 2 |
+   | textbook-init | 6 |
+
+   用例 4 只验证中断-续写机制（不写完全书），若改动专门涉及阶段 5 自检或交付摘要逻辑，额外补跑用例 5（该场景的验收职责已移交 eval 5，见 evals/README.md）。
 
 4. 更新 [CHANGELOG.md](CHANGELOG.md) 的 Unreleased 段；
 5. 行为语义有变化时（gate 规则、契约字段、验证纪律），同步更新 README 与受影响 skill 的交叉引用。
@@ -53,7 +57,7 @@ python3 -m unittest discover -s tests                 # 单元测试
 
 - **frontmatter**：`name` 与目录名一致；`description` 承担全部触发职责——写清"何时用 + 干什么 + 何时不用"，带中文触发词示例，50–1024 字符；
 - **渐进披露**：SKILL.md 只放工作流骨架（目标 ≤ 500 行），操作细节、模板、查表下沉到 `references/`，并在正文明确指路"何时读哪个文件"；
-- **跨 skill 引用**：一律相对路径（`../<skill-name>/references/xxx.md`），校验脚本会检查存在性；4 个 skill 是整体组合，不得引入仓库外依赖；
+- **跨 skill 引用**：一律相对路径（`../<skill-name>/references/xxx.md`），校验脚本会检查存在性；5 个 skill 是整体组合，不得引入仓库外依赖；
 - **解释为什么**：给模型的指令尽量讲清动机（"上下文膨胀会让长教材写不完"），而不是堆砌大写的 MUST；
 - **无占位符**：TBD/TODO/FIXME/待补充 一律不准入库，校验脚本强制。
 

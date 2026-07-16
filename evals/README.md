@@ -1,6 +1,6 @@
 # 行为测试基线（evals）
 
-[evals.json](evals.json) 把 README 里程碑 **M2–M5 的验收场景**固化为可重复执行的用例。结构校验（CI 里跑的 `validate_skills.py`）只能保证 skill 文件形态正确；skill 的真正质量在**行为**——gate 停不停、题目验没验、中断续不续——这些只能靠真实运行来检验，本目录就是这些检验的单一事实来源。
+[evals.json](evals.json) 把 README 里程碑 **M2–M6 的验收场景**固化为可重复执行的用例。结构校验（CI 里跑的 `validate_skills.py`）只能保证 skill 文件形态正确；skill 的真正质量在**行为**——gate 停不停、题目验没验、中断续不续——这些只能靠真实运行来检验，本目录就是这些检验的单一事实来源。
 
 ## 用例一览
 
@@ -9,8 +9,9 @@
 | 1 | outline-double-gate | M2 | textbook-outline | ~10 分钟（含 2 次人工确认） |
 | 2 | exercises-verified-generation | M3 | textbook-exercises | ~5 分钟（全自动） |
 | 3 | chapter-four-part-structure | M3 | textbook-chapter | ~15 分钟（全自动） |
-| 4 | e2e-resume-after-interrupt | M4 | textbook | 数小时（含人为中断步骤） |
-| 5 | second-subject-rerun | M5 | textbook | 数小时 |
+| 4 | e2e-resume-after-interrupt | M4 | textbook | ~40-60 分钟（只测中断-续写机制：写 1 章→中断→续 2 章即可判定，不写完全书） |
+| 5 | second-subject-rerun | M5 | textbook | 数小时（本用例是「整本书写完 + 阶段 5 自检 + 交付摘要」的验收责任方） |
+| 6 | init-workspace-scaffold | M6 | textbook-init | ~5 分钟（含 1 次人工确认） |
 
 ## 怎么跑
 
@@ -25,7 +26,8 @@
 
 - assertions 是客观断言：逐条给出 通过/不通过 + 证据（引用产物文件的具体位置），不许"总体感觉不错"；
 - 任何一条不通过就是用例不通过——修 skill 后重跑，不许改 assertions 迁就产出（确需调整断言时单独提 PR 说明理由）；
-- 用例 4 的中断步骤是硬要求：不真中断就没有验证"中断可续"。
+- 用例 4 的中断步骤是硬要求：不真中断就没有验证"中断可续"；
+- 用例 4/5 的验收职责按 M4/M5 拆分，不重叠：4 只验证「中断-续写机制」（写 1 章即中断，续写 1 章即可判定，无需写完全书），「整本书写完 + 阶段 5 自检 + 交付摘要」的验收全部下沉到 5——这样日常迭代改动契约时不必每次都写完一整本书才能判定。若改动专门涉及阶段 5 自检或交付摘要逻辑，额外补跑用例 5。
 
 ## 增改用例
 
