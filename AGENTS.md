@@ -19,7 +19,7 @@ Codex 没有 Claude Code 的 plugin/Skill 工具机制，不会自动加载 skil
 
 ## 跨 skill 调用桥接
 
-各 SKILL.md 内部已写明"使用 Skill 工具调用 XXX；若 Skill 工具不可用或未注册，直接读取对方 SKILL.md 并严格遵循其指令执行"的降级路径（例：`skills/textbook/SKILL.md` 第 42、56 行，`skills/textbook-chapter/SKILL.md` 第 33 行）。Codex 没有 Skill 工具，天然命中这条降级分支：主 skill 调子 skill、子 skill 相互调用时，都直接读取被调用方的 SKILL.md 并遵循执行，无需任何额外适配。
+各 SKILL.md 内部已写明"使用 Skill 工具调用对方 skill；若 Skill 工具不可用或未注册，直接读取对方 SKILL.md 并严格遵循其指令执行"的降级路径（例：`skills/textbook/SKILL.md` 第 42、56 行，`skills/textbook-chapter/SKILL.md` 第 33 行）。Codex 没有 Skill 工具，天然命中这条降级分支：主 skill 调子 skill、子 skill 相互调用时，都直接读取被调用方的 SKILL.md 并遵循执行，无需任何额外适配。
 
 ## 三条红线（细节以对应 SKILL.md / `handoff-contract.md` 为准，此处只提醒不重述）
 
