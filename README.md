@@ -85,6 +85,12 @@ cp -r skills/* ~/.claude/skills/
 mkdir -p .claude && ln -s ../skills .claude/skills
 ```
 
+**在 Codex 中使用**——无需额外安装：在 Codex CLI 中打开本仓库目录即可，仓库根的 [AGENTS.md](AGENTS.md) 会自动引导 Codex 找到并遵循对应 skill。例如输入：
+
+```text
+写一本《线性代数入门》教材
+```
+
 ### 第一次运行会发生什么
 
 新开一个 Claude Code 会话，输入：
