@@ -16,6 +16,7 @@
 | [0006](0006-verified-computation-for-exercises.md) | 例题真算验证 | 验证状态二值化:✅ 已验证 / ⚠️ 需作者确认,无第三种 |
 | [0007](0007-three-layer-quality-defense.md) | 三层质量防线 | 结构校验、单元测试进 CI;行为 evals 人工跑,不许改断言迁就产出 |
 | [0008](0008-plugin-layout-and-distribution.md) | plugin 布局与整体分发 | 顶层 skills/ + 双清单入库,四个 skill 整体安装不可拆分 |
+| [0009](0009-unified-skill-naming.md) | skill 命名统一为 textbook- 名词族 | 主 skill 名即公共前缀,补全聚族;动作语义由 description 承担,plugin 名不变 |
 
 ## 何时新增一篇 ADR
 

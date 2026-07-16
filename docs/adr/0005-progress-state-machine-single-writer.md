@@ -12,10 +12,10 @@
 
 ## 决策
 
-- `.progress.json` **只由主 skill write-textbook 读写**,三个子 skill 一律不碰;独立使用子 skill 时不产生此文件;
+- `.progress.json` **只由主 skill textbook 读写**,三个子 skill 一律不碰;独立使用子 skill 时不产生此文件;
 - 写盘时机纪律:每完成一个阶段、每完成一章,**立即**更新写盘,绝不批量延迟——中断可能发生在任何时刻;
-- 重入按[契约文档第 4 节](../../skills/write-textbook/references/handoff-contract.md)的规则表定位续点:gate 未确认的阶段重新呈现产出等确认,已完成章不重写,`chapters.next` 指向最小未完成章号;
-- gate 重入时的修改-再确认循环始终委托 design-textbook-outline 执行,确认后由主 skill 更新状态——内容职责与状态职责不混。
+- 重入按[契约文档第 4 节](../../skills/textbook/references/handoff-contract.md)的规则表定位续点:gate 未确认的阶段重新呈现产出等确认,已完成章不重写,`chapters.next` 指向最小未完成章号;
+- gate 重入时的修改-再确认循环始终委托 textbook-outline 执行,确认后由主 skill 更新状态——内容职责与状态职责不混。
 
 ## 后果
 

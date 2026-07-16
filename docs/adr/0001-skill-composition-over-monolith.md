@@ -16,8 +16,8 @@
 
 PRD §4.1(本地文档,不纳入版本库)拍板 v1 直接拆分,比调研结论更激进:
 
-- `write-textbook` 是主 skill,**只做调度**:驱动五阶段流程、读写状态、在阶段间传递交接契约,不亲自写内容;
-- 三个子 skill 各占一段流水线:`design-textbook-outline`(阶段 1–3,大纲设计)、`write-textbook-chapter`(阶段 4,单章写作)、`generate-textbook-exercises`(被单章 skill 调用,出题与验证);
+- `textbook` 是主 skill,**只做调度**:驱动五阶段流程、读写状态、在阶段间传递交接契约,不亲自写内容;
+- 三个子 skill 各占一段流水线:`textbook-outline`(阶段 1–3,大纲设计)、`textbook-chapter`(阶段 4,单章写作)、`textbook-exercises`(被单章 skill 调用,出题与验证);
 - 每个子 skill 都可脱离主 skill 独立使用(只做大纲 / 单写一章 / 只出题);
 - 子 skill 调用方式:Skill 工具优先,不可用时降级为直接读取对方 SKILL.md 并遵循执行;
 - 4 个 skill 是一个整体组合,跨 skill 以相对路径互引,需整体安装(见 [ADR 0008](0008-plugin-layout-and-distribution.md))。

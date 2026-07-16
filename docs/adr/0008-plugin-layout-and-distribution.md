@@ -8,7 +8,7 @@
 
 skill 最初放在 `.claude/skills/` 下,只对本仓库的会话生效,无法分发给其他项目和其他人。Claude Code 的 plugin 机制提供了标准分发通道,但要求顶层 `skills/` 布局加 `.claude-plugin/` 清单。
 
-同时,4 个 skill 之间存在跨 skill 引用(如各 SKILL.md 引用 `../write-textbook/references/handoff-contract.md`),这决定了它们不能被拆开分发——引用一断,契约单源([ADR 0003](0003-single-authoritative-handoff-contract.md))即失效。
+同时,4 个 skill 之间存在跨 skill 引用(如各 SKILL.md 引用 `../textbook/references/handoff-contract.md`),这决定了它们不能被拆开分发——引用一断,契约单源([ADR 0003](0003-single-authoritative-handoff-contract.md))即失效。
 
 ## 决策
 
