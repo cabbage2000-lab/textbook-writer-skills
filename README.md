@@ -1,8 +1,10 @@
 # textbook-writer-skills
 
+**中文** | [English](README.en.md)
+
 [![CI](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](CHANGELOG.md)
 
 一套给 Claude Code 用的教材写作 skill 组合，面向数学、物理、计算机等「例题可验证」的 STEM 学科。它把成熟的教学设计方法装进 AI 的工作流：先想清楚"学生学完该带走什么"，再倒推章节和习题，一章一章写出有主线、有梯度、例题答案可信的成体系教材——中途断了随时续写。
 
