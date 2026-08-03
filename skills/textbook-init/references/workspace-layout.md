@@ -12,6 +12,7 @@
 ├── README.md              # 工作说明，init 创建
 ├── 00-教材设计.md          # ↓ 以下均由 textbook 流水线创建，init 一律不建
 ├── 01-<章标题>.md …
+├── 99-表现性任务.md
 ├── 术语表.md
 └── .progress.json
 ```
@@ -78,6 +79,7 @@ Thumbs.db
 | README.md、.gitignore | textbook-init | 本说明与版本管理配置 |
 | 00-教材设计.md | textbook-outline | 教学定位、UbD 五件套、章节树与梯度规划（两处 gate 确认后写入） |
 | 01-….md 等章文件 | textbook-chapter | 每章一个文件，四段式结构 |
+| 99-表现性任务.md | textbook（主 skill） | 综合任务与评分标准，阶段 5 定稿时生成 |
 | 术语表.md | textbook（主 skill） | 全书术语与符号约定，逐章追加 |
 | .progress.json | textbook（主 skill） | 写作进度状态，断点续写的唯一依据，请勿手动编辑 |
 

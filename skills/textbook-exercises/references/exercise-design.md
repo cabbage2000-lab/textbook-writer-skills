@@ -63,6 +63,8 @@
 
 ## 6. 输出格式
 
+题干、解答与提示中的数学公式遵循 [../../textbook-chapter/references/writing-style.md](../../textbook-chapter/references/writing-style.md) 第 13 节（定界符、矩阵环境统一、公式内不写中文）——题目与正文出自同一本书，公式语法两套会让读者以为换了本书。
+
 正文格式（与 chapter-template.md 第 4 节一致，全书统一）：
 
 ```markdown

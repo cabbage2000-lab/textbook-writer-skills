@@ -29,7 +29,7 @@ description: Use when writing one textbook chapter following the fixed 四段式
 
    - 引言：从前章小结的核心结论衔接进入，呼应五件套中的一条核心问题，先"为什么"再"学什么"；
    - `## N.1 概念讲解`：按大纲切片中该章定位与承载的持久理解展开，每个概念走"动机 → 定义 → 直观解释 → 关系"链条；
-   - 全程遵循 [references/writing-style.md](references/writing-style.md)：叙事散文、认知负荷控制（一段一个新概念）、配图双轨（抽象概念用 mermaid/SVG，纯概念章至少一图）、措辞禁忌（禁"显然/易得"跳步）、中文排版。
+   - 全程遵循 [references/writing-style.md](references/writing-style.md)：叙事散文、认知负荷控制（一段一个新概念）、配图双轨（抽象概念用 mermaid/SVG，纯概念章至少一图）、数学公式规范（`$...$` / `$$...$$` 定界，矩阵环境全书统一）、措辞禁忌（禁"显然/易得"跳步）、中文排版。
 3. **生成三类题**：使用 Skill 工具调用 `textbook-exercises`（传入契约 `{章上下文, 题目计划, 术语表}`，其中章上下文的概念清单与学习目标从大纲切片提取）；若 Skill 工具不可用或未注册，直接读取 [../textbook-exercises/SKILL.md](../textbook-exercises/SKILL.md) 并严格遵循其指令执行。将返回题目按类型放入 `## N.2 示范例题`、`## N.3 引导练习`、`## N.4 独立习题`，保持验证状态与复算代码块原样，不改动已验证解答的数值。
 4. **写本章小结**：按 chapter-template.md 3.5 节固定三件——核心结论（3–5 条，面向下一章作者）、与持久理解的呼应（一句话说明本章推进了哪条）、下一章预告（1 句）。
 5. **落盘与自查**：写入 `NN-<章标题>.md`（NN 为两位章号）；按 chapter-template.md 第 5 节章内自查清单逐项自查，不过的当场修正后再交付。

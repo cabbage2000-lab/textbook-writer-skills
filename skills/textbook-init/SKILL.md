@@ -17,7 +17,7 @@ description: Use when starting a textbook project and the author wants to plan a
 
 本 skill 只独立触发：不被 textbook 调度，不进五阶段契约链，产出是"就绪的空工作目录 + 启动指引"。
 
-**流水线文件一律不建不改**：`.progress.json`（主 skill 是唯一写者，这是项目红线）、`00-教材设计.md`（textbook-outline 写入）、`NN-<章标题>.md`（逐章生成）、`术语表.md`（主 skill 追加维护）。动机：主 skill 的重入判定靠"这些文件存不存在、内容有没有"定位续点（契约文档第 4 节），预建空文件会让它把全新项目误判成半成品；空壳文件混进交付物也违背"交付即可用"的底线。本 skill 创建的只有目录本身、`.gitignore` 和 README 工作说明——均在契约之外。
+**流水线文件一律不建不改**：`.progress.json`（主 skill 是唯一写者，这是项目红线）、`00-教材设计.md`（textbook-outline 写入）、`NN-<章标题>.md`（逐章生成）、`99-表现性任务.md`（阶段 5 派生生成）、`术语表.md`（主 skill 追加维护）。动机：主 skill 的重入判定靠"这些文件存不存在、内容有没有"定位续点（契约文档第 4 节），预建空文件会让它把全新项目误判成半成品；空壳文件混进交付物也违背"交付即可用"的底线。本 skill 创建的只有目录本身、`.gitignore` 和 README 工作说明——均在契约之外。
 
 ## 工作流
 
