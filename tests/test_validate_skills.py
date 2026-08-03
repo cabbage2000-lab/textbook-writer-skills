@@ -36,18 +36,59 @@ def make_skill(root: Path, name: str, *, frontmatter_name: str | None = None,
     return d
 
 
+CODEX_INTERFACE = {
+    "displayName": "Demo",
+    "shortDescription": "演示",
+    "longDescription": "演示 plugin 的长描述。",
+    "developerName": "demo-dev",
+    "category": "Productivity",
+    "capabilities": ["Read"],
+    "defaultPrompt": ["写一本教材"],
+}
+
+
+def _write_json(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+
 def make_manifests(root: Path, *, plugin: dict | None = None,
-                   marketplace: dict | None = None) -> None:
-    manifest_dir = root / ".claude-plugin"
-    manifest_dir.mkdir(parents=True, exist_ok=True)
+                   marketplace: dict | None = None,
+                   codex_plugin: dict | None = None,
+                   codex_marketplace: dict | None = None,
+                   codebuddy_plugin: dict | None = None,
+                   codebuddy_marketplace: dict | None = None) -> None:
+    """造齐三宿主六份清单：默认全部同源一致（各测试再按需污染其中一份）。"""
     if plugin is None:
         plugin = {"name": "demo", "version": "0.1.0", "description": "演示 plugin"}
     if marketplace is None:
         marketplace = {"name": "demo-market", "plugins": [dict(plugin)]}
-    (manifest_dir / "plugin.json").write_text(
-        json.dumps(plugin, ensure_ascii=False), encoding="utf-8")
-    (manifest_dir / "marketplace.json").write_text(
-        json.dumps(marketplace, ensure_ascii=False), encoding="utf-8")
+    if codex_plugin is None:
+        codex_plugin = dict(
+            plugin, skills="./skills/", interface=dict(CODEX_INTERFACE))
+    if codex_marketplace is None:
+        codex_marketplace = {
+            "name": "demo-market",
+            "plugins": [{
+                "name": plugin["name"],
+                "source": {"source": "local", "path": "./"},
+                "policy": {"installation": "AVAILABLE", "authentication": "ON_USE"},
+            }],
+        }
+    if codebuddy_plugin is None:
+        codebuddy_plugin = dict(plugin)
+    if codebuddy_marketplace is None:
+        codebuddy_marketplace = {
+            "name": "demo-market",
+            "owner": {"name": "demo-dev"},
+            "plugins": [dict(plugin, source="./")],
+        }
+    _write_json(root / ".claude-plugin" / "plugin.json", plugin)
+    _write_json(root / ".claude-plugin" / "marketplace.json", marketplace)
+    _write_json(root / ".codex-plugin" / "plugin.json", codex_plugin)
+    _write_json(root / ".agents" / "plugins" / "marketplace.json", codex_marketplace)
+    _write_json(root / ".codebuddy-plugin" / "plugin.json", codebuddy_plugin)
+    _write_json(root / ".codebuddy-plugin" / "marketplace.json", codebuddy_marketplace)
 
 
 class TempDirTest(unittest.TestCase):
@@ -158,6 +199,115 @@ class ValidateManifestsTest(TempDirTest):
         self.assertTrue(any("解析失败" in e for e in errors))
 
 
+class ValidateCodexManifestsTest(TempDirTest):
+    """Codex 侧两份清单：与 Claude 侧同源 + Codex 专有的摄取要求。"""
+
+    def test_missing_codex_manifest_reported(self):
+        make_manifests(self.root)
+        (self.root / ".codex-plugin" / "plugin.json").unlink()
+        errors = validate_manifests(self.root)
+        self.assertTrue(any(".codex-plugin/plugin.json" in e for e in errors))
+
+    def test_cross_host_version_drift_detected(self):
+        plugin = {"name": "demo", "version": "0.2.0", "description": "演示 plugin"}
+        codex = dict(plugin, version="0.1.0", skills="./skills/",
+                     interface=dict(CODEX_INTERFACE))
+        make_manifests(self.root, plugin=plugin, codex_plugin=codex)
+        errors = validate_manifests(self.root)
+        self.assertTrue(any("跨宿主 plugin 清单的 version 不一致" in e for e in errors))
+
+    def test_wrong_skills_pointer_detected(self):
+        plugin = {"name": "demo", "version": "0.1.0", "description": "演示 plugin"}
+        codex = dict(plugin, skills="./.codex-plugin/skills/",
+                     interface=dict(CODEX_INTERFACE))
+        make_manifests(self.root, plugin=plugin, codex_plugin=codex)
+        errors = validate_manifests(self.root)
+        self.assertTrue(any("skills 指针" in e for e in errors))
+
+    def test_incomplete_interface_detected(self):
+        plugin = {"name": "demo", "version": "0.1.0", "description": "演示 plugin"}
+        interface = {k: v for k, v in CODEX_INTERFACE.items()
+                     if k != "longDescription"}
+        codex = dict(plugin, skills="./skills/", interface=interface)
+        make_manifests(self.root, plugin=plugin, codex_plugin=codex)
+        errors = validate_manifests(self.root)
+        self.assertTrue(any("longDescription" in e for e in errors))
+
+    def test_missing_interface_detected(self):
+        plugin = {"name": "demo", "version": "0.1.0", "description": "演示 plugin"}
+        make_manifests(self.root, plugin=plugin,
+                       codex_plugin=dict(plugin, skills="./skills/"))
+        errors = validate_manifests(self.root)
+        self.assertTrue(any("缺少 interface 块" in e for e in errors))
+
+    def test_codex_marketplace_entry_missing_detected(self):
+        make_manifests(self.root, codex_marketplace={"name": "m", "plugins": []})
+        errors = validate_manifests(self.root)
+        self.assertTrue(any(".agents/plugins/marketplace.json" in e for e in errors))
+
+    def test_codex_marketplace_source_shape_checked(self):
+        make_manifests(self.root, codex_marketplace={
+            "name": "m",
+            "plugins": [{
+                "name": "demo",
+                "source": "./",  # Claude 版的写法，Codex 要对象
+                "policy": {"installation": "AVAILABLE"},
+            }],
+        })
+        errors = validate_manifests(self.root)
+        self.assertTrue(any("source=" in e for e in errors))
+
+    def test_codex_marketplace_policy_checked(self):
+        make_manifests(self.root, codex_marketplace={
+            "name": "m",
+            "plugins": [{
+                "name": "demo",
+                "source": {"source": "local", "path": "./"},
+                "policy": {"installation": "UNAVAILABLE"},
+            }],
+        })
+        errors = validate_manifests(self.root)
+        self.assertTrue(any("AVAILABLE" in e for e in errors))
+
+
+class ValidateCodebuddyManifestsTest(TempDirTest):
+    """WorkBuddy（CodeBuddy 内核）侧两份清单：结构与 Claude 版同构，另放一个目录。"""
+
+    def test_missing_codebuddy_manifest_reported(self):
+        make_manifests(self.root)
+        (self.root / ".codebuddy-plugin" / "marketplace.json").unlink()
+        errors = validate_manifests(self.root)
+        self.assertTrue(
+            any(".codebuddy-plugin/marketplace.json" in e for e in errors))
+
+    def test_cross_host_description_drift_detected(self):
+        plugin = {"name": "demo", "version": "0.1.0", "description": "演示 plugin"}
+        make_manifests(self.root, plugin=plugin,
+                       codebuddy_plugin=dict(plugin, description="改过的描述"))
+        errors = validate_manifests(self.root)
+        self.assertTrue(any(
+            ".codebuddy-plugin/plugin.json" in e and "description" in e
+            for e in errors))
+
+    def test_missing_owner_detected(self):
+        plugin = {"name": "demo", "version": "0.1.0", "description": "演示 plugin"}
+        make_manifests(self.root, plugin=plugin, codebuddy_marketplace={
+            "name": "m", "plugins": [dict(plugin, source="./")],
+        })
+        errors = validate_manifests(self.root)
+        self.assertTrue(any("owner.name" in e for e in errors))
+
+    def test_wrong_source_detected(self):
+        plugin = {"name": "demo", "version": "0.1.0", "description": "演示 plugin"}
+        make_manifests(self.root, plugin=plugin, codebuddy_marketplace={
+            "name": "m",
+            "owner": {"name": "demo-dev"},
+            "plugins": [dict(plugin, source="./plugins/demo")],
+        })
+        errors = validate_manifests(self.root)
+        self.assertTrue(any("必须是 './'" in e for e in errors))
+
+
 class ValidateRepoHealthTest(TempDirTest):
     def test_clean_gitignore_passes(self):
         (self.root / ".gitignore").write_text(
@@ -175,6 +325,22 @@ class ValidateRepoHealthTest(TempDirTest):
             ".claude-plugin/\n", encoding="utf-8")
         errors = validate_repo_health(self.root)
         self.assertTrue(any(".claude-plugin" in e for e in errors))
+
+    def test_ignoring_other_manifest_dirs_rejected(self):
+        (self.root / ".gitignore").write_text(
+            ".codex-plugin/\n.agents\n.codebuddy-plugin\n", encoding="utf-8")
+        errors = validate_repo_health(self.root)
+        self.assertTrue(any(".codex-plugin" in e for e in errors))
+        self.assertTrue(any(".agents" in e for e in errors))
+        self.assertTrue(any(".codebuddy-plugin" in e for e in errors))
+
+    def test_skills_inside_manifest_dir_rejected(self):
+        """skills/ 塞进清单目录：插件装得上、但一个 skill 都加载不到。"""
+        (self.root / ".codex-plugin" / "skills" / "demo").mkdir(parents=True)
+        (self.root / ".codex-plugin" / "plugin.json").write_text(
+            "{}", encoding="utf-8")
+        errors = validate_repo_health(self.root)
+        self.assertTrue(any("只放清单文件" in e for e in errors))
 
 
 if __name__ == "__main__":

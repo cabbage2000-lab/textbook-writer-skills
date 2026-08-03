@@ -10,3 +10,6 @@ evals/workspace/
 # docs 下只保留 adr/（架构决策记录）入库，其余（PRD、调研、超能力计划等本地文档）不入库
 docs/*
 !docs/adr/
+
+# MCP 工具运行缓存
+.playwright-mcp/

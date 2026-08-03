@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 仓库性质
 
-这是一个 Claude Code skills/plugin 仓库：产品本身是 `skills/` 下的 5 个 Markdown skill（"给模型看的程序"），没有传统应用代码。**改一行指令就可能改变 skill 的运行行为**，而结构校验和单元测试只能保证文件形态正确，行为质量必须靠 evals 真实运行来检验——这是本仓库三层防线设计的出发点。Python 只出现在质量保障脚本中（零第三方依赖，3.10+ 标准库）。
+这是一个 agent skills/plugin 仓库（目标宿主：Claude Code / Codex / WorkBuddy）：产品本身是 `skills/` 下的 5 个 Markdown skill（"给模型看的程序"），没有传统应用代码。**改一行指令就可能改变 skill 的运行行为**，而结构校验和单元测试只能保证文件形态正确，行为质量必须靠 evals 真实运行来检验——这是本仓库三层防线设计的出发点。Python 只出现在质量保障脚本中（零第三方依赖，3.10+ 标准库）。
 
 领域：以 UbD 逆向设计为内核的 STEM 教材写作流水线。设计依据源自 PRD 与前期调研（本地 `docs/` 目录留存，不纳入版本库）；版本库内可查的架构决策摘要见 [docs/adr/](docs/adr/README.md)。
 
@@ -21,7 +21,7 @@ python3 -m unittest tests.test_validate_skills.ValidateSkillsTest.test_valid_ski
 mkdir -p .claude && ln -s ../skills .claude/skills
 ```
 
-③ 第三道防线是行为测试（evals），**无法自动化**：在新开的 Claude Code 会话中输入 [evals/evals.json](evals/evals.json) 用例的 `prompt` 原文真实运行，对照 `assertions` 逐条客观判定（通过/不通过 + 产物证据），任何一条不通过即用例不通过，不许改断言迁就产出。运行产物放 `evals/workspace/`（已 gitignore，用例定义入库、运行产物不入库）。
+③ 第三道防线是行为测试（evals），**无法自动化**：在新开的会话中（Claude Code 为基线宿主，跨宿主复跑口径见 [evals/README.md](evals/README.md)）输入 [evals/evals.json](evals/evals.json) 用例的 `prompt` 原文真实运行，对照 `assertions` 逐条客观判定（通过/不通过 + 产物证据），任何一条不通过即用例不通过，不许改断言迁就产出。运行产物放 `evals/workspace/`（已 gitignore，用例定义入库、运行产物不入库）。
 
 ## 架构
 
@@ -45,6 +45,22 @@ textbook-init（独立辅助）  不入调度链：动笔前规划并创建工�
 - **上下文隔离**：单章写作不读其他章正文，跨章一致性只靠术语表、前章小结、UbD 五件套三个轻量载体传递——这是 10+ 章长教材不爆上下文的根本保证；
 - **子 skill 调用方式**：Skill 工具优先，不可用时降级为直接读对方 SKILL.md 并遵循执行。
 
+## 分发与跨宿主
+
+目标宿主三个，Claude Code 是 evals 的基线宿主。仓库根的清单文件让**仓库自身成为插件市场**，三个宿主都能一键装：
+
+| 宿主 | 清单文件 | 用户侧入口 | 散装目录（用户级 / 项目级） |
+| ---- | -------- | ---------- | ---- |
+| Claude Code | `.claude-plugin/plugin.json` + `marketplace.json` | `/plugin marketplace add cabbage2000-lab/textbook-writer-skills` | `~/.claude/skills/` / `.claude/skills/` |
+| Codex | `.codex-plugin/plugin.json` + `.agents/plugins/marketplace.json` | `codex plugin marketplace add cabbage2000-lab/textbook-writer-skills` | `~/.codex/skills/` / `.codex/skills/`、`.agents/skills/` |
+| WorkBuddy | `.codebuddy-plugin/plugin.json` + `marketplace.json` | `/plugin marketplace add cabbage2000-lab/textbook-writer-skills` | `~/.workbuddy/skills/` / `.codebuddy/skills/`（注意项目级不是 `.workbuddy/`） |
+
+三套清单**不能合并**：Codex 的 plugin.json 多要 `skills: "./skills/"` 指针与一整块 `interface`（displayName / shortDescription / longDescription / developerName / category / capabilities / defaultPrompt 全必填），marketplace 条目的 `source` 是对象且必带 `policy`；CodeBuddy 与 Claude 版结构同构（skills 靠 plugin 根下的 `skills/` 自动发现），但清单目录、`owner.name` 必填这两点不同。六份清单的公共字段由 `validate_skills.py` 的 `validate_manifests` 守住不漂——发版时带 `version` 的**五处一起升版**（`.agents/plugins/marketplace.json` 按 Codex 规范不带 version）。
+
+实测记录：Codex 侧 2026-08-03 在 codex-cli 0.146.0 上跑通（隔离 `CODEX_HOME` 做本地路径市场 → `codex plugin add` → 5 个 SKILL.md 与 8 个 references 全部装载，官方预检脚本 `~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py` 通过）；WorkBuddy 侧清单格式**已由作者在其他项目实测可用**，本仓库按同一格式编写（本仓库的清单未单独复测，差异仅在 name/description 等元信息）。
+
+**跨宿主中立**是设计约束：skill 的核心路径只依赖通用 agent skills 标准（SKILL.md frontmatter + `references/` 分层加载 + 相对路径互引 + 无仓库外依赖）。宿主专有能力只能作可选增强，且必须写明纯文本降级路径——现存两处：Skill 工具调子 skill（降级为直接读对方 SKILL.md）、AskUserQuestion 一轮提问（降级为编号提问等文本回复）。要加第三处前先问一句：没有这个能力的宿主会不会退化到不可用。plugin 清单是增量增强，`skills/` 散装主体原样保留，任何宿主照常按 SKILL.md 装载。
+
 ## 改动影响半径与必跑 evals
 
 影响半径从大到小：handoff-contract.md（牵动全部 5 个 skill）＞ SKILL.md 的调用契约段（牵动调用方与被调用方两侧）＞ SKILL.md 流程段 / references（只影响本 skill）＞ scripts/tests/docs（不影响 skill 行为，CI 绿即可）。
@@ -65,8 +81,8 @@ textbook-init（独立辅助）  不入调度链：动笔前规划并创建工�
 - frontmatter：`name` 与目录名一致；`description` 50–1024 字符，承担全部触发职责（写清"何时用 + 干什么 + 何时不用"，带中文触发词示例）；仅允许白名单字段（name/description/version/license/allowed-tools/compatibility/metadata），其余会被静默忽略；
 - `skills/` 下所有 .md 禁止占位符词（TBD、TODO、FIXME、XXX、待补充、占位）；
 - `references/` 下每个 .md ≥ 500 字节；SKILL.md 引用的 references 路径（含跨 skill）必须真实存在；
-- `plugin.json` 与 `marketplace.json` 的 name/version/description/license 必须一致——发版时两处同步升版；
-- `.gitignore` 不得忽略 `.claude-plugin`（分发清单必须入库）。
+- 三宿主六份清单的 name/version/description/license 必须一致，Codex 侧另查 `skills` 指针、`interface` 必填字段、marketplace 条目的 source/policy 形状，CodeBuddy 侧另查 `owner.name` 与条目 `source: "./"`——发版时六处同步升版；
+- `.gitignore` 不得忽略 `.claude-plugin`、`.codex-plugin`、`.codebuddy-plugin`、`.agents`（分发清单必须入库）；三个 `.*-plugin/` 里只放清单文件，`skills/` 必须在仓库根（放错位置装上后一个 skill 都加载不到）。
 
 写给模型的指令尽量讲清动机（"上下文膨胀会让长教材写不完"），而不是堆砌大写的 MUST。
 

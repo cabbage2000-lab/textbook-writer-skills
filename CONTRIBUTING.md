@@ -1,6 +1,6 @@
 # 贡献指南
 
-本仓库是长期维护的 Claude Code skill 组合项目。skill 是"给模型看的程序"，改一行指令就可能改变运行行为，所以本项目用三层防线保证质量：**结构校验（CI 自动）→ 单元测试（CI 自动）→ 行为测试（evals 人工跑）**。
+本仓库是长期维护的 agent skill 组合项目（目标宿主：Claude Code / Codex / WorkBuddy）。skill 是"给模型看的程序"，改一行指令就可能改变运行行为，所以本项目用三层防线保证质量：**结构校验（CI 自动）→ 单元测试（CI 自动）→ 行为测试（evals 人工跑）**。
 
 ## 架构一览：改哪里，影响什么
 
@@ -58,6 +58,7 @@ python3 -m unittest discover -s tests                 # 单元测试
 - **frontmatter**：`name` 与目录名一致；`description` 承担全部触发职责——写清"何时用 + 干什么 + 何时不用"，带中文触发词示例，50–1024 字符；
 - **渐进披露**：SKILL.md 只放工作流骨架（目标 ≤ 500 行），操作细节、模板、查表下沉到 `references/`，并在正文明确指路"何时读哪个文件"；
 - **跨 skill 引用**：一律相对路径（`../<skill-name>/references/xxx.md`），校验脚本会检查存在性；5 个 skill 是整体组合，不得引入仓库外依赖；
+- **跨宿主中立**：核心路径只依赖通用 agent skills 标准（SKILL.md frontmatter + `references/` 分层加载 + 相对路径互引）。宿主专有能力只能作可选增强，且必须写明纯文本降级路径——现存两处是 Skill 工具调子 skill（降级为直接读对方 SKILL.md）与 AskUserQuestion 一轮提问（降级为编号提问）。三个宿主的装法与六份分发清单见 [README](README.md) 与 CLAUDE.md 的「分发与跨宿主」一节；
 - **解释为什么**：给模型的指令尽量讲清动机（"上下文膨胀会让长教材写不完"），而不是堆砌大写的 MUST；
 - **无占位符**：TBD/TODO/FIXME/待补充 一律不准入库，校验脚本强制。
 
@@ -73,7 +74,7 @@ python3 -m unittest discover -s tests                 # 单元测试
 
 版本号语义：**MAJOR** = 契约或落盘格式不兼容变更（老项目的 `.progress.json` 不能续用）；**MINOR** = 新增 skill/新能力；**PATCH** = 指令修正与文档修补。
 
-1. 同步升版 `.claude-plugin/plugin.json` 与 `marketplace.json` 的 `version`（两处不一致 CI 会拒绝）；
+1. 同步升版三宿主六份清单里带 `version` 的**五处**：`.claude-plugin/{plugin,marketplace}.json`、`.codex-plugin/plugin.json`、`.codebuddy-plugin/{plugin,marketplace}.json`（`.agents/plugins/marketplace.json` 按 Codex 规范不带 version，无需改；任一处不一致 CI 会拒绝）。README 的 version badge 也是同一份事实——v0.2.0 发版时它漏改过一次，别再漏；
 2. CHANGELOG 的 Unreleased 段落固化为版本号 + 日期；
 3. 打 tag：`git tag v<version> && git push --tags`。
 4. push tag 后 GitHub Actions（[.github/workflows/release.yml](.github/workflows/release.yml)）会自动创建对应的 GitHub Release，说明文字取自 CHANGELOG 对应版本段；若需要给历史 tag 补建或更新 Release，手动触发 `gh workflow run release.yml -f tag=v<version>`。

@@ -1,0 +1,20 @@
+{
+  "name": "textbook-writer-skills",
+  "interface": {
+    "displayName": "Textbook-Writer-Skills"
+  },
+  "plugins": [
+    {
+      "name": "textbook-writer",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

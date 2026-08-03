@@ -1,0 +1,38 @@
+{
+  "name": "textbook-writer",
+  "description": "UbD 逆向设计驱动的教材写作 skill 组合：教学定位 → UbD 预期结果 → 章节树 → 四段式逐章写作 → 真算验证例题，产出有主线、有梯度、可评估的成体系 STEM 教材",
+  "version": "0.3.0",
+  "license": "MIT",
+  "homepage": "https://github.com/cabbage2000-lab/textbook-writer-skills",
+  "repository": "https://github.com/cabbage2000-lab/textbook-writer-skills.git",
+  "author": {
+    "name": "cabbage2000-lab"
+  },
+  "keywords": [
+    "skills",
+    "textbook",
+    "ubd",
+    "bloom",
+    "education",
+    "stem"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Textbook-Writer-Skills 教材写作套件",
+    "shortDescription": "UbD 逆向设计驱动的 STEM 教材写作流水线",
+    "longDescription": "面向数学、物理、计算机等「例题可验证」STEM 学科的中文教材写作 skill 组合：1 个主 skill 调度 3 个子 skill，走完「教学定位 → UbD 预期结果 → 章节树与 Bloom 梯度 → 四段式逐章写作 → 审核定稿」五个阶段，另有 1 个独立辅助 skill 负责动笔前的工作目录规划。三条纪律贯穿全程：UbD 五件套与章节树必须作者明确确认才放行（双 gate），计算类例题答案必须真算复核、验证不了的明确标注「需作者确认」，每章只读自己的输入契约且进度实时落盘——章数再多也写得完，中断随时可续。",
+    "developerName": "cabbage2000-lab",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "写一本《线性代数入门》教材",
+      "设计一份数据结构教材大纲",
+      "出几道矩阵乘法的练习题"
+    ],
+    "websiteURL": "https://github.com/cabbage2000-lab/textbook-writer-skills"
+  }
+}

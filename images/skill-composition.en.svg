@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="728" viewBox="0 0 900 728" role="img" aria-labelledby="t d">
+  <title id="t">Skill’s-eye view: how the five skills divide the work</title>
+  <desc id="d">The orchestrator skill textbook drives the five stages and is the only reader and writer of .progress.json. It calls textbook-outline for the stage 1 to 3 teaching design, where both gates stop the pipeline, and calls textbook-chapter once per chapter — each chapter receiving only its outline slice, the UbD elements, the glossary and the previous summary, never other chapters’ prose. textbook-chapter in turn calls textbook-exercises, which recomputes every computed answer before returning. handoff-contract.md is the single authoritative definition all five skills align their field names to; textbook-init sits outside the pipeline and only creates the working directory before writing starts.</desc>
+  <style>
+    text { font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+    .h1 { font-size: 17px; font-weight: 700; fill: #1F2328; }
+    .h2 { font-size: 12.5px; fill: #6B7681; }
+    .skl { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 14px; font-weight: 600; fill: #1F2328; }
+    .io { font-size: 11.5px; fill: #7A8794; }
+    .cd { font-size: 12.5px; fill: #57606A; }
+    .sm { font-size: 12px; fill: #57606A; }
+    .ow { font-size: 12.5px; fill: #FFFFFF; }
+    .osub { font-size: 11.5px; fill: #B9D2EA; }
+    .bdg { font-size: 11px; font-weight: 600; fill: #2F6FB2; }
+    .pill { font-size: 11.5px; fill: #2F5D8C; }
+    .skl-w, .skl-s, .skl-c, .skl-i { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-weight: 600; font-size: 14px; }
+    .skl-w { fill: #FFFFFF; }
+    .skl-c { fill: #6B5A38; }
+    .skl-i { fill: #4A5561; }
+    .skl-s { font-size: 13px; fill: #1F2328; }
+    .onum { font-size: 10px; fill: #FFFFFF; }
+    .osub-a { font-size: 11.5px; fill: #F0D9AE; }
+    .osub-w { font-size: 11.5px; fill: #E7EFF7; }
+    .io-xs { font-size: 10.5px; fill: #7A8794; }
+    .cd-warn { font-size: 12.5px; fill: #A3453C; }
+    .sep { font-size: 12px; fill: #9AA7B4; }
+    .xs { font-size: 11px; fill: #57606A; }
+    .xs-b { font-size: 11px; font-weight: 600; fill: #33445A; }
+    .xs-warn { font-size: 11px; fill: #A3453C; }
+    .contract { font-size: 12px; fill: #6E6250; }
+    .bdg-mute { font-size: 11px; font-weight: 600; fill: #69737E; }
+    .init-d { font-size: 12px; fill: #6B7681; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="899" height="727" rx="14" fill="#FBFAF8" stroke="#E7E2D9"/>
+
+  <text class="h1" x="32" y="46">Skill’s-eye view: how the five skills divide the work</text>
+  <text class="h2" x="32" y="68">One orchestrator, three sub-skills · one contract aligns the field names · one state file tracks progress</text>
+
+  <!-- orchestrator -->
+  <rect x="32" y="92" width="180" height="400" rx="12" fill="#2B5F98"/>
+  <text class="skl-w" x="52" y="122">textbook</text>
+  <text class="osub" x="52" y="142">orchestrator</text>
+  <line x1="52" y1="156" x2="192" y2="156" stroke="#FFFFFF" stroke-opacity="0.25"/>
+
+  <circle cx="60" cy="178" r="8" fill="#FFFFFF" fill-opacity="0.18"/>
+  <text class="onum" x="60" y="181.5" text-anchor="middle">1</text>
+  <text class="ow" x="76" y="186">Scoping</text>
+
+  <circle cx="60" cy="212" r="8" fill="#FFFFFF" fill-opacity="0.18"/>
+  <text class="onum" x="60" y="215.5" text-anchor="middle">2</text>
+  <text class="ow" x="76" y="220">UbD elements</text>
+  <circle cx="176" cy="216" r="6.5" fill="#E8A33D"/>
+  <rect x="173.8" y="212.8" width="1.6" height="6.4" rx="0.7" fill="#FFFFFF"/>
+  <rect x="176.6" y="212.8" width="1.6" height="6.4" rx="0.7" fill="#FFFFFF"/>
+
+  <circle cx="60" cy="246" r="8" fill="#FFFFFF" fill-opacity="0.18"/>
+  <text class="onum" x="60" y="249.5" text-anchor="middle">3</text>
+  <text class="ow" x="76" y="254">Tree + gradient</text>
+  <circle cx="176" cy="250" r="6.5" fill="#E8A33D"/>
+  <rect x="173.8" y="246.8" width="1.6" height="6.4" rx="0.7" fill="#FFFFFF"/>
+  <rect x="176.6" y="246.8" width="1.6" height="6.4" rx="0.7" fill="#FFFFFF"/>
+
+  <circle cx="60" cy="280" r="8" fill="#FFFFFF" fill-opacity="0.18"/>
+  <text class="onum" x="60" y="283.5" text-anchor="middle">4</text>
+  <text class="ow" x="76" y="288">Chapter loop</text>
+  <path d="M171,287 a6.5,6.5 0 1 0 3.8,-5.8" fill="none" stroke="#BBD3EA" stroke-width="1.5" stroke-linecap="round"/>
+  <polygon points="171.8,278.4 177.4,276.4 176,282" fill="#BBD3EA"/>
+
+  <circle cx="60" cy="314" r="8" fill="#FFFFFF" fill-opacity="0.18"/>
+  <text class="onum" x="60" y="317.5" text-anchor="middle">5</text>
+  <text class="ow" x="76" y="322">Final review</text>
+
+  <rect x="48" y="352" width="148" height="64" rx="8" fill="#FFFFFF" fill-opacity="0.12"/>
+  <circle cx="64" cy="372" r="6.5" fill="#E8A33D"/>
+  <rect x="61.8" y="368.8" width="1.6" height="6.4" rx="0.7" fill="#FFFFFF"/>
+  <rect x="64.6" y="368.8" width="1.6" height="6.4" rx="0.7" fill="#FFFFFF"/>
+  <text class="osub-a" x="78" y="376">Stage 2 / 3 = gate</text>
+  <text class="osub-w" x="62" y="396">Nothing moves past it</text>
+
+  <text class="osub" x="52" y="440">Saves state after every</text>
+  <text class="osub" x="52" y="458">stage and chapter ↓</text>
+
+  <!-- orchestrator <-> sub-skill call arrows -->
+  <text class="io-xs" x="242" y="145" text-anchor="middle">calls</text>
+  <line x1="222" y1="154" x2="262" y2="154" stroke="#9DAEBE" stroke-width="1.6"/>
+  <polygon points="262,154 253,149.5 253,158.5" fill="#9DAEBE"/>
+  <polygon points="222,154 231,149.5 231,158.5" fill="#9DAEBE"/>
+  <text class="io-xs" x="242" y="360" text-anchor="middle">calls</text>
+  <line x1="222" y1="369" x2="262" y2="369" stroke="#9DAEBE" stroke-width="1.6"/>
+  <polygon points="262,369 253,364.5 253,373.5" fill="#9DAEBE"/>
+  <polygon points="222,369 231,364.5 231,373.5" fill="#9DAEBE"/>
+
+  <!-- sub-skill 1: outline design -->
+  <rect x="272" y="92" width="596" height="124" rx="12" fill="#FFFFFF" stroke="#D7E0EA"/>
+  <text class="skl" x="292" y="120">textbook-outline</text>
+  <rect x="766" y="104" width="82" height="22" rx="11" fill="#EAF2FA"/>
+  <text class="bdg" x="807" y="119" text-anchor="middle">Stages 1–3</text>
+  <text class="io" x="292" y="145">In: your scoping answers   →   Out: the teaching design (UbD elements · tree · exercise plan)</text>
+  <text class="cd" x="292" y="170">Scoping → the five UbD elements → chapter tree + a book-wide Bloom gradient report</text>
+  <text class="cd" x="292" y="193">Produces 00-design.md; both gates stop here, and it returns only after your OK</text>
+
+  <!-- sub-skill 2: chapter writing -->
+  <rect x="272" y="246" width="596" height="246" rx="12" fill="#FFFFFF" stroke="#D7E0EA"/>
+  <text class="skl" x="292" y="274">textbook-chapter</text>
+  <rect x="670" y="258" width="178" height="22" rx="11" fill="#EAF2FA"/>
+  <text class="bdg" x="759" y="273" text-anchor="middle">Stage 4 · once per chapter</text>
+  <text class="io" x="292" y="299">In: outline slice · UbD elements · glossary · prev. summary   →   Out: prose · summary · new terms</text>
+  <text class="cd-warn" x="310" y="324">Never reads other chapters’ prose — those four light carriers are all it gets</text>
+  <path d="M292.5,318.5 l7,7 M299.5,318.5 l-7,7" stroke="#A3453C" stroke-width="1.8" stroke-linecap="round"/>
+
+  <rect x="292" y="338" width="104" height="24" rx="12" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="344" y="354" text-anchor="middle">Concept</text>
+  <text class="sep" x="400" y="354">›</text>
+  <rect x="410" y="338" width="104" height="24" rx="12" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="462" y="354" text-anchor="middle">Worked examples</text>
+  <text class="sep" x="518" y="354">›</text>
+  <rect x="528" y="338" width="104" height="24" rx="12" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="580" y="354" text-anchor="middle">Guided practice</text>
+  <text class="sep" x="636" y="354">›</text>
+  <rect x="646" y="338" width="104" height="24" rx="12" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="698" y="354" text-anchor="middle">Independent work</text>
+
+  <line x1="300" y1="370" x2="300" y2="392" stroke="#9DAEBE" stroke-width="1.6"/>
+  <polygon points="300,392 295.5,383 304.5,383" fill="#9DAEBE"/>
+  <text class="io" x="314" y="388">the exercises in the last three parts go to</text>
+
+  <!-- sub-skill 3: exercises, called by chapter -->
+  <rect x="292" y="398" width="556" height="76" rx="10" fill="#F5F9FD" stroke="#D2E2F0"/>
+  <text class="skl-s" x="308" y="422">textbook-exercises</text>
+  <rect x="710" y="408" width="122" height="20" rx="10" fill="#E3EEF8"/>
+  <text class="bdg" x="771" y="422" text-anchor="middle">called by chapter</text>
+  <text class="sm" x="308" y="444">Worked examples · guided practice · independent exercises, each Bloom-tagged</text>
+  <circle cx="314" cy="459" r="6.5" fill="#2E7D5B"/>
+  <path d="M311,459 l2.2,2.4 l4,-4.6" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+  <text class="sm" x="328" y="463">Every computed answer is recomputed before it returns; the rest gets tagged</text>
+
+  <!-- orchestrator <-> state file -->
+  <line x1="122" y1="492" x2="122" y2="520" stroke="#9DAEBE" stroke-width="1.6"/>
+  <polygon points="122,520 117.5,511 126.5,511" fill="#9DAEBE"/>
+  <polygon points="122,492 117.5,501 126.5,501" fill="#9DAEBE"/>
+
+  <rect x="32" y="520" width="180" height="92" rx="10" fill="#EDF1F5" stroke="#CFD8E0"/>
+  <text class="mono" x="52" y="546" font-size="12.5" font-weight="600" fill="#33445A">.progress.json</text>
+  <text class="xs" x="52" y="566">Stage + chapters done</text>
+  <text class="xs-b" x="52" y="586">Only textbook writes it</text>
+  <text class="xs-warn" x="52" y="602">Sub-skills never touch it</text>
+
+  <!-- the single authoritative contract -->
+  <rect x="272" y="520" width="596" height="92" rx="10" fill="#F5F1E8" stroke="#DDD2BC"/>
+  <rect x="272" y="520" width="3.5" height="92" rx="1.8" fill="#B79B62"/>
+  <text class="skl-c" x="292" y="548">handoff-contract.md</text>
+  <text class="contract" x="292" y="574">Handoff contracts, on-disk layout, the state machine and its re-entry rules all live here</text>
+  <text class="contract" x="292" y="596">All five skills cite it; field names match word for word — a synonym breaks the contract</text>
+
+  <!-- standalone helper skill -->
+  <rect x="32" y="640" width="836" height="64" rx="10" fill="#F7F8FA" stroke="#C7CFD8" stroke-dasharray="5 4"/>
+  <text class="skl-i" x="52" y="668">textbook-init</text>
+  <rect x="182" y="652" width="140" height="20" rx="10" fill="#EDEFF2"/>
+  <text class="bdg-mute" x="252" y="666" text-anchor="middle">outside the pipeline</text>
+  <text class="init-d" x="52" y="691">Plans and creates the working directory before you write (optional git, optional README guide), then hands off to textbook</text>
+</svg>

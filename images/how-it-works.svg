@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="784" viewBox="0 0 900 784" role="img" aria-labelledby="t d">
+  <title id="t">作者视角：写一本教材会经历的五步</title>
+  <desc id="d">从作者一句话开始，依次经过教学定位、UbD 五件套（停点 1 等作者确认）、章节树与 Bloom 难度梯度（停点 2 等作者确认）、按四段式逐章写作（例题真算复核、上下文隔离、每章存盘可续写）、通读定稿，最后交付一个教材目录。</desc>
+  <style>
+    text { font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", sans-serif; }
+    .h1 { font-size: 17px; font-weight: 700; fill: #1F2328; }
+    .h2 { font-size: 12.5px; fill: #6B7681; }
+    .ct { font-size: 14.5px; font-weight: 600; fill: #1F2328; }
+    .cd { font-size: 12.5px; fill: #57606A; }
+    .gt { font-size: 12.5px; font-weight: 600; fill: #8A5A11; }
+    .gd { font-size: 12px; fill: #A3792F; }
+    .pill { font-size: 12px; fill: #2F5D8C; }
+    .num { font-size: 13px; font-weight: 700; fill: #FFFFFF; }
+    .chip { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 11.5px; fill: #2E6A4C; }
+    .out { font-size: 13.5px; font-weight: 600; fill: #235C41; }
+    .plabel { font-size: 11.5px; font-weight: 700; fill: #FFFFFF; }
+    .sep { font-size: 12.5px; fill: #9AA7B4; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="899" height="783" rx="14" fill="#FBFAF8" stroke="#E7E2D9"/>
+
+  <text class="h1" x="32" y="46">作者视角：写一本教材，你会经历这五步</text>
+  <text class="h2" x="32" y="68">两处停下来等你拍板 · 每道计算题真算复核 · 中断了从断点接着写</text>
+
+  <!-- 时间轴 -->
+  <line x1="52" y1="108" x2="52" y2="740" stroke="#CBD5DE" stroke-width="2"/>
+  <polygon points="46,215 58,215 52,224" fill="#A8B6C3"/>
+  <polygon points="46,341 58,341 52,350" fill="#A8B6C3"/>
+  <polygon points="46,467 58,467 52,476" fill="#A8B6C3"/>
+  <polygon points="46,623 58,623 52,632" fill="#A8B6C3"/>
+  <polygon points="46,705 58,705 52,714" fill="#A8B6C3"/>
+
+  <!-- 起点：作者输入 -->
+  <circle cx="52" cy="108" r="14" fill="#33445A"/>
+  <circle cx="52" cy="103.5" r="3.2" fill="#FFFFFF"/>
+  <path d="M45.5,114.5 a6.5,6.5 0 0 1 13,0" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+  <rect x="78" y="86" width="790" height="44" rx="10" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <rect x="98" y="97" width="76" height="22" rx="11" fill="#2F6FB2"/>
+  <text class="plabel" x="136" y="112.5" text-anchor="middle">作者输入</text>
+  <text x="188" y="113" font-size="14" fill="#1F2328">「用 textbook 写一本《线性代数入门》教材」</text>
+
+  <!-- ① 教学定位 -->
+  <circle cx="52" cy="181" r="14" fill="#2F6FB2"/>
+  <text class="num" x="52" y="185.5" text-anchor="middle">1</text>
+  <rect x="78" y="150" width="790" height="62" rx="10" fill="#FFFFFF" stroke="#DFE3E8"/>
+  <rect x="78" y="150" width="3.5" height="62" rx="1.8" fill="#2F6FB2"/>
+  <text class="ct" x="98" y="176">教学定位：先把「给谁写」问清楚</text>
+  <text class="cd" x="98" y="197">它先反问你：读者是谁、要讲多深、打算写多大篇幅——这三问没答完不动笔</text>
+
+  <!-- ② UbD 五件套 -->
+  <circle cx="52" cy="262" r="14" fill="#2F6FB2"/>
+  <text class="num" x="52" y="266.5" text-anchor="middle">2</text>
+  <rect x="78" y="228" width="790" height="68" rx="10" fill="#FFFFFF" stroke="#DFE3E8"/>
+  <rect x="78" y="228" width="3.5" height="68" rx="1.8" fill="#2F6FB2"/>
+  <text class="ct" x="98" y="255">想清楚这本书到底要教什么</text>
+  <text class="cd" x="98" y="277">产出 UbD 五件套：大概念 · 持久理解 · 核心问题 · 迁移目标 · 学习目标</text>
+
+  <!-- 停点 1 -->
+  <circle cx="52" cy="321" r="14" fill="#D08B2C"/>
+  <rect x="47.5" y="315" width="3.4" height="12" rx="1.2" fill="#FFFFFF"/>
+  <rect x="53.5" y="315" width="3.4" height="12" rx="1.2" fill="#FFFFFF"/>
+  <rect x="78" y="304" width="790" height="34" rx="8" fill="#FDF4E6" stroke="#E8C88F"/>
+  <rect x="78" y="304" width="3.5" height="34" rx="1.8" fill="#D08B2C"/>
+  <text class="gt" x="98" y="325.5">停点 1 · 等你点头才继续：这五件套是全书的灵魂，AI 不替你拍板</text>
+  <path d="M646,318 a7,7 0 1 0 4,-6.2" fill="none" stroke="#B98A3E" stroke-width="1.6" stroke-linecap="round"/>
+  <polygon points="647,308.5 653.5,306 652,312.5" fill="#B98A3E"/>
+  <text class="gd" x="668" y="325.5">说「改一下 X」就按你的意见重做</text>
+
+  <!-- ③ 章节树 + 梯度 -->
+  <circle cx="52" cy="388" r="14" fill="#2F6FB2"/>
+  <text class="num" x="52" y="392.5" text-anchor="middle">3</text>
+  <rect x="78" y="354" width="790" height="68" rx="10" fill="#FFFFFF" stroke="#DFE3E8"/>
+  <rect x="78" y="354" width="3.5" height="68" rx="1.8" fill="#2F6FB2"/>
+  <text class="ct" x="98" y="381">倒推章节顺序与难度梯度</text>
+  <text class="cd" x="98" y="403">由五件套推出章节树；全书习题做 Bloom 难度体检，扎堆一层或缺了应用/分析当场告警</text>
+
+  <!-- 停点 2 -->
+  <circle cx="52" cy="447" r="14" fill="#D08B2C"/>
+  <rect x="47.5" y="441" width="3.4" height="12" rx="1.2" fill="#FFFFFF"/>
+  <rect x="53.5" y="441" width="3.4" height="12" rx="1.2" fill="#FFFFFF"/>
+  <rect x="78" y="430" width="790" height="34" rx="8" fill="#FDF4E6" stroke="#E8C88F"/>
+  <rect x="78" y="430" width="3.5" height="34" rx="1.8" fill="#D08B2C"/>
+  <text class="gt" x="98" y="451.5">停点 2 · 等你点头才动笔：章节顺序和难度梯度定了，才开始写正文</text>
+  <path d="M646,444 a7,7 0 1 0 4,-6.2" fill="none" stroke="#B98A3E" stroke-width="1.6" stroke-linecap="round"/>
+  <polygon points="647,434.5 653.5,432 652,438.5" fill="#B98A3E"/>
+  <text class="gd" x="668" y="451.5">改章节树也一样，随时退回重排</text>
+
+  <!-- ④ 逐章写作 -->
+  <circle cx="52" cy="550" r="14" fill="#2F6FB2"/>
+  <text class="num" x="52" y="554.5" text-anchor="middle">4</text>
+  <rect x="78" y="480" width="790" height="140" rx="10" fill="#FCFDFF" stroke="#D7E0EA"/>
+  <rect x="78" y="480" width="3.5" height="140" rx="1.8" fill="#2F6FB2"/>
+  <text class="ct" x="98" y="506">一章一章往下写，每章按固定节奏走</text>
+
+  <rect x="98" y="518" width="110" height="26" rx="13" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="153" y="535" text-anchor="middle">概念讲解</text>
+  <text class="sep" x="216" y="535">›</text>
+  <rect x="224" y="518" width="110" height="26" rx="13" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="279" y="535" text-anchor="middle">示范例题</text>
+  <text class="sep" x="342" y="535">›</text>
+  <rect x="350" y="518" width="110" height="26" rx="13" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="405" y="535" text-anchor="middle">引导练习</text>
+  <text class="sep" x="468" y="535">›</text>
+  <rect x="476" y="518" width="110" height="26" rx="13" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="531" y="535" text-anchor="middle">独立习题</text>
+  <path d="M614,531 a9,9 0 1 0 5.2,-8" fill="none" stroke="#7E8C99" stroke-width="1.6" stroke-linecap="round"/>
+  <polygon points="615,519 622.5,516 621,523.5" fill="#7E8C99"/>
+  <text class="cd" x="640" y="535">第 1 章到第 N 章，循环这一套节奏</text>
+
+  <circle cx="104" cy="562" r="7" fill="#2E7D5B"/>
+  <path d="M100.6,562 l2.4,2.6 l4.4,-5" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text class="cd" x="118" y="566">每道计算题都实际复算核对后才写进书，确实算不了的标注「需作者确认」，绝不假装验证过</text>
+
+  <circle cx="104" cy="583" r="7" fill="#5B6B7C"/>
+  <rect x="100.5" y="579.5" width="7" height="7" rx="1.4" fill="none" stroke="#FFFFFF" stroke-width="1.6"/>
+  <text class="cd" x="118" y="587">写每章只看这章的大纲切片 + 术语表 + 前一章小结，不读别章正文——十几章也不会撑爆上下文</text>
+
+  <circle cx="104" cy="604" r="7" fill="#5B6B7C"/>
+  <path d="M104,600.2 v4.4 M101.7,602.6 l2.3,2.4 l2.3,-2.4 M100.9,607.8 h6.2" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text class="cd" x="118" y="608">每写完一章立刻存进度：中断后再说同一句话，就从断点接着写，已完成的章不会被重写</text>
+
+  <!-- ⑤ 通读定稿 -->
+  <circle cx="52" cy="669" r="14" fill="#2F6FB2"/>
+  <text class="num" x="52" y="673.5" text-anchor="middle">5</text>
+  <rect x="78" y="636" width="790" height="66" rx="10" fill="#FFFFFF" stroke="#DFE3E8"/>
+  <rect x="78" y="636" width="3.5" height="66" rx="1.8" fill="#2F6FB2"/>
+  <text class="ct" x="98" y="662">通读定稿</text>
+  <text class="cd" x="98" y="684">全书术语一致性自检，补齐面向学生的综合任务与评分标准，最后给你一份交付摘要</text>
+
+  <!-- 终点：交付 -->
+  <circle cx="52" cy="740" r="14" fill="#2E7D5B"/>
+  <path d="M46.2,740 l4,4.4 l7.4,-8.4" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="78" y="718" width="790" height="44" rx="10" fill="#F1F8F3" stroke="#C9E2D3"/>
+  <text class="out" x="98" y="745">交付 · 一个能直接用的教材目录</text>
+  <rect x="300" y="729" width="108" height="22" rx="6" fill="#E8F3EC" stroke="#C3DFCE"/>
+  <text class="chip" x="354" y="744" text-anchor="middle">00-教材设计.md</text>
+  <rect x="418" y="729" width="134" height="22" rx="6" fill="#E8F3EC" stroke="#C3DFCE"/>
+  <text class="chip" x="485" y="744" text-anchor="middle">01…NN-各章正文.md</text>
+  <rect x="562" y="729" width="76" height="22" rx="6" fill="#E8F3EC" stroke="#C3DFCE"/>
+  <text class="chip" x="600" y="744" text-anchor="middle">术语表.md</text>
+  <rect x="648" y="729" width="146" height="22" rx="6" fill="#E8F3EC" stroke="#C3DFCE"/>
+  <text class="chip" x="721" y="744" text-anchor="middle">综合任务与评分标准.md</text>
+</svg>

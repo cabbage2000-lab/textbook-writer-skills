@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="784" viewBox="0 0 900 784" role="img" aria-labelledby="t d">
+  <title id="t">From the author's seat: the five steps of writing a textbook</title>
+  <desc id="d">Starting from one sentence by the author, the pipeline runs through scoping, the five UbD elements (stop 1, waiting for the author's OK), the chapter tree and Bloom gradient (stop 2, waiting for the author's OK), chapter-by-chapter writing in the four-part rhythm (answers recomputed, context isolated, progress saved so work resumes after a break), and a final read-through, delivering one ready-to-use textbook folder.</desc>
+  <style>
+    text { font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .h1 { font-size: 17px; font-weight: 700; fill: #1F2328; }
+    .h2 { font-size: 12.5px; fill: #6B7681; }
+    .ct { font-size: 14.5px; font-weight: 600; fill: #1F2328; }
+    .cd { font-size: 12.5px; fill: #57606A; }
+    .gt { font-size: 12.5px; font-weight: 600; fill: #8A5A11; }
+    .gd { font-size: 12px; fill: #A3792F; }
+    .pill { font-size: 12px; fill: #2F5D8C; }
+    .num { font-size: 13px; font-weight: 700; fill: #FFFFFF; }
+    .chip { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; font-size: 11.5px; fill: #2E6A4C; }
+    .out { font-size: 13.5px; font-weight: 600; fill: #235C41; }
+    .plabel { font-size: 11.5px; font-weight: 700; fill: #FFFFFF; }
+    .sep { font-size: 12.5px; fill: #9AA7B4; }
+  </style>
+
+  <rect x="0.5" y="0.5" width="899" height="783" rx="14" fill="#FBFAF8" stroke="#E7E2D9"/>
+
+  <text class="h1" x="32" y="46">How it works, from where the author sits</text>
+  <text class="h2" x="32" y="68">Two stops where it waits for your call · every computed answer really checked · resume after any break</text>
+
+  <!-- timeline -->
+  <line x1="52" y1="108" x2="52" y2="740" stroke="#CBD5DE" stroke-width="2"/>
+  <polygon points="46,215 58,215 52,224" fill="#A8B6C3"/>
+  <polygon points="46,341 58,341 52,350" fill="#A8B6C3"/>
+  <polygon points="46,467 58,467 52,476" fill="#A8B6C3"/>
+  <polygon points="46,623 58,623 52,632" fill="#A8B6C3"/>
+  <polygon points="46,705 58,705 52,714" fill="#A8B6C3"/>
+
+  <!-- start: the author's one sentence -->
+  <circle cx="52" cy="108" r="14" fill="#33445A"/>
+  <circle cx="52" cy="103.5" r="3.2" fill="#FFFFFF"/>
+  <path d="M45.5,114.5 a6.5,6.5 0 0 1 13,0" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+  <rect x="78" y="86" width="790" height="44" rx="10" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <rect x="98" y="97" width="68" height="22" rx="11" fill="#2F6FB2"/>
+  <text class="plabel" x="132" y="112.5" text-anchor="middle">AUTHOR</text>
+  <text x="182" y="113" font-size="14" fill="#1F2328">“Write a textbook on Introduction to Linear Algebra, using textbook”</text>
+
+  <!-- 1. scoping -->
+  <circle cx="52" cy="181" r="14" fill="#2F6FB2"/>
+  <text class="num" x="52" y="185.5" text-anchor="middle">1</text>
+  <rect x="78" y="150" width="790" height="62" rx="10" fill="#FFFFFF" stroke="#DFE3E8"/>
+  <rect x="78" y="150" width="3.5" height="62" rx="1.8" fill="#2F6FB2"/>
+  <text class="ct" x="98" y="176">Scoping: settle who it is for, before any writing</text>
+  <text class="cd" x="98" y="197">It asks first: who reads this, how deep it goes, how long it runs — no prose until those are answered</text>
+
+  <!-- 2. five UbD elements -->
+  <circle cx="52" cy="262" r="14" fill="#2F6FB2"/>
+  <text class="num" x="52" y="266.5" text-anchor="middle">2</text>
+  <rect x="78" y="228" width="790" height="68" rx="10" fill="#FFFFFF" stroke="#DFE3E8"/>
+  <rect x="78" y="228" width="3.5" height="68" rx="1.8" fill="#2F6FB2"/>
+  <text class="ct" x="98" y="255">Work out what the book must actually teach</text>
+  <text class="cd" x="98" y="277">The five UbD elements: big ideas · enduring understandings · essential questions · transfer goals · objectives</text>
+
+  <!-- gate 1 -->
+  <circle cx="52" cy="321" r="14" fill="#D08B2C"/>
+  <rect x="47.5" y="315" width="3.4" height="12" rx="1.2" fill="#FFFFFF"/>
+  <rect x="53.5" y="315" width="3.4" height="12" rx="1.2" fill="#FFFFFF"/>
+  <rect x="78" y="304" width="790" height="34" rx="8" fill="#FDF4E6" stroke="#E8C88F"/>
+  <rect x="78" y="304" width="3.5" height="34" rx="1.8" fill="#D08B2C"/>
+  <text class="gt" x="98" y="325.5">Stop 1 · waits for your OK — these five elements are the soul of the book</text>
+  <path d="M646,318 a7,7 0 1 0 4,-6.2" fill="none" stroke="#B98A3E" stroke-width="1.6" stroke-linecap="round"/>
+  <polygon points="647,308.5 653.5,306 652,312.5" fill="#B98A3E"/>
+  <text class="gd" x="668" y="325.5">Say “change X” to redo it</text>
+
+  <!-- 3. chapter tree + gradient -->
+  <circle cx="52" cy="388" r="14" fill="#2F6FB2"/>
+  <text class="num" x="52" y="392.5" text-anchor="middle">3</text>
+  <rect x="78" y="354" width="790" height="68" rx="10" fill="#FFFFFF" stroke="#DFE3E8"/>
+  <rect x="78" y="354" width="3.5" height="68" rx="1.8" fill="#2F6FB2"/>
+  <text class="ct" x="98" y="381">Derive the chapter order and difficulty gradient</text>
+  <text class="cd" x="98" y="403">The chapter tree follows from those five elements; a Bloom check flags clustering or a missing level</text>
+
+  <!-- gate 2 -->
+  <circle cx="52" cy="447" r="14" fill="#D08B2C"/>
+  <rect x="47.5" y="441" width="3.4" height="12" rx="1.2" fill="#FFFFFF"/>
+  <rect x="53.5" y="441" width="3.4" height="12" rx="1.2" fill="#FFFFFF"/>
+  <rect x="78" y="430" width="790" height="34" rx="8" fill="#FDF4E6" stroke="#E8C88F"/>
+  <rect x="78" y="430" width="3.5" height="34" rx="1.8" fill="#D08B2C"/>
+  <text class="gt" x="98" y="451.5">Stop 2 · waits for your OK — chapters and gradient locked before any prose</text>
+  <path d="M646,444 a7,7 0 1 0 4,-6.2" fill="none" stroke="#B98A3E" stroke-width="1.6" stroke-linecap="round"/>
+  <polygon points="647,434.5 653.5,432 652,438.5" fill="#B98A3E"/>
+  <text class="gd" x="668" y="451.5">Same for the chapter tree</text>
+
+  <!-- 4. chapter by chapter -->
+  <circle cx="52" cy="550" r="14" fill="#2F6FB2"/>
+  <text class="num" x="52" y="554.5" text-anchor="middle">4</text>
+  <rect x="78" y="480" width="790" height="140" rx="10" fill="#FCFDFF" stroke="#D7E0EA"/>
+  <rect x="78" y="480" width="3.5" height="140" rx="1.8" fill="#2F6FB2"/>
+  <text class="ct" x="98" y="506">Chapter by chapter, each on the same fixed rhythm</text>
+
+  <rect x="98" y="518" width="110" height="26" rx="13" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="153" y="535" text-anchor="middle">Concept</text>
+  <text class="sep" x="216" y="535">›</text>
+  <rect x="224" y="518" width="110" height="26" rx="13" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="279" y="535" text-anchor="middle">Worked example</text>
+  <text class="sep" x="342" y="535">›</text>
+  <rect x="350" y="518" width="110" height="26" rx="13" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="405" y="535" text-anchor="middle">Guided practice</text>
+  <text class="sep" x="468" y="535">›</text>
+  <rect x="476" y="518" width="110" height="26" rx="13" fill="#EEF4FB" stroke="#C7D9EC"/>
+  <text class="pill" x="531" y="535" text-anchor="middle">Independent work</text>
+  <path d="M614,531 a9,9 0 1 0 5.2,-8" fill="none" stroke="#7E8C99" stroke-width="1.6" stroke-linecap="round"/>
+  <polygon points="615,519 622.5,516 621,523.5" fill="#7E8C99"/>
+  <text class="cd" x="640" y="535">same rhythm, chapter 1 through N</text>
+
+  <circle cx="104" cy="562" r="7" fill="#2E7D5B"/>
+  <path d="M100.6,562 l2.4,2.6 l4.4,-5" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text class="cd" x="118" y="566">Every computed answer is recomputed before it ships; what cannot be verified is tagged “needs author review”</text>
+
+  <circle cx="104" cy="583" r="7" fill="#5B6B7C"/>
+  <rect x="100.5" y="579.5" width="7" height="7" rx="1.4" fill="none" stroke="#FFFFFF" stroke-width="1.6"/>
+  <text class="cd" x="118" y="587">Each chapter sees only its outline slice, the glossary and the previous summary — never other chapters' prose</text>
+
+  <circle cx="104" cy="604" r="7" fill="#5B6B7C"/>
+  <path d="M104,600.2 v4.4 M101.7,602.6 l2.3,2.4 l2.3,-2.4 M100.9,607.8 h6.2" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text class="cd" x="118" y="608">Progress is saved after every chapter — say the same sentence again and it picks up where it stopped</text>
+
+  <!-- 5. final read-through -->
+  <circle cx="52" cy="669" r="14" fill="#2F6FB2"/>
+  <text class="num" x="52" y="673.5" text-anchor="middle">5</text>
+  <rect x="78" y="636" width="790" height="66" rx="10" fill="#FFFFFF" stroke="#DFE3E8"/>
+  <rect x="78" y="636" width="3.5" height="66" rx="1.8" fill="#2F6FB2"/>
+  <text class="ct" x="98" y="662">Final read-through</text>
+  <text class="cd" x="98" y="684">A glossary consistency check, a student-facing performance task with rubric, and a delivery summary</text>
+
+  <!-- delivery -->
+  <circle cx="52" cy="740" r="14" fill="#2E7D5B"/>
+  <path d="M46.2,740 l4,4.4 l7.4,-8.4" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="78" y="718" width="790" height="44" rx="10" fill="#F1F8F3" stroke="#C9E2D3"/>
+  <text class="out" x="98" y="745">Delivered · a ready-to-use folder</text>
+  <rect x="360" y="729" width="103" height="22" rx="6" fill="#E8F3EC" stroke="#C3DFCE"/>
+  <text class="chip" x="411" y="744" text-anchor="middle">00-design.md</text>
+  <rect x="473" y="729" width="140" height="22" rx="6" fill="#E8F3EC" stroke="#C3DFCE"/>
+  <text class="chip" x="543" y="744" text-anchor="middle">01…NN-chapters.md</text>
+  <rect x="623" y="729" width="96" height="22" rx="6" fill="#E8F3EC" stroke="#C3DFCE"/>
+  <text class="chip" x="671" y="744" text-anchor="middle">glossary.md</text>
+  <rect x="729" y="729" width="82" height="22" rx="6" fill="#E8F3EC" stroke="#C3DFCE"/>
+  <text class="chip" x="770" y="744" text-anchor="middle">rubric.md</text>
+</svg>

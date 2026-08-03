@@ -65,11 +65,11 @@ Thumbs.db
 ```markdown
 # 线性代数入门 · 教材写作工作目录
 
-本目录由 textbook-init 创建，是《线性代数入门》的教材写作工作目录，配合 Claude Code 的 textbook skill 组合使用。
+本目录由 textbook-init 创建，是《线性代数入门》的教材写作工作目录，配合 textbook skill 组合使用（Claude Code / Codex / WorkBuddy 等宿主装好该组合后均可）。
 
 ## 怎么开始写 / 续写
 
-- 首次开写：对 Claude Code 说 `写教材《线性代数入门》，落盘目录用 ./线性代数入门/`
+- 首次开写：对你的 AI 编程助手说 `写教材《线性代数入门》，落盘目录用 ./线性代数入门/`
 - 中断后续写：再说一遍同样的话即可——textbook 会读 `.progress.json` 从断点继续，已完成的章不会被重写。
 
 ## 目录里的文件

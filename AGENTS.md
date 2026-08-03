@@ -1,6 +1,8 @@
 # AGENTS.md
 
-本文件是 Codex CLI 在本仓库中的项目级指令入口，作用与 `CLAUDE.md` 面向 Claude Code 平行——`CLAUDE.md` 面向"改 skill 时的工程约束"，本文件面向"如何在本仓库启动并运行这套 skill"。
+本文件是 Codex CLI 及其他读取 `AGENTS.md` 的宿主在本仓库中的项目级指令入口，作用与 `CLAUDE.md` 面向 Claude Code 平行——`CLAUDE.md` 面向"改 skill 时的工程约束"，本文件面向"如何在本仓库启动并运行这套 skill"。
+
+它是**未安装时的兜底路径**：已按 README「快速开始」装了插件（`codex plugin add textbook-writer@textbook-writer-skills`）或把 `skills/` 复制进宿主 skills 目录的，宿主会自行加载 5 个 skill，不必依赖本文件的路由表；在本仓库目录里直接开干、什么都没装时，按本文件走同样成立。
 
 ## 这是什么
 
@@ -8,7 +10,7 @@
 
 ## 触发路由：用户想做什么，就读哪个 SKILL.md
 
-Codex 没有 Claude Code 的 plugin/Skill 工具机制，不会自动加载 skill 的 frontmatter。收到以下意图时，直接读取对应文件并严格遵循其指令执行：
+宿主未安装本套 skill 时不会自动加载它们的 frontmatter。收到以下意图时，直接读取对应文件并严格遵循其指令执行：
 
 | 用户意图（触发词示例） | 读取并遵循 |
 | --- | --- |
@@ -20,7 +22,7 @@ Codex 没有 Claude Code 的 plugin/Skill 工具机制，不会自动加载 skil
 
 ## 跨 skill 调用桥接
 
-各 SKILL.md 内部已写明"使用 Skill 工具调用对方 skill；若 Skill 工具不可用或未注册，直接读取对方 SKILL.md 并严格遵循其指令执行"的降级路径（例：`skills/textbook/SKILL.md` 第 42、56 行，`skills/textbook-chapter/SKILL.md` 第 33 行）。Codex 没有 Skill 工具，天然命中这条降级分支：主 skill 调子 skill、子 skill 相互调用时，都直接读取被调用方的 SKILL.md 并遵循执行，无需任何额外适配。
+各 SKILL.md 内部已写明"使用 Skill 工具调用对方 skill；若 Skill 工具不可用或未注册，直接读取对方 SKILL.md 并严格遵循其指令执行"的降级路径（例：`skills/textbook/SKILL.md` 第 42、56 行，`skills/textbook-chapter/SKILL.md` 第 33 行）。没有 Skill 工具的宿主天然命中这条降级分支：主 skill 调子 skill、子 skill 相互调用时，都直接读取被调用方的 SKILL.md 并遵循执行，无需任何额外适配。另一处同款降级是 `textbook-outline`、`textbook-init` 的一轮提问——宿主没有 AskUserQuestion 一类结构化提问工具时，降级为编号提问、等待文本回复，收集到的信息完全一致。
 
 ## 三条红线（细节以对应 SKILL.md / `handoff-contract.md` 为准，此处只提醒不重述）
 
