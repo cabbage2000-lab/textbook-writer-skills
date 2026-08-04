@@ -7,7 +7,9 @@
 
 [中文](README.md) | **English**
 
-Textbook-Writer-Skills is a skill suite for writing textbooks — for coding agents (Claude Code, Codex, WorkBuddy) — aimed at STEM subjects where worked examples can be verified: mathematics, physics, computer science. It packs established instructional-design method into an AI workflow: first pin down what students should walk away with, then work backwards to chapters and exercises, then write chapter by chapter into a coherent textbook with a through-line, a cognitive gradient, and worked examples whose answers you can trust. Interrupt it anytime and pick up where you left off. Currently **v0.3.0**: 5 skills (1 orchestrator + 3 pipeline sub-skills + 1 standalone helper) covering all five stages, from planning the working directory to the final review pass. The authoritative definition of the stage handoff contracts, the on-disk layout and the state machine is [handoff-contract.md](skills/textbook/references/handoff-contract.md).
+Textbook-Writer-Skills is a skill suite for writing textbooks — for coding agents (Claude Code, Codex, WorkBuddy). It packs established instructional-design method into an AI workflow: first pin down what students should walk away with, then work backwards to chapters and exercises, then write chapter by chapter into a coherent textbook with a through-line, a cognitive gradient, and answers you can trust. Interrupt it anytime and pick up where you left off. Currently **v0.3.0**: 5 skills (1 orchestrator + 3 pipeline sub-skills + 1 standalone helper) covering all five stages, from planning the working directory to the final review pass.
+
+A subject-agnostic core plus pluggable **subject profiles**: the `stem` profile targets subjects whose answers can be recomputed — mathematics, physics, computer science (full eval regression passed); the `humanities` profile targets subjects whose answers rest on argument — history, philosophy, literature — swapping "recompute the answer" for "check the source". The humanities profile is **newly landed and not yet verified by a real eval run**. Supporting a new subject family takes one new profile file, no core changes. The authoritative definition of the stage handoff contracts, the on-disk layout and the state machine is [handoff-contract.md](skills/textbook/references/handoff-contract.md); everything that varies by subject is pinned in [subject-profile-spec.md](skills/textbook/references/subject-profile-spec.md).
 
 > **Output language: Chinese.** These skills produce Chinese-language textbooks. The section headings are hard-coded Chinese strings that the template forbids renaming (`## N.1 概念讲解`, `## N.2 示范例题`, …), the Bloom verb tables are Chinese, and the prose style guide encodes Chinese typography rules. The instructional-design machinery — UbD, Bloom, scaffolding, verified computation — is language-independent, but adapting the output to English would mean a fork of the `references/` layer, not a config flag.
 
@@ -19,16 +21,16 @@ Textbook-Writer-Skills is a skill suite for writing textbooks — for coding age
 - **Honesty over fluency.** A conclusion that can't be verified gets labeled "author must confirm" rather than shipped as a confident-looking fabrication.
 - **A pipeline instead of one long breath.** Four skills each own one segment, handing off via written contracts and never reading each other's intermediate work — that's the engineering guarantee that a long textbook actually gets finished with even quality per chapter.
 
-**The non-negotiables**: every computational answer must be recomputed and cross-checked before it ships, and anything unverifiable is tagged `⚠️ 需作者确认` ("author must confirm"); the two gates at stages 2 and 3 only open on explicit author confirmation. Neither is traded off against any other goal.
+**The non-negotiables**: every answer must be checked by the method its subject profile defines before it ships (recomputation for STEM, source and citation checking for the humanities), and anything unverifiable is tagged `⚠️ 需作者确认` ("author must confirm"); the two gates at stages 2 and 3 only open on explicit author confirmation. Neither is traded off against any other goal — **the subject may change, the discipline does not**: a profile defines *how* something is verified, never *whether* it needs to be.
 
 ## ✅ What it does / ⛔ What it doesn't
 
 | ✅ What this suite does | ⛔ What this suite doesn't do |
 | --- | --- |
 | Settle the scoping in one round of questions, then produce the five UbD elements | Decide the scoping or which chapters make the cut for you (both gates stop and wait) |
-| Work backwards to a chapter tree and run a book-wide Bloom gradient check | Humanities essay and case-analysis questions (out of scope for v1; deferred to v2) |
+| Work backwards to a chapter tree and run a book-wide Bloom gradient check | Take a side for you where the scholarship genuinely disagrees (it lays out the main positions and asks you) |
 | Write chapters in the four-part structure and keep the glossary consistent | Turn your existing lecture material into a course |
-| Generate three kinds of exercises, every computed answer recomputed | Ship an answer it couldn't verify while pretending it did |
+| Generate three kinds of exercises, each answer checked by its profile's method (recomputation for STEM, source and citation checks for the humanities) | Ship an answer it couldn't verify while pretending it did; invent a citation, source, or date from memory |
 | Persist progress to `.progress.json` and resume from the break | Online course platform and LMS integration |
 | Plan and create the working directory before you start (git optional) | Generate figures automatically |
 
@@ -56,9 +58,9 @@ The 58-exercise gradient report for that same book — distribution table, bar c
 
 ### Pitfall 2: worked examples that look right and fall apart when you do the math
 
-Fabricated answers are the most damaging failure mode for AI-written STEM material. A reader follows along, discovers the book is wrong, and the whole thing loses its credibility.
+Fabrication is the most damaging failure mode for AI-written teaching material. In STEM it looks like a wrong computation — a reader follows along and finds the book is wrong. In the humanities it looks like **invented citations and misplaced facts**: fabricated references, quotations attributed to the wrong person, garbled dates. Both destroy the same thing: the credibility of the whole book.
 
-**The fix — every answer actually gets computed.** Answers to computational examples and exercises must be recomputed and cross-checked before they ship, with the recomputation attached to the exercise. Anything genuinely unverifiable (open-ended discussion, numerical experiments) is explicitly tagged `⚠️ 需作者确认` ("author must confirm") — never dressed up as verified.
+**The fix — every answer gets checked, by the method its subject profile defines.** Under the `stem` profile, answers are recomputed along a path different from the solution's, with the recomputation attached to the exercise. Under the `humanities` profile, quotations are checked word-for-word against the original with edition and location recorded, factual claims are checked against author-supplied material or established scholarship, and essay questions get argument points plus a rubric instead of a fake answer key. Both share one discipline: anything genuinely unverifiable is explicitly tagged `⚠️ 需作者确认` ("author must confirm") — never dressed up as verified, and **never a citation written from memory**.
 
 Below: an excerpt from chapter 4 of *Introduction to Linear Algebra*, produced end-to-end by `textbook` — the four-part rhythm and the per-exercise verification tags are both visible.
 
@@ -68,7 +70,7 @@ Below: an excerpt from chapter 4 of *Introduction to Linear Algebra*, produced e
 
 Cram a 10+ chapter textbook into one conversation and the context will blow up: by chapter 8 it has forgotten chapter 2's notation, terminology drifts, and a dropped connection means starting over.
 
-**The fix — write each chapter in isolation, persist progress to disk.** Writing a chapter takes only four lightweight inputs: that chapter's outline slice, the book-wide five UbD elements, the glossary, and the previous chapter's summary. It never reads another chapter's prose, so the context stays flat no matter how many chapters there are. Progress is written to `.progress.json` as it goes; interrupt at any point and one sentence resumes from the break, with finished chapters left untouched.
+**The fix — write each chapter in isolation, persist progress to disk.** Writing a chapter takes only four lightweight inputs: that chapter's outline slice, the book-wide five UbD elements, the glossary, and the previous chapter's summary — plus a subject-profile id that fixes the chapter's section structure and verification methods. It never reads another chapter's prose, so the context stays flat no matter how many chapters there are. Progress is written to `.progress.json` as it goes; interrupt at any point and one sentence resumes from the break, with finished chapters left untouched.
 
 ## The five-stage pipeline × skill capabilities
 
@@ -77,10 +79,10 @@ One table for the whole picture: who does what at each stage, which file the out
 | Stage | Skill | What it does | Output | Gate | Eval case |
 | --- | --- | --- | --- | --- | --- |
 | **0 · Setup** (optional) | `textbook-init` | One round of questions: one book or several, where, version control or not | Working-directory scaffold (git and a README brief, both optional) | — | [eval 6](evals/evals.json) |
-| **1 · Scoping** | `textbook-outline` | Subject / reader's starting point / depth / length | `00-教材设计.md` §「## 一、教学定位」 | No (one round of questions) | [eval 1](evals/evals.json) |
+| **1 · Scoping** | `textbook-outline` | Subject / reader's starting point / depth / length, plus the subject profile derived from the subject | `00-教材设计.md` §「## 一、教学定位」 | No (one round of questions) | [eval 1](evals/evals.json) |
 | **2 · UbD desired results** | `textbook-outline` | Big Ideas, Enduring Understandings, Essential Questions, Transfer Goals, Learning Objectives | §「## 二、UbD 五件套（已确认）」 | **⏸ Yes (primary gate)** | [eval 1](evals/evals.json) |
 | **3 · Assessment & chapter design** | `textbook-outline` | Chapter tree + exercise plan + book-wide gradient report + performance task | §「## 三、章节树与梯度规划（已确认）」and §「## 四、表现性任务」 | **⏸ Yes (secondary gate)** | [eval 1](evals/evals.json) |
-| **4 · Chapter prose** | `textbook-chapter` → `textbook-exercises` | Four-part chapters; every computed answer recomputed | `NN-<章标题>.md` × N + glossary increments | No | [eval 2, 3](evals/evals.json) |
+| **4 · Chapter prose** | `textbook-chapter` → `textbook-exercises` | Four-part chapters (section titles come from the subject profile); every answer checked by the profile's method | `NN-<章标题>.md` × N + glossary increments | No | [eval 2, 3](evals/evals.json), [8](evals/evals.json) |
 | **5 · Review and sign-off** | `textbook` (orchestrator) | Full read-through self-check, derive the student-facing task | Self-check report + `99-表现性任务.md` + delivery summary | No | [eval 5](evals/evals.json) |
 
 Stages 1–5 are driven by the orchestrator `textbook`, and `.progress.json` is read and written by it alone — the interrupt-and-resume mechanism itself is guarded by [eval 4](evals/evals.json). Stage 0 sits outside the pipeline: `textbook-init` only creates the scaffold and hands you to `textbook`. Skipping it is fine — `textbook` will create a default directory on its own.
@@ -224,10 +226,10 @@ English trigger phrases also work — each skill's `description` carries both Ch
 
 | What you might ask | Why it won't | Where it points you instead |
 | --- | --- | --- |
-| "Just give me the answer, skip the arithmetic" | Fabricated answers are the most damaging failure mode for AI-written STEM material | → It recomputes anyway; anything genuinely unverifiable gets tagged `⚠️ 需作者确认`, never dressed up as verified |
+| "Just give me the answer, skip the arithmetic" | Fabrication is the most damaging failure mode for AI-written teaching material | → It checks anyway, by its profile's method (recomputation for STEM, source checks for the humanities); anything genuinely unverifiable gets tagged `⚠️ 需作者确认`, never dressed up as verified |
 | "Skip the UbD step and go straight to chapters" | The two gates are a red line; bypassing them lands you back at a pile of topics | → Confirming can be quick, but it can't be skipped; if you disagree with the draft, just ask for changes — changes take precedence over confirmation |
 | "While writing chapter 8, look back at chapter 2's prose" | Reading other chapters' prose is exactly what blows up the context on a long book | → Cross-chapter consistency travels through three lightweight carriers: the glossary, the previous chapter's summary, and the five UbD elements |
-| "Write me some humanities essay / case-analysis questions" | v1 only covers STEM subjects where worked examples can be verified | → It says so and offers concept-discrimination questions instead; essay questions are v2 scope |
+| "Write me some humanities essay / case-analysis questions" | The `humanities` profile defines how to verify them: no answer key, but citations and facts still get checked | → You get essay questions with argument points and a rubric, tagged as open-ended; quotations carry their source, and anything it couldn't check is tagged `⚠️ 需作者确认（引文未核）` |
 | "Turn this pile of lecture notes into a course" | v1 does backward design from scratch, not source-material reassembly | → Explicitly out of scope for v1, along with LMS integration and automatic figure generation |
 
 ### End to end: one textbook from start to finish
@@ -259,7 +261,7 @@ What guards them is three layers of defense; the first two run automatically in 
 ```bash
 python3 scripts/validate_skills.py       # 1. structural validation: skill content + manifest consistency + repo health
 python3 -m unittest discover -s tests    # 2. unit tests: the validation logic itself
-# 3. behavioral tests: really run the 6 cases in evals/evals.json;
+# 3. behavioral tests: really run the 8 cases in evals/evals.json;
 #    after changing a skill, re-run per the mapping table in CONTRIBUTING.md
 ```
 
@@ -287,12 +289,13 @@ The foundation in that diagram, [handoff-contract.md](skills/textbook/references
 | M4 | Orchestrator interrupt-and-resume (state machine locates the resume point) | [eval 4](evals/evals.json) | ✅ Passed (3/3 assertions, 2026-08-03; the finished chapter's SHA-1 was byte-identical across the interruption) |
 | M5 | Second subject written end to end (including stage 5 self-check and delivery summary), proving it isn't overfitted | [eval 5](evals/evals.json) | ✅ Passed (8/8 assertions, 2026-08-03; the first run surfaced a "26 of 80 exercises missing their verification line" defect — after the fix, the re-run produced 11 chapters and 85 exercises with zero omissions) |
 | M6 | Working-directory setup skill (textbook-init): plan and create single-book / multi-textbook directories | [eval 6](evals/evals.json) | ✅ Passed (6/6 assertions, 2026-08-03; must be run outside this repository) |
+| M7 | Subject-profile layer: one core, pluggable profiles, run through on a non-STEM subject | [eval 7, 8](evals/evals.json) | ⏳ Pending (the `humanities` profile has landed; behavior not yet verified by a real run) |
 
 Per-assertion evidence (assertions, artifacts, verdicts) lives in `evals/workspace/` (gitignored). Judging discipline, per-case runtimes, and the terms for re-running on another host are in [evals/README.md](evals/README.md).
 
 ## Repository layout
 
-Five areas: `skills/` (the 5 skills themselves, each with a `references/` knowledge base — UbD guide, Bloom verb tables, chapter template, prose style guide, exercise verification rules, performance-task rubrics, workspace layout); three distribution-manifest directories `.claude-plugin/`, `.codex-plugin/` and `.codebuddy-plugin/` (Codex's marketplace manifest additionally lives in `.agents/plugins/`, which makes the repository itself a one-command-install marketplace on all three hosts); [AGENTS.md](AGENTS.md) (the in-repo entry point for hosts that don't auto-load skill frontmatter — usable with no installation at all); [evals/](evals/README.md) (behavioral test cases: prompt + objective assertions; case definitions are versioned, run artifacts are not); and `scripts/` + `tests/` (the structural validation script and its unit tests, zero third-party dependencies, Python 3.10+ standard library).
+Five areas: `skills/` (the 5 skills themselves, each with a `references/` knowledge base — UbD guide, Bloom verb tables, chapter template, prose style guide, exercise verification rules, performance-task rubrics, workspace layout, plus the subject-profile spec and the pluggable profiles under `profiles/`: everything that varies by subject — question types, verification methods, cognitive verbs, in-chapter section structure — lives there, so supporting a new subject family means adding one profile file); three distribution-manifest directories `.claude-plugin/`, `.codex-plugin/` and `.codebuddy-plugin/` (Codex's marketplace manifest additionally lives in `.agents/plugins/`, which makes the repository itself a one-command-install marketplace on all three hosts); [AGENTS.md](AGENTS.md) (the in-repo entry point for hosts that don't auto-load skill frontmatter — usable with no installation at all); [evals/](evals/README.md) (behavioral test cases: prompt + objective assertions; case definitions are versioned, run artifacts are not); and `scripts/` + `tests/` (the structural validation script and its unit tests, zero third-party dependencies, Python 3.10+ standard library).
 
 ## Contributing
 

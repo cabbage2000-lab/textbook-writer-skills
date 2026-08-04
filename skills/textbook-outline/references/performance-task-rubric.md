@@ -1,6 +1,6 @@
 # 表现性任务与评价标准（UbD 评估证据的另一半）
 
-本文档是 textbook-outline 阶段 3 设计表现性任务的权威来源，与 [ubd-framework.md](ubd-framework.md)（阶段 2 预期结果）配套。GRASPS 与评价标准（rubric）两个工具同样源自 Wiggins & McTighe《Understanding by Design》，此处按"写 STEM 教材"场景做了落地化改写。
+本文档是 textbook-outline 阶段 3 设计表现性任务的权威来源，与 [ubd-framework.md](ubd-framework.md)（阶段 2 预期结果）配套。GRASPS 与评价标准（rubric）两个工具同样源自 Wiggins & McTighe《Understanding by Design》，此处按"写教材"场景做了落地化改写。本文档属**学科无关内核**（见 [../../textbook/references/subject-profile-spec.md](../../textbook/references/subject-profile-spec.md) 第 2 节）：任何学科档案下六要素与 rubric 的写法逐条相同，下文示例取自线性代数只是举例。
 
 ## 1. 为什么任务必须配评价标准
 

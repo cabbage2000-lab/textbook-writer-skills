@@ -11,12 +11,54 @@ from validate_skills import (  # noqa: E402
     validate,
     validate_manifests,
     validate_repo_health,
+    validate_subject_profiles,
 )
 
 GOOD_DESC = (
     "Use when generating verified STEM exercises with Bloom-level tags "
     "— e.g. 出几道练习题. Not for essay questions."
 )
+FILLER = "实质内容。" * 100
+# 一份合法档案：四节齐全，第 2 节表头固定、验证手段列填满
+GOOD_PROFILE = """# 学科档案：demo
+
+## 1 适用范围与判定
+
+适用于演示学科。
+
+## 2 题型集与验证方式
+
+| 题型 | 示例 | 验证手段 | 无法验证时的降级 |
+| ------ | ------ | ---------- | ---------------- |
+| 计算 | 求和 | 用独立路径复算并比对 | 手算两遍交叉核对 |
+
+## 3 认知动词与层级示例
+
+补充动词：计算、求解。
+
+## 4 章内段义与载体扩展
+
+四段标题照内核模板。
+"""
+
+
+def make_profile_layer(root: Path, profiles: dict[str, str],
+                       index_ids: list[str] | None = None) -> None:
+    """造出档案层：textbook/references/{subject-profile-spec.md, profiles/*.md}。
+
+    index_ids 显式给出时与实际文件解耦，用来测「登记了没文件 / 有文件没登记」。
+    """
+    ref = root / "textbook" / "references"
+    (ref / "profiles").mkdir(parents=True, exist_ok=True)
+    ids = list(profiles) if index_ids is None else index_ids
+    rows = "\n".join(f"| `{i}` | 演示学科 | [{i}.md](profiles/{i}.md) |" for i in ids)
+    (ref / "subject-profile-spec.md").write_text(
+        "# 学科档案规格\n\n## 5 档案索引\n\n"
+        "| id | 适用学科 | 档案 |\n| ---- | ---- | ---- |\n" + rows + "\n",
+        encoding="utf-8",
+    )
+    for name, content in profiles.items():
+        (ref / "profiles" / f"{name}.md").write_text(content, encoding="utf-8")
 
 
 def make_skill(root: Path, name: str, *, frontmatter_name: str | None = None,
@@ -158,6 +200,90 @@ class ValidateSkillsTest(TempDirTest):
         make_skill(self.root, "skill-a", refs={"thin.md": "薄"})
         errors = validate(self.root)
         self.assertTrue(any("过短" in e for e in errors))
+
+    def test_thin_reference_in_subdir_rejected(self):
+        """references/ 的子目录（如 profiles/）同样受 500 字节约束。"""
+        skill = make_skill(self.root, "skill-a")
+        (skill / "references" / "profiles").mkdir(parents=True)
+        (skill / "references" / "profiles" / "thin.md").write_text("薄", encoding="utf-8")
+        errors = validate(self.root)
+        self.assertTrue(any("profiles/thin.md" in e and "过短" in e for e in errors))
+
+    def test_broken_link_inside_reference_detected(self):
+        """引用完整性覆盖 references 之间的互引，不只 SKILL.md。"""
+        make_skill(self.root, "skill-a",
+                   refs={"core.md": "见 [邻居](../../skill-b/references/gone.md)。" + FILLER})
+        make_skill(self.root, "skill-b")
+        errors = validate(self.root)
+        self.assertTrue(any("gone.md" in e for e in errors))
+
+    def test_deep_relative_link_resolved(self):
+        """多级 ../ 的跨 skill 引用（档案层用得到）能被正确解析。"""
+        skill = make_skill(self.root, "skill-a")
+        (skill / "references" / "profiles").mkdir(parents=True)
+        (skill / "references" / "profiles" / "p.md").write_text(
+            "见 [邻居](../../../skill-b/references/core.md)。" + FILLER, encoding="utf-8")
+        make_skill(self.root, "skill-b", refs={"core.md": "# 核心\n" + FILLER})
+        self.assertEqual(validate(self.root), [])
+
+
+class ValidateSubjectProfilesTest(TempDirTest):
+    """学科档案层：四节齐全 + 验证手段非空（红线的机械保障）+ 索引与文件一一对应。"""
+
+    def test_valid_profile_passes(self):
+        make_profile_layer(self.root, {"demo": GOOD_PROFILE})
+        self.assertEqual(validate_subject_profiles(self.root), [])
+
+    def test_no_profile_layer_skipped(self):
+        """显式传入的任意 skills 目录未必有档案层，静默跳过而不是报错。"""
+        make_skill(self.root, "skill-a")
+        self.assertEqual(validate_subject_profiles(self.root), [])
+
+    def test_missing_section_rejected(self):
+        broken = GOOD_PROFILE.replace("## 3 认知动词与层级示例", "## 3 动词表")
+        make_profile_layer(self.root, {"demo": broken})
+        errors = validate_subject_profiles(self.root)
+        self.assertTrue(any("认知动词与层级示例" in e for e in errors))
+
+    def test_empty_verification_column_rejected(self):
+        """档案不能定义「是否需要验证」——空的验证手段列即红线违规。"""
+        broken = GOOD_PROFILE.replace(
+            "| 计算 | 求和 | 用独立路径复算并比对 | 手算两遍交叉核对 |",
+            "| 论述 | 谈谈看法 |  | 无 |")
+        make_profile_layer(self.root, {"demo": broken})
+        errors = validate_subject_profiles(self.root)
+        self.assertTrue(any("验证手段为空" in e and "论述" in e for e in errors))
+
+    def test_none_as_verification_rejected(self):
+        broken = GOOD_PROFILE.replace("用独立路径复算并比对", "无")
+        make_profile_layer(self.root, {"demo": broken})
+        errors = validate_subject_profiles(self.root)
+        self.assertTrue(any("验证手段为空" in e for e in errors))
+
+    def test_wrong_table_header_rejected(self):
+        broken = GOOD_PROFILE.replace(
+            "| 题型 | 示例 | 验证手段 | 无法验证时的降级 |", "| 题型 | 示例 | 验证方式 |")
+        make_profile_layer(self.root, {"demo": broken})
+        errors = validate_subject_profiles(self.root)
+        self.assertTrue(any("表头" in e for e in errors))
+
+    def test_table_without_rows_rejected(self):
+        broken = GOOD_PROFILE.replace(
+            "| 计算 | 求和 | 用独立路径复算并比对 | 手算两遍交叉核对 |\n", "")
+        make_profile_layer(self.root, {"demo": broken})
+        errors = validate_subject_profiles(self.root)
+        self.assertTrue(any("没有任何题型" in e for e in errors))
+
+    def test_unlisted_profile_rejected(self):
+        make_profile_layer(self.root, {"demo": GOOD_PROFILE}, index_ids=[])
+        errors = validate_subject_profiles(self.root)
+        self.assertTrue(any("未登记" in e for e in errors))
+
+    def test_indexed_but_missing_file_rejected(self):
+        make_profile_layer(self.root, {"demo": GOOD_PROFILE},
+                           index_ids=["demo", "ghost"])
+        errors = validate_subject_profiles(self.root)
+        self.assertTrue(any("ghost" in e for e in errors))
 
 
 class ValidateManifestsTest(TempDirTest):
@@ -312,7 +438,19 @@ class ValidateRepoHealthTest(TempDirTest):
     def test_clean_gitignore_passes(self):
         (self.root / ".gitignore").write_text(
             ".DS_Store\n.claude/\n", encoding="utf-8")
+        make_profile_layer(self.root / "skills", {"demo": GOOD_PROFILE})
         self.assertEqual(validate_repo_health(self.root), [])
+
+    def test_missing_profile_spec_rejected(self):
+        """档案规格缺失 = 四个可变点重新弥散回各 skill，必须拦住。"""
+        (self.root / "skills").mkdir()
+        errors = validate_repo_health(self.root)
+        self.assertTrue(any("subject-profile-spec.md" in e for e in errors))
+
+    def test_empty_profile_dir_rejected(self):
+        make_profile_layer(self.root / "skills", {})
+        errors = validate_repo_health(self.root)
+        self.assertTrue(any("没有任何档案" in e for e in errors))
 
     def test_ignoring_claude_plugin_rejected(self):
         (self.root / ".gitignore").write_text(

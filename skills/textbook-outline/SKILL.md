@@ -15,7 +15,7 @@ description: Use when a textbook project needs its teaching design — 教学定
 
 ## 两种调用模式
 
-- **被 textbook 调度**（常规）：输入为 `{教材项目目录, 教材名}`；产出写入该目录，两个 gate 的确认结果回报主 skill（`.progress.json` 由主 skill 维护，本 skill 不碰）。
+- **被 textbook 调度**（常规）：输入为 `{教材项目目录, 教材名}`；产出写入该目录，阶段 1 判定出的 `学科档案` 与两个 gate 的确认结果回报主 skill（`.progress.json` 由主 skill 维护，本 skill 不碰）。
 - **独立触发**：先用一轮提问确认教材名与落盘目录（默认 `./<教材名>/`），后续流程完全相同，产出 `00-教材设计.md`；不建 `.progress.json`——那是主 skill 的职责。
 
 交接契约、落盘布局、进度打印与 gate 停点格式的权威定义见 [../textbook/references/handoff-contract.md](../textbook/references/handoff-contract.md)，下文简称"契约文档"。本 skill 的进度行 `▶ 阶段 N/3` 是子 skill 内层标尺（契约文档第 5 节：N/M 中 M 为当前 skill 自身的阶段总数）；被调度时全局的 `▶ 阶段 N/5` 行由主 skill 打印，两级并存。
@@ -24,7 +24,7 @@ description: Use when a textbook project needs its teaching design — 教学定
 
 打印进度：`▶ 阶段 1/3：教学定位确认`
 
-用 AskUserQuestion **一轮**收集四项（对应契约 `{学科, 读者认知起点, 教材深度, 篇幅规模}`）：
+用 AskUserQuestion **一轮**收集四项（对应契约的前四项；第五项 `学科档案` 由学科判定得出，不问作者）：
 
 1. **学科**：具体到分支（如"线性代数"而非"数学"）。用户触发时若已说明，此项不再问。
 2. **读者认知起点**：零基础 / 有先修（注明先修什么）
@@ -43,15 +43,18 @@ description: Use when a textbook project needs its teaching design — 教学定
 
 按语义宽松解析回复，能定位到各项即可；无法判断时只就有歧义的一项追问。
 
-**注意**：若学科属于文科论述型（历史/哲学/文学等），告知作者 v1 仅支持 STEM 概念型教材，文科为 v2 范围；作者坚持则继续走流程，但例题环节会按概念辨析题降级处理。
+**判定学科档案**（契约第五项）：按学科到 [../textbook/references/subject-profile-spec.md](../textbook/references/subject-profile-spec.md) 第 5 节索引表定位档案 id。判定一次、全流程沿用，后续阶段不重判。
 
-产出写入 `00-教材设计.md` 的「## 一、教学定位」，然后**不停顿**，直接进入阶段 2。
+- 索引里有匹配项 → 取该 id；
+- 找不到匹配项（如历史/哲学/文学等答案取决于论证与立场的学科）→ 按该文档第 7 节处理：向作者说明「本学科暂无专属档案，将按 `<最接近的 id>` 档案处理」并指出已知差异（哪些题型在该档案里没有对应验证手段、章内段义是否需要调整），由作者决定继续或改学科范围，**不得静默套用**。作者决定继续则照该档案执行，`学科档案` 记录实际使用的 id。
+
+产出写入 `00-教材设计.md` 的「## 一、教学定位」，其中**必须含一行 `学科档案：<id>`**——不设 gate，让作者看见即可：档案决定全书的验证纪律与章内段式，选错一次会歪一整本书，而作者是唯一有资格判断「这个近似可以接受」的人。写完**不停顿**，直接进入阶段 2。
 
 ## 阶段 2/3：UbD 预期结果设计（核心 gate）
 
 打印进度：`▶ 阶段 2/3：UbD 预期结果设计`
 
-严格按 [references/ubd-framework.md](references/ubd-framework.md) 设计五件套，学习目标动词查 [references/bloom-levels.md](references/bloom-levels.md) 第 2 节：
+严格按 [references/ubd-framework.md](references/ubd-framework.md) 设计五件套（此段与学科无关，任何档案下逐条要求相同）。学习目标动词查 [references/bloom-levels.md](references/bloom-levels.md) 第 2 节的通用基线，再补所用档案第 3 节的本学科特有动词：
 
 1. **大概念**：3–7 个，每个是"主张"不是名词；
 2. **持久理解**：一律"学生将理解：……"句式，是洞见不是知识点复述；
@@ -94,7 +97,7 @@ Gate 规则与阶段 2 相同：修改后重新完整呈现，确认前绝不放
 ## 产出与交接
 
 - **落盘物**：完整的 `00-教材设计.md`，固定二级标题结构见契约文档第 3 节；
-- **回报上游**（被调度时）：契约 `{章节树[], 例题习题计划[], 表现性任务[], 梯度报告}` + 两个 gate 均已确认的显式声明；
+- **回报上游**（被调度时）：阶段 1 完成即回报 `学科档案`（供主 skill 写入 `.progress.json` 的 `subject_profile`），阶段 3 完成回报契约 `{章节树[], 例题习题计划[], 表现性任务[], 梯度报告}` + 两个 gate 均已确认的显式声明；
 - 独立触发时，最后向作者说明：可用 textbook 从此设计文档继续逐章写作。
 
 ## 真实性约束

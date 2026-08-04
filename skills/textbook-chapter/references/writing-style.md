@@ -85,6 +85,8 @@
 
 ## 13. 数学公式规范
 
+**本节的归属**：第 1–12 节对所有学科有效；本节是 `stem` 档案在第 4 节「文体附加条款」里声明适用的内容，不构成通用规范。用其他档案时以该档案第 4 节为准（例如 `humanities` 档案声明本节不适用，改用引文与纪年体例；只有确含公式的章节按需启用本节）。档案索引见 [../../textbook/references/subject-profile-spec.md](../../textbook/references/subject-profile-spec.md) 第 5 节。
+
 第 2 节要求公式推导必须以文本形式存在，本节规定这个文本形式具体长什么样。两个动机：
 
 - **防跨章漂移**：各章在不同会话里独立写成（上下文隔离原则见 [../../textbook/references/handoff-contract.md](../../textbook/references/handoff-contract.md) 第 6 节），术语表只管术语与符号语义、管不到公式语法。没有统一约定，第 3 章矩阵写 `bmatrix`、第 8 章写 `pmatrix`，专业读者一眼看出这不是同一本书；

@@ -1,6 +1,6 @@
 # UbD 逆向设计框架（教材版落地指南）
 
-本文档是 textbook-outline skill 阶段 2（UbD 预期结果设计）的内核依据，源自 Wiggins & McTighe《Understanding by Design（追求理解的教学设计）》，已针对"写 STEM 概念型教材"场景做落地化改写。
+本文档是 textbook-outline skill 阶段 2（UbD 预期结果设计）的内核依据，源自 Wiggins & McTighe《Understanding by Design（追求理解的教学设计）》，已针对"写教材"场景做落地化改写。本文档属**学科无关内核**（见 [../../textbook/references/subject-profile-spec.md](../../textbook/references/subject-profile-spec.md) 第 2 节）：五件套的定义、质量标准与一致性检查在任何学科档案下逐条相同，下文示例统一取自"线性代数入门"只是举例。
 
 ## 1. 为什么逆向设计
 

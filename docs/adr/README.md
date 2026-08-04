@@ -17,6 +17,7 @@
 | [0007](0007-three-layer-quality-defense.md) | 三层质量防线 | 结构校验、单元测试进 CI;行为 evals 人工跑,不许改断言迁就产出 |
 | [0008](0008-plugin-layout-and-distribution.md) | plugin 布局与整体分发 | 顶层 skills/ + 双清单入库,四个 skill 整体安装不可拆分 |
 | [0009](0009-unified-skill-naming.md) | skill 命名统一为 textbook- 名词族 | 主 skill 名即公共前缀,补全聚族;动作语义由 description 承担,plugin 名不变 |
+| [0010](0010-pluggable-subject-profiles.md) | 学科差异收拢为可插拔学科档案 | 四个可变点进档案,内核学科无关;加一个学科 = 加一个文件,红线由结构守住 |
 
 ## 何时新增一篇 ADR
 

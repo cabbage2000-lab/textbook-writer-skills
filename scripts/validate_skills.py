@@ -7,8 +7,16 @@ skill 结构检查（validate）：
 3. frontmatter 仅含白名单字段（防手误写入无效字段被静默忽略）
 4. SKILL.md ≤ 500 行（渐进披露预算：超限内容应下沉到 references/）
 5. 所有 .md 文件不含占位符（TBD/TODO/FIXME/XXX/待补充/占位）
-6. SKILL.md 中引用的 references/ 相对路径（含 ../ 跨 skill）都存在
-7. references 下每个 .md 实质内容 ≥ 500 字节
+6. 所有 .md 中引用的 references/ 相对路径（含多级 ../ 跨 skill）都存在
+7. references/ 及其子目录下每个 .md 实质内容 ≥ 500 字节
+
+学科档案检查（validate_subject_profiles）：学科差异收拢在可插拔的档案里，
+规格见 skills/textbook/references/subject-profile-spec.md：
+13. 每份档案含规格要求的四个固定小节（缺一节，消费它的 skill 就无处可查）
+14. 档案第 2 节题型表的「验证手段」列不得为空——红线「每题必须验证」靠这条守住：
+    档案能定义"用什么方式验证"，不能定义"是否需要验证"
+15. 规格第 5 节索引表与 profiles/ 下实际文件一一对应（有档案不登记 = 选不到，
+    登记了没文件 = 运行时读不到）
 
 plugin 清单检查（validate_manifests）：三个宿主各要一套清单，格式不同不能合并，
 只能各写一份 + 在此守住六份不背离（同一份元数据抄六遍，必然漂移）：
@@ -25,6 +33,7 @@ plugin 清单检查（validate_manifests）：三个宿主各要一套清单，�
     （分发清单必须入库，否则 plugin 装不出去）
 12. 三个 .*-plugin/ 目录只放清单文件——skills/ 必须在仓库根（plugin 根），
     塞进清单目录会导致一个 skill 都加载不到
+13. 学科档案规格文件与至少一份档案存在（缺了它们，四个可变点就会重新弥散回各 skill）
 
 用法：python3 scripts/validate_skills.py [skills_root]
 """
@@ -45,7 +54,21 @@ ALLOWED_FRONTMATTER_KEYS = {
     "name", "description", "version", "license", "allowed-tools",
     "compatibility", "metadata",
 }
-REF_LINK_RE = re.compile(r"[(`]((?:\.\./[\w-]+/)?references/[\w./-]+?\.md)[)`]")
+REF_LINK_RE = re.compile(r"[(`]((?:\.\./)*(?:[\w-]+/)*references/[\w./-]+?\.md)[)`]")
+# 学科档案层：内核 skill 持有规格，各档案放 profiles/ 下（详见 subject-profile-spec.md）
+PROFILE_SPEC_REL = Path("textbook/references/subject-profile-spec.md")
+PROFILE_DIR_REL = Path("textbook/references/profiles")
+# 档案的固定四节：每节恰有一个消费者（阶段 1 / exercises / outline / chapter）
+PROFILE_REQUIRED_SECTIONS = (
+    "## 1 适用范围与判定",
+    "## 2 题型集与验证方式",
+    "## 3 认知动词与层级示例",
+    "## 4 章内段义与载体扩展",
+)
+PROFILE_TABLE_HEADER = ("题型", "示例", "验证手段", "无法验证时的降级")
+# 「验证手段」列写成这些等于宣称该题型不用验证——正是红线要拦的
+PROFILE_EMPTY_MEANS = {"", "-", "—", "–", "无", "不适用", "n/a", "na", "none"}
+PROFILE_LINK_RE = re.compile(r"\(profiles/([\w-]+)\.md\)")
 # 各宿主的 plugin 清单里必须逐字一致的字段（同一个 plugin 分三处发行，元信息只有一份事实）
 MIRRORED_FIELDS = ("name", "version", "description", "license")
 # Codex 官方摄取校验（plugin-creator/validate_plugin.py）要求的 interface 必填字段，
@@ -114,10 +137,15 @@ def check_skill_md(skill_dir: Path, errors: list[str]) -> None:
             f"{skill_dir.name}/SKILL.md: {n_lines} 行超出预算"
             f"（>{MAX_SKILL_MD_LINES} 行，请把细节下沉到 references/）"
         )
+
+
+def check_reference_links(md_file: Path, skills_root: Path, errors: list[str]) -> None:
+    """引用完整性覆盖所有 .md，不只 SKILL.md——档案层与内核互引密度高，断链要当场发现。"""
+    text = md_file.read_text(encoding="utf-8")
+    rel = md_file.relative_to(skills_root)
     for ref in REF_LINK_RE.findall(text):
-        target = (skill_dir / ref).resolve()
-        if not target.exists():
-            errors.append(f"{skill_dir.name}/SKILL.md: 引用的文件不存在 {ref}")
+        if not (md_file.parent / ref).resolve().exists():
+            errors.append(f"{rel}: 引用的文件不存在 {ref}")
 
 
 def check_placeholders(md_file: Path, skills_root: Path, errors: list[str]) -> None:
@@ -143,8 +171,96 @@ def validate(skills_root: Path) -> list[str]:
         check_skill_md(skill_dir, errors)
         for md_file in sorted(skill_dir.rglob("*.md")):
             check_placeholders(md_file, skills_root, errors)
-            if md_file.parent.name == "references":
+            check_reference_links(md_file, skills_root, errors)
+            # 判定用 parts 而非 parent.name：references/ 的子目录（如 profiles/）同样受约
+            if "references" in md_file.parts:
                 check_reference_size(md_file, skills_root, errors)
+    return errors
+
+
+def _section_body(text: str, heading: str) -> str:
+    """取某个二级标题到下一个二级标题之间的正文；标题不存在则返回空串。"""
+    start = text.find(heading)
+    if start < 0:
+        return ""
+    rest = text[start + len(heading):]
+    nxt = re.search(r"^## ", rest, re.MULTILINE)
+    return rest[:nxt.start()] if nxt else rest
+
+
+def _table_rows(body: str) -> list[list[str]]:
+    """解析 Markdown 表格，返回去掉表头与分隔行的数据行（每行为单元格列表）。"""
+    rows = []
+    for line in body.splitlines():
+        line = line.strip()
+        if not line.startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if all(set(c) <= set("-: ") for c in cells):  # 分隔行
+            continue
+        rows.append(cells)
+    return rows
+
+
+def check_profile(md_file: Path, skills_root: Path, errors: list[str]) -> None:
+    text = md_file.read_text(encoding="utf-8")
+    rel = md_file.relative_to(skills_root)
+    for section in PROFILE_REQUIRED_SECTIONS:
+        if section not in text:
+            errors.append(
+                f"{rel}: 缺少固定小节「{section}」"
+                "——四节结构见 subject-profile-spec.md 第 3 节，缺一节消费它的 skill 就无处可查"
+            )
+    rows = _table_rows(_section_body(text, PROFILE_REQUIRED_SECTIONS[1]))
+    if not rows:
+        errors.append(f"{rel}: 第 2 节没有题型表（表头须为 {' | '.join(PROFILE_TABLE_HEADER)}）")
+        return
+    header, data = rows[0], rows[1:]
+    if tuple(header[:4]) != PROFILE_TABLE_HEADER:
+        errors.append(
+            f"{rel}: 第 2 节表头为 {header}，必须是 {list(PROFILE_TABLE_HEADER)}"
+            "——表头固定才能机械校验验证手段是否填了"
+        )
+        return
+    if not data:
+        errors.append(f"{rel}: 第 2 节题型表没有任何题型")
+    for row in data:
+        if len(row) < 4:
+            errors.append(f"{rel}: 第 2 节题型行列数不足（{row}），四列都必须填")
+            continue
+        if row[2].lower() in PROFILE_EMPTY_MEANS:
+            errors.append(
+                f"{rel}: 题型「{row[0]}」的验证手段为空（{row[2]!r}）"
+                "——档案只能定义'用什么方式验证'，不能定义'是否需要验证'；"
+                "填不出手段的题型不该写进档案"
+            )
+
+
+def validate_subject_profiles(skills_root: Path) -> list[str]:
+    """学科档案层：四节齐全 + 验证手段非空 + 索引与文件一一对应。
+
+    档案不存在时静默跳过（显式传入的任意 skills 目录未必是本仓库布局）；
+    本仓库缺档案层由 validate_repo_health 报错。
+    """
+    spec = skills_root / PROFILE_SPEC_REL
+    profile_dir = skills_root / PROFILE_DIR_REL
+    if not spec.exists():
+        return []
+    errors: list[str] = []
+    indexed = set(PROFILE_LINK_RE.findall(spec.read_text(encoding="utf-8")))
+    on_disk = {p.stem for p in profile_dir.glob("*.md")} if profile_dir.is_dir() else set()
+    for missing in sorted(indexed - on_disk):
+        errors.append(
+            f"{PROFILE_SPEC_REL}: 索引表登记了档案 '{missing}'，"
+            f"但 {PROFILE_DIR_REL}/{missing}.md 不存在——运行时读不到"
+        )
+    for unlisted in sorted(on_disk - indexed):
+        errors.append(
+            f"{PROFILE_DIR_REL}/{unlisted}.md: 未登记在 {PROFILE_SPEC_REL} 第 5 节索引表"
+            "——没登记的档案阶段 1 选不到，等于白写"
+        )
+    for profile in sorted(profile_dir.glob("*.md")) if profile_dir.is_dir() else []:
+        check_profile(profile, skills_root, errors)
     return errors
 
 
@@ -343,6 +459,16 @@ def validate_repo_health(repo_root: Path) -> list[str]:
                 f"{dirname}/: 出现了不该有的内容 {extra}——该目录只放清单文件，"
                 "skills/ 必须在仓库根（plugin 根），放错位置装上后一个 skill 都加载不到"
             )
+    skills_root = repo_root / "skills"
+    if not (skills_root / PROFILE_SPEC_REL).exists():
+        errors.append(
+            f"skills/{PROFILE_SPEC_REL} 不存在——学科档案规格是四个可变点的收口处，"
+            "缺了它题型集/验证手段/认知动词/章内段义会重新弥散回各 skill"
+        )
+    elif not any((skills_root / PROFILE_DIR_REL).glob("*.md")):
+        errors.append(
+            f"skills/{PROFILE_DIR_REL}/ 下没有任何档案——至少要有一份，否则阶段 1 无档案可选"
+        )
     return errors
 
 
@@ -357,7 +483,7 @@ def main() -> int:
     if not skills_root.is_dir():
         print(f"❌ skills 目录不存在：{skills_root}")
         return 1
-    errors = validate(skills_root)
+    errors = validate(skills_root) + validate_subject_profiles(skills_root)
     if repo_root is not None:
         errors += validate_manifests(repo_root)
         errors += validate_repo_health(repo_root)
@@ -367,8 +493,12 @@ def main() -> int:
         return 1
     n_skills = sum(1 for d in skills_root.iterdir() if d.is_dir())
     n_md = sum(1 for _ in skills_root.rglob("*.md"))
+    n_profiles = len(list((skills_root / PROFILE_DIR_REL).glob("*.md")))
     suffix = "，三宿主六份 plugin 清单一致" if repo_root is not None else ""
-    print(f"✅ 校验通过：{n_skills} 个 skill，{n_md} 个 markdown 文件{suffix}")
+    print(
+        f"✅ 校验通过：{n_skills} 个 skill，{n_md} 个 markdown 文件，"
+        f"{n_profiles} 份学科档案{suffix}"
+    )
     return 0
 
 

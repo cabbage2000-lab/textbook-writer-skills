@@ -5,7 +5,9 @@ description: Use when writing one textbook chapter following the fixed 四段式
 
 # textbook-chapter
 
-按四段式模板写一章教材正文：概念讲解 → 示范例题 → 引导练习 → 独立习题，外加章引言与本章小结。章结构的权威来源是 [references/chapter-template.md](references/chapter-template.md)，文体规范是 [references/writing-style.md](references/writing-style.md)。
+按四段式模板写一章教材正文：概念讲解 → 示范（教）→ 引导（扶）→ 独立（放）四段，外加章引言与本章小结。章结构的权威来源是 [references/chapter-template.md](references/chapter-template.md)，文体规范是 [references/writing-style.md](references/writing-style.md)。
+
+四段的**标题文案**、后三段的**具体教学动作**、配图类型与文体附加条款取自输入契约里 `学科档案` 指定的档案第 4 节——规格与索引见 [../textbook/references/subject-profile-spec.md](../textbook/references/subject-profile-spec.md)，开写前先读该档案第 4 节。
 
 ## 何时不触发
 
@@ -15,8 +17,8 @@ description: Use when writing one textbook chapter following the fixed 四段式
 
 ## 两种调用模式
 
-- **被 textbook 调度**（常规）：输入 = 契约 `{章号, 章标题, 该章大纲切片, UbD五件套, 术语表, 前章小结}`（字段定义见 [../textbook/references/handoff-contract.md](../textbook/references/handoff-contract.md) 第 2 节；第 1 章的前章小结为空）。
-- **独立触发**（写深度技术文章）：一轮问清 `{主题, 读者水平, 篇幅}`；自拟**轻量版五件套**（只取两件）——1 条持久理解（"读者将理解：……"句式）+ 1 个核心问题，向用户展示后开写（不设 gate，展示即可）；无外部术语表时自建（格式同契约文档第 3 节的术语表列定义），无前章小结则引言直接从动机切入。
+- **被 textbook 调度**（常规）：输入 = 契约 `{章号, 章标题, 该章大纲切片, UbD五件套, 术语表, 前章小结, 学科档案}`（字段定义见 [../textbook/references/handoff-contract.md](../textbook/references/handoff-contract.md) 第 2 节；第 1 章的前章小结为空）。
+- **独立触发**（写深度技术文章）：一轮问清 `{主题, 读者水平, 篇幅}`；按主题自行判定学科档案（索引见 subject-profile-spec.md 第 5 节，找不到匹配项按该文档第 7 节处理）；自拟**轻量版五件套**（只取两件）——1 条持久理解（"读者将理解：……"句式）+ 1 个核心问题，连同选定的档案 id 一并向用户展示后开写（不设 gate，展示即可）；无外部术语表时自建（格式同契约文档第 3 节的术语表列定义，附加结构按档案第 4 节），无前章小结则引言直接从动机切入。
 
 ## 上下文隔离纪律（不可违反）
 
@@ -28,9 +30,9 @@ description: Use when writing one textbook chapter following the fixed 四段式
 2. **起草章骨架**：按 [references/chapter-template.md](references/chapter-template.md) 第 2 节的完整模板起草——
 
    - 引言：从前章小结的核心结论衔接进入，呼应五件套中的一条核心问题，先"为什么"再"学什么"；
-   - `## N.1 概念讲解`：按大纲切片中该章定位与承载的持久理解展开，每个概念走"动机 → 定义 → 直观解释 → 关系"链条；
-   - 全程遵循 [references/writing-style.md](references/writing-style.md)：叙事散文、认知负荷控制（一段一个新概念）、配图双轨（抽象概念用 mermaid/SVG，纯概念章至少一图）、数学公式规范（`$...$` / `$$...$$` 定界，矩阵环境全书统一）、措辞禁忌（禁"显然/易得"跳步）、中文排版。
-3. **生成三类题**：使用 Skill 工具调用 `textbook-exercises`（传入契约 `{章上下文, 题目计划, 术语表}`，其中章上下文的概念清单与学习目标从大纲切片提取）；若 Skill 工具不可用或未注册，直接读取 [../textbook-exercises/SKILL.md](../textbook-exercises/SKILL.md) 并严格遵循其指令执行。将返回题目按类型放入 `## N.2 示范例题`、`## N.3 引导练习`、`## N.4 独立习题`，保持验证状态与复算代码块原样，不改动已验证解答的数值。
+   - 第一段（`stem` 档案为 `## N.1 概念讲解`）：按大纲切片中该章定位与承载的持久理解展开，每个概念走"动机 → 定义 → 直观解释 → 关系"链条；
+   - 全程遵循 [references/writing-style.md](references/writing-style.md)：叙事散文、认知负荷控制（一段一个新概念）、配图双轨（抽象概念配示意图，纯概念章至少一图）、措辞禁忌（禁"显然/易得"跳步）、中文排版；外加档案第 4 节的文体附加条款（`stem` 档案 = writing-style.md 第 13 节数学公式规范）。
+3. **生成三类题**：使用 Skill 工具调用 `textbook-exercises`（传入契约 `{章上下文, 题目计划, 术语表, 学科档案}`，其中章上下文的概念清单与学习目标从大纲切片提取，学科档案原样透传）；若 Skill 工具不可用或未注册，直接读取 [../textbook-exercises/SKILL.md](../textbook-exercises/SKILL.md) 并严格遵循其指令执行。将返回题目**按类型**放入后三段（类型 → 段的对应关系固定：示范例题 → 第二段、引导练习 → 第三段、独立习题 → 第四段；段标题文案取自档案第 4 节），保持验证状态与验证过程代码块原样，不改动已验证解答的数值。
 4. **写本章小结**：按 chapter-template.md 3.5 节固定三件——核心结论（3–5 条，面向下一章作者）、与持久理解的呼应（一句话说明本章推进了哪条）、下一章预告（1 句）。
 5. **落盘与自查**：写入 `NN-<章标题>.md`（NN 为两位章号）；按 chapter-template.md 第 5 节章内自查清单逐项自查，不过的当场修正后再交付。
 

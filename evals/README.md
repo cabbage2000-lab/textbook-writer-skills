@@ -1,6 +1,6 @@
 # 行为测试基线（evals）
 
-[evals.json](evals.json) 把 README 里程碑 **M2–M6 的验收场景**固化为可重复执行的用例。结构校验（CI 里跑的 `validate_skills.py`）只能保证 skill 文件形态正确；skill 的真正质量在**行为**——gate 停不停、题目验没验、中断续不续——这些只能靠真实运行来检验，本目录就是这些检验的单一事实来源。
+[evals.json](evals.json) 把 README 里程碑 **M2–M7 的验收场景**固化为可重复执行的用例。结构校验（CI 里跑的 `validate_skills.py`）只能保证 skill 文件形态正确；skill 的真正质量在**行为**——gate 停不停、题目验没验、中断续不续——这些只能靠真实运行来检验，本目录就是这些检验的单一事实来源。
 
 ## 用例一览
 
@@ -12,6 +12,10 @@
 | 4 | e2e-resume-after-interrupt | M4 | textbook | ~40-60 分钟（只测中断-续写机制：写 1 章→中断→续 2 章即可判定，不写完全书） |
 | 5 | second-subject-rerun | M5 | textbook | 数小时（本用例是「整本书写完 + 阶段 5 自检 + 交付摘要」的验收责任方） |
 | 6 | init-workspace-scaffold | M6 | textbook-init | ~5 分钟（含 1 次人工确认） |
+| 7 | humanities-outline-profile-routing | M7 | textbook-outline | ~10 分钟（含 2 次人工确认） |
+| 8 | humanities-chapter-citation-discipline | M7 | textbook-chapter | ~15 分钟（全自动） |
+
+用例 7、8 走 `humanities` 学科档案，验证同一套内核在非 STEM 学科下的行为；判定时**不要用内容质量代替形式项**（见本文末「增改用例」）。
 
 ## 怎么跑
 
@@ -36,4 +40,6 @@
 
 ## 增改用例
 
-新场景（如 v2 文科支持、新学科复跑）按 evals.json 现有 schema 追加：`id` 递增、`name` 用描述性 kebab-case、`assertions` 写可判定的客观断言。用例定义入库，运行产物不入库。
+新场景（如新增学科档案、同一档案换学科复跑）按 evals.json 现有 schema 追加：`id` 递增、`name` 用描述性 kebab-case、`assertions` 写可判定的客观断言。用例定义入库，运行产物不入库。
+
+新增一份**学科档案**时，断言要锚定**形式性可判定项**——每题是否有验证状态行、题目数是否等于验证行数、开放题是否附参考要点、四段标题是否与档案第 4 节逐字一致、题型是否都在档案题型集内——而不是"内容写得好不好"。学科越偏论述，内容质量越难客观判定，把断言压在形式项上，第三道防线才不会在新学科上失效。

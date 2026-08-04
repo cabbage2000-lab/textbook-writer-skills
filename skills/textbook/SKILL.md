@@ -7,6 +7,8 @@ description: Use when the user wants to write a complete multi-chapter textbook 
 
 写教材的主 skill（orchestrator）：驱动五阶段流程，管理 `.progress.json` 状态实现中断可续，在阶段间传递交接契约，最终交付一本有主线、有梯度、可评估的多章节 Markdown 教材。契约、落盘布局、状态机的权威定义见 [references/handoff-contract.md](references/handoff-contract.md)（下称"契约文档"）。
 
+学科差异（题型集、验证手段、认知动词、章内段义）不在本 skill 里分支，收拢在**学科档案**中：阶段 1 判定一次，落盘为 `.progress.json` 的 `subject_profile`，逐章原样透传。规格与索引见 [references/subject-profile-spec.md](references/subject-profile-spec.md)。
+
 ## 何时不触发
 
 - 单篇教程/图文教程（用 tutorial-writer）
@@ -31,8 +33,8 @@ gate 之外的阶段只打印一行进度（格式见契约文档第 5 节），
 1. **确定教材项目目录**：用户指定则用之；未指定则询问一次（默认 `./<教材名>/`）。
 2. **找 `.progress.json`**：
 
-   - 不存在 → 全新项目：确认教材名 → 建目录 → 初始化 `.progress.json`（schema 见契约文档第 4 节，`current_stage=1`，gates 全 false）→ 从阶段 1 开始；
-   - 存在 → 按契约文档第 4 节**重入规则表**定位续点，打印续写行：阶段 4 用 `▶ 续写：<教材名>，从第 N 章继续`，其余阶段用 `▶ 续写：<教材名>，从阶段 N 继续`。特别地：`current_stage=2/3` 且对应 gate 未确认时，从 `00-教材设计.md` 读出已有产出（阶段 2 为五件套、阶段 3 为章节树/例题习题计划/梯度报告/表现性任务四项）**重新呈现并等确认**，不推倒重做；作者提出修改时委托 textbook-outline 执行修改与再确认循环。
+   - 不存在 → 全新项目：确认教材名 → 建目录 → 初始化 `.progress.json`（schema 见契约文档第 4 节，`current_stage=1`，gates 全 false，`subject_profile` 待阶段 1 判定后补写）→ 从阶段 1 开始；
+   - 存在 → 按契约文档第 4 节**重入规则表**定位续点，打印续写行：阶段 4 用 `▶ 续写：<教材名>，从第 N 章继续`，其余阶段用 `▶ 续写：<教材名>，从阶段 N 继续`；同时读出 `subject_profile` 供后续透传，**字段缺失**（v0.3.x 及更早创建的存量项目）时按 `stem` 处理并在续写行后补一句「按 stem 学科档案续写」，不阻塞。特别地：`current_stage=2/3` 且对应 gate 未确认时，从 `00-教材设计.md` 读出已有产出（阶段 2 为五件套、阶段 3 为章节树/例题习题计划/梯度报告/表现性任务四项）**重新呈现并等确认**，不推倒重做；作者提出修改时委托 textbook-outline 执行修改与再确认循环。
 3. **状态纪律**：`.progress.json` 只由本 skill 读写（子 skill 一律不碰）；每完成一个阶段、每完成一章**立即更新写盘**，绝不批量延迟。
 
 ## 阶段 1–3：委托 textbook-outline
@@ -42,6 +44,7 @@ gate 之外的阶段只打印一行进度（格式见契约文档第 5 节），
 使用 Skill 工具调用 `textbook-outline`（传入 `{教材项目目录, 教材名}`）；若 Skill 工具不可用或未注册，直接读取 [../textbook-outline/SKILL.md](../textbook-outline/SKILL.md) 并严格遵循其指令执行。
 
 - 其内部两个 gate 就是本流程的 gate——**gate 由该子 skill 面向作者执行，本 skill 绝不越过未确认的 gate 推进状态**；
+- 阶段 1 完成后（子 skill 回报 `学科档案`）：置 `subject_profile=<档案 id>`、`current_stage=2`，写盘。此后**不再改动该字段**——换档案等于换验证纪律与章内段式，已写的章会与后写的章不是一本书；
 - 阶段 2 确认后：置 `gates.stage2_ubd_confirmed=true`、`current_stage=3`，写盘；
 - 阶段 3 确认后：置 `gates.stage3_outline_confirmed=true`、`current_stage=4`、`chapters.total=章节树章数`、`chapters.next=1`，写盘。
 
@@ -53,7 +56,7 @@ gate 之外的阶段只打印一行进度（格式见契约文档第 5 节），
 
 1. **提取该章大纲切片**：从 `00-教材设计.md` 的「## 三、章节树与梯度规划（已确认）」取该章的章节树条目 + 例题习题计划；
 2. **读跨章载体**：术语表.md 当前版 + 前一章文件的「## 本章小结」全节（N=1 时前章小结为空）；
-3. **组装输入契约调用 textbook-chapter**：`{章号, 章标题, 该章大纲切片, UbD五件套, 术语表, 前章小结}`（五件套从「## 二、UbD 五件套（已确认）」提取 `{大概念[], 持久理解[], 核心问题[]}`）。调用方式同上：Skill 工具优先，降级读 [../textbook-chapter/SKILL.md](../textbook-chapter/SKILL.md)；
+3. **组装输入契约调用 textbook-chapter**：`{章号, 章标题, 该章大纲切片, UbD五件套, 术语表, 前章小结, 学科档案}`（五件套从「## 二、UbD 五件套（已确认）」提取 `{大概念[], 持久理解[], 核心问题[]}`；学科档案取 `.progress.json` 的 `subject_profile` 原样透传，不重新判定）。调用方式同上：Skill 工具优先，降级读 [../textbook-chapter/SKILL.md](../textbook-chapter/SKILL.md)；
 4. **收输出契约** `{章文件路径, 新增术语[], Bloom标注回写[]}`：新增术语追加进术语表.md；Bloom 标注回写记入 `00-教材设计.md` 该章例题习题计划条目旁的"实际"标注（与"计划"并排，供阶段 5 对比）；
 5. **更新状态**：`chapters.done` 加入 N、`chapters.next=N+1`，写盘 `.progress.json`。
 

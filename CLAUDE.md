@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 这是一个 agent skills/plugin 仓库（目标宿主：Claude Code / Codex / WorkBuddy）：产品本身是 `skills/` 下的 5 个 Markdown skill（"给模型看的程序"），没有传统应用代码。**改一行指令就可能改变 skill 的运行行为**，而结构校验和单元测试只能保证文件形态正确，行为质量必须靠 evals 真实运行来检验——这是本仓库三层防线设计的出发点。Python 只出现在质量保障脚本中（零第三方依赖，3.10+ 标准库）。
 
-领域：以 UbD 逆向设计为内核的 STEM 教材写作流水线。设计依据源自 PRD 与前期调研（本地 `docs/` 目录留存，不纳入版本库）；版本库内可查的架构决策摘要见 [docs/adr/](docs/adr/README.md)。
+领域：以 UbD 逆向设计为内核的教材写作流水线（学科无关内核 + 可插拔学科档案；内置 `stem`、`humanities` 两份档案，后者行为尚未经 eval 实跑验证）。设计依据源自 PRD 与前期调研（本地 `docs/` 目录留存，不纳入版本库）；版本库内可查的架构决策摘要见 [docs/adr/](docs/adr/README.md)。
 
 ## 常用命令
 
@@ -30,19 +30,22 @@ mkdir -p .claude && ln -s ../skills .claude/skills
 ```text
 textbook（orchestrator）  五阶段调度 + .progress.json 状态机（中断可续）
   ├─ textbook-outline     阶段 1–3：教学定位 → UbD 五件套(核心 gate) → 章节树+梯度(次要 gate)
-  ├─ textbook-chapter     阶段 4：四段式单章写作（概念讲解→示范例题→引导练习→独立习题）
-  └─ textbook-exercises   被单章 skill 调用：三类题生成 + 真算验证
+  ├─ textbook-chapter     阶段 4：四段式单章写作（stem 档案：概念讲解→示范例题→引导练习→独立习题）
+  └─ textbook-exercises   被单章 skill 调用：三类题生成 + 每题验证（手段取自学科档案）
 
 textbook-init（独立辅助）  不入调度链：动笔前规划并创建工作目录（可选 git 与 README 工作说明），产出交接给 textbook
 ```
 
 **[skills/textbook/references/handoff-contract.md](skills/textbook/references/handoff-contract.md) 是全项目唯一权威定义**——阶段间交接契约、教材项目落盘布局、`.progress.json` 状态机与重入规则、进度打印/gate 停点格式、上下文隔离原则，全部以它为准。5 个 SKILL.md 一律引用它，不得各自重复定义；契约字段名上下游**逐字一致**，同义改写（如"章节树"写成"章节列表"）即破坏契约。
 
+学科差异不在上述任何位置分支，而是收拢在**学科档案**里，规格见 [skills/textbook/references/subject-profile-spec.md](skills/textbook/references/subject-profile-spec.md)：随学科变化的只有四个可变点——题型集、验证手段、认知动词与层级示例、章内段义与载体扩展；每份档案 `profiles/<id>.md` 固定四节、每节恰有一个消费者（阶段 1 / exercises / outline / chapter）。**内核只写学科无关规则，档案只写本学科增量**（通用 Bloom 动词、三类题支撑纪律、四段式脚手架逻辑、通用文体规范都留内核，档案不复制）。支持新学科 = 加一份档案 + 索引登记一行，内核零改动；要改内核才能容纳的新学科，说明四点划分不够，先讨论再动手。
+
 理解运行时行为的关键机制（详见契约文档）：
 
 - **双 gate**：阶段 2（UbD 五件套）、阶段 3（章节树+梯度报告）必须作者明确确认才放行；"确认，但把 X 改一下"按修改分支处理，修改优先于确认；
 - **状态机**：`.progress.json` 只由主 skill 读写（子 skill 一律不碰），每完成一阶段/一章立即写盘；重入按契约文档第 4 节规则表定位续点；
 - **上下文隔离**：单章写作不读其他章正文，跨章一致性只靠术语表、前章小结、UbD 五件套三个轻量载体传递——这是 10+ 章长教材不爆上下文的根本保证；
+- **学科档案**：阶段 1 判定一次 → 落盘 `.progress.json` 的 `subject_profile` → 逐章原样透传，中途不重判（换档案等于换验证纪律与段式，已写的章会与后写的章不是一本书）；存量项目无此字段按 `stem` 处理，不阻塞续写；
 - **子 skill 调用方式**：Skill 工具优先，不可用时降级为直接读对方 SKILL.md 并遵循执行。
 
 ## 分发与跨宿主
@@ -63,15 +66,17 @@ textbook-init（独立辅助）  不入调度链：动笔前规划并创建工�
 
 ## 改动影响半径与必跑 evals
 
-影响半径从大到小：handoff-contract.md（牵动全部 5 个 skill）＞ SKILL.md 的调用契约段（牵动调用方与被调用方两侧）＞ SKILL.md 流程段 / references（只影响本 skill）＞ scripts/tests/docs（不影响 skill 行为，CI 绿即可）。
+影响半径从大到小：handoff-contract.md / subject-profile-spec.md（各牵动全部 5 个 skill）＞ SKILL.md 的调用契约段（牵动调用方与被调用方两侧）＞ SKILL.md 流程段 / references / 单份档案（只影响本 skill 或用该档案的教材）＞ scripts/tests/docs（不影响 skill 行为，CI 绿即可）。
 
 | 改动位置 | 必跑用例 |
 | -------- | -------- |
-| textbook（含 handoff-contract.md） | 1, 2, 3, 4（涉及契约第 3 节落盘布局时补跑 6） |
+| textbook（含 handoff-contract.md、subject-profile-spec.md） | 1, 2, 3, 4（涉及契约第 3 节落盘布局时补跑 6） |
 | textbook-outline | 1 |
 | textbook-chapter | 2, 3 |
 | textbook-exercises | 2 |
 | textbook-init | 6 |
+| `profiles/stem.md` | 1, 2, 3 |
+| `profiles/humanities.md` | 7, 8 |
 
 用例 4 只验证中断-续写机制（写 1 章即中断、续 1 章即可判定，不写完全书），耗时 ~40-60 分钟；「整本书写完 + 阶段 5 自检 + 交付摘要」的验收职责在用例 5（数小时）。若改动专门涉及阶段 5 自检或交付摘要逻辑，额外补跑用例 5。
 
@@ -80,7 +85,8 @@ textbook-init（独立辅助）  不入调度链：动笔前规划并创建工�
 - SKILL.md ≤ 500 行——超限把细节下沉到 `references/`（渐进披露：SKILL.md 只放工作流骨架，并明确指路"何时读哪个文件"）；
 - frontmatter：`name` 与目录名一致；`description` 50–1024 字符，承担全部触发职责（写清"何时用 + 干什么 + 何时不用"，带中文触发词示例）；仅允许白名单字段（name/description/version/license/allowed-tools/compatibility/metadata），其余会被静默忽略；
 - `skills/` 下所有 .md 禁止占位符词（TBD、TODO、FIXME、XXX、待补充、占位）；
-- `references/` 下每个 .md ≥ 500 字节；SKILL.md 引用的 references 路径（含跨 skill）必须真实存在；
+- `references/` 及其子目录下每个 .md ≥ 500 字节；**所有** .md 引用的 references 路径（含多级 `../` 跨 skill）必须真实存在；
+- 学科档案：每份 `profiles/<id>.md` 含规格第 3 节的四个固定小节；第 2 节题型表表头固定为 `| 题型 | 示例 | 验证手段 | 无法验证时的降级 |` 且**「验证手段」列不得为空或写"无"**（红线的结构性保障）；规格第 5 节索引表与实际档案文件一一对应；
 - 三宿主六份清单的 name/version/description/license 必须一致，Codex 侧另查 `skills` 指针、`interface` 必填字段、marketplace 条目的 source/policy 形状，CodeBuddy 侧另查 `owner.name` 与条目 `source: "./"`——发版时六处同步升版；
 - `.gitignore` 不得忽略 `.claude-plugin`、`.codex-plugin`、`.codebuddy-plugin`、`.agents`（分发清单必须入库）；三个 `.*-plugin/` 里只放清单文件，`skills/` 必须在仓库根（放错位置装上后一个 skill 都加载不到）。
 
@@ -88,7 +94,7 @@ textbook-init（独立辅助）  不入调度链：动笔前规划并创建工�
 
 ## 红线（源自 PRD，任何改动不得突破）
 
-- STEM 例题答案必须真算验证，验证不了的明确标注 `⚠️ 需作者确认`，绝不假装已验证；
+- 例题答案必须按所用学科档案第 2 节定义的手段验证（`stem` 档案 = 真算复核），验证不了的明确标注 `⚠️ 需作者确认`，绝不假装已验证——档案能定义"用什么方式验证"，不能定义"是否需要验证"；
 - 阶段 2/3 双 gate 必须作者明确确认才放行，任何"优化"不得绕过；
 - 单章写作只接收输入契约，不读其他章正文；
 - `.progress.json` 只由主 skill 读写；
