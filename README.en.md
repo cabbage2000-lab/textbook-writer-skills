@@ -289,7 +289,7 @@ The foundation in that diagram, [handoff-contract.md](skills/textbook/references
 | M4 | Orchestrator interrupt-and-resume (state machine locates the resume point) | [eval 4](evals/evals.json) | ✅ Passed (3/3 assertions, 2026-08-03; the finished chapter's SHA-1 was byte-identical across the interruption) |
 | M5 | Second subject written end to end (including stage 5 self-check and delivery summary), proving it isn't overfitted | [eval 5](evals/evals.json) | ✅ Passed (8/8 assertions, 2026-08-03; the first run surfaced a "26 of 80 exercises missing their verification line" defect — after the fix, the re-run produced 11 chapters and 85 exercises with zero omissions) |
 | M6 | Working-directory setup skill (textbook-init): plan and create single-book / multi-textbook directories | [eval 6](evals/evals.json) | ✅ Passed (6/6 assertions, 2026-08-03; must be run outside this repository) |
-| M7 | Subject-profile layer: one core, pluggable profiles, run through on a non-STEM subject | [eval 7, 8](evals/evals.json) | ⏳ Pending (the `humanities` profile has landed; behavior not yet verified by a real run) |
+| M7 | Subject-profile layer: one core, pluggable profiles, run through on a non-STEM subject | [eval 7, 8](evals/evals.json) | 🟡 Partly passed (eval 8: 7/7, 2026-08-04 — with no sources supplied, all three unverifiable citations took the documented fallback and were never quoted verbatim; the citation ledger landed. eval 7 pending) |
 
 Per-assertion evidence (assertions, artifacts, verdicts) lives in `evals/workspace/` (gitignored). Judging discipline, per-case runtimes, and the terms for re-running on another host are in [evals/README.md](evals/README.md).
 

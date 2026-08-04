@@ -283,7 +283,7 @@ python3 -m unittest discover -s tests    # ② 单元测试：校验逻辑本身
 | M4 | 主 skill 中断-续写机制验证（状态机正确定位续点） | [eval 4](evals/evals.json) | ✅ 通过（3/3 断言，2026-08-03，续写前后章文件 SHA-1 逐字节一致） |
 | M5 | 第二学科端到端写完整本教材（含阶段 5 自检与交付摘要），验证不过拟合 | [eval 5](evals/evals.json) | ✅ 通过（8/8 断言，2026-08-03；首跑发现「26/80 题缺验证状态行」缺陷，修复后重跑 11 章 85 题零漏标） |
 | M6 | 工作目录初始化 skill（textbook-init）：规划并创建单本/多教材工作目录 | [eval 6](evals/evals.json) | ✅ 通过（6/6 断言，2026-08-03，须在本仓库外运行） |
-| M7 | 学科档案层：同一套内核 + 可插拔档案，跑通非 STEM 学科 | [eval 7, 8](evals/evals.json) | ⏳ 待跑（`humanities` 档案已落地，行为尚未实跑验证） |
+| M7 | 学科档案层：同一套内核 + 可插拔档案，跑通非 STEM 学科 | [eval 7, 8](evals/evals.json) | 🟡 部分通过（eval 8 通过 7/7，2026-08-04：无史料时三处引文全部走降级路径、不逐字引用，引文台账落地；eval 7 待跑） |
 
 逐条判定证据（断言、产物、判定记录）保存在 `evals/workspace/`（已 gitignore，不入库）；判定纪律、各用例耗时与跨宿主复跑口径见 [evals/README.md](evals/README.md)。
 
