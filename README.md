@@ -2,14 +2,14 @@
 
 [![CI](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)](CHANGELOG.md)
 ![host](https://img.shields.io/badge/host-Claude%20Code%20%7C%20Codex%20%7C%20WorkBuddy-grey)
 
 **简体中文** | [English](README.en.md)
 
-Textbook-Writer-Skills 是一套装进编程智能体（Claude Code / Codex / 国内 WorkBuddy）的教材写作 skill 组合。它把成熟的教学设计方法装进 AI 的工作流：先想清楚「学生学完该带走什么」，再倒推章节和习题，一章一章写出有主线、有梯度、题目答案可信的成体系教材——中途断了随时续写。当前 **v0.3.0**：5 个 skill（1 个主调度 + 3 个流水线子 skill + 1 个独立辅助），覆盖从工作目录规划到审核定稿的五阶段全流程。
+Textbook-Writer-Skills 是一套装进编程智能体（Claude Code / Codex / 国内 WorkBuddy）的教材写作 skill 组合。它把成熟的教学设计方法装进 AI 的工作流：先想清楚「学生学完该带走什么」，再倒推章节和习题，一章一章写出有主线、有梯度、题目答案可信的成体系教材——中途断了随时续写。当前 **v0.4.0**：5 个 skill（1 个主调度 + 3 个流水线子 skill + 1 个独立辅助），覆盖从工作目录规划到审核定稿的五阶段全流程。
 
-学科无关的内核 + 可插拔的**学科档案**：`stem` 档案面向数学、物理、计算机等答案可复算的学科（已跑通全案回归）；`humanities` 档案面向历史、哲学、文学等答案取决于论证的学科，把"真算复核"换成"核对来源"——**新落地，行为尚未经 eval 实跑验证**。支持一个新学科门类不需要改内核，只需加一份档案。阶段交接契约、落盘布局与状态机的准确定义以 [handoff-contract.md](skills/textbook/references/handoff-contract.md) 为准，学科差异的收口处是 [subject-profile-spec.md](skills/textbook/references/subject-profile-spec.md)。
+学科无关的内核 + 可插拔的**学科档案**：`stem` 档案面向数学、物理、计算机等答案可复算的学科（已跑通全案回归）；`humanities` 档案面向历史、哲学、文学等答案取决于论证的学科，把"真算复核"换成"核对来源"（大纲与单章两条路径已通过 eval 7、8 实跑验证）。支持一个新学科门类不需要改内核，只需加一份档案。阶段交接契约、落盘布局与状态机的准确定义以 [handoff-contract.md](skills/textbook/references/handoff-contract.md) 为准，学科差异的收口处是 [subject-profile-spec.md](skills/textbook/references/subject-profile-spec.md)。
 
 ## 设计理念
 
@@ -283,11 +283,11 @@ python3 -m unittest discover -s tests    # ② 单元测试：校验逻辑本身
 | M4 | 主 skill 中断-续写机制验证（状态机正确定位续点） | [eval 4](evals/evals.json) | ✅ 通过（3/3 断言，2026-08-03，续写前后章文件 SHA-1 逐字节一致） |
 | M5 | 第二学科端到端写完整本教材（含阶段 5 自检与交付摘要），验证不过拟合 | [eval 5](evals/evals.json) | ✅ 通过（8/8 断言，2026-08-03；首跑发现「26/80 题缺验证状态行」缺陷，修复后重跑 11 章 85 题零漏标） |
 | M6 | 工作目录初始化 skill（textbook-init）：规划并创建单本/多教材工作目录 | [eval 6](evals/evals.json) | ✅ 通过（6/6 断言，2026-08-03，须在本仓库外运行） |
-| M7 | 学科档案层：同一套内核 + 可插拔档案，跑通非 STEM 学科 | [eval 7, 8](evals/evals.json) | 🟡 部分通过（eval 8 通过 7/7，2026-08-04：无史料时三处引文全部走降级路径、不逐字引用，引文台账落地；eval 7 待跑） |
+| M7 | 学科档案层：同一套内核 + 可插拔档案，跑通非 STEM 学科 | [eval 7, 8](evals/evals.json) | ✅ 通过（eval 7 6/6 + eval 8 7/7，2026-08-04）：大纲侧档案路由正确、题型与动词无 STEM 残留、梯度矩阵算术自洽；单章侧无史料时三处引文全部走降级路径、不逐字引用，引文台账落地。另首次覆盖 gate 修改分支 |
 
 逐条判定证据（断言、产物、判定记录）保存在 `evals/workspace/`（已 gitignore，不入库）；判定纪律、各用例耗时与跨宿主复跑口径见 [evals/README.md](evals/README.md)。
 
-M2–M6 的通过记录对应**加断言前**的用例定义：学科档案层给 eval 1、2 各补了一条断言，且本轮改动触及全部 5 个 skill，按 [CONTRIBUTING](CONTRIBUTING.md) 映射表 eval 1–4 需重跑，尚未跑。
+M2–M6 的通过记录对应**加断言前**的用例定义：学科档案层给 eval 1、2 各补了一条断言，且改动触及全部 5 个 skill，按 [CONTRIBUTING](CONTRIBUTING.md) 映射表 eval 1–4 需重跑。**eval 2 已跑**（2026-08-04，三轮）：新增的档案声明断言通过，重构引入的一处漂移已修复并验证，但末轮撞上一处公式规范偶发违规（`\text{}` 内写中文），整体待下一轮复验；eval 1、3、4 仍待跑。
 
 ## 仓库结构
 
