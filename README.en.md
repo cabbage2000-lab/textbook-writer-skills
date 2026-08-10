@@ -41,6 +41,27 @@ The authoritative definition of the stage handoff contracts, the on-disk layout 
 
 > The full wording of all five red lines is in [CONTRIBUTING.md](CONTRIBUTING.md) under 「红线约束」; the authoritative contract layer is [handoff-contract.md](skills/textbook/references/handoff-contract.md).
 
+## Which subjects it can write
+
+Subject coverage is defined by three pluggable subject profiles. Stage 1 decides the profile from your subject and prints it once (e.g. `学科档案：humanities`), then passes it through unchanged chapter by chapter — you never pick a profile yourself, and if it decided wrong, say so at stage 1. The authoritative index and routing rules are in [subject-profile-spec.md](skills/textbook/references/subject-profile-spec.md), section 5.
+
+| Profile | Subjects covered | Verification method | Field-tested status |
+| --- | --- | --- | --- |
+| `stem` | All branches of mathematics, physics, chemistry, engineering, computer science and algorithms | Recomputation: every answer recomputed along a path different from the solution's, results compared | ✅ Full eval regression passed (evals 1–6) |
+| `humanities` | History, philosophy, literature, political science, sociology, art history, religious studies | Source checking: quotations checked word-for-word against the original with edition and location recorded — never a citation written from memory | ✅ Both paths, outline and chapter, verified by real runs (evals 7, 8) |
+| `economics` | All branches of economics (micro, macro, econometrics, international, development, industrial organization) and finance | Mixed: model questions recomputed + statistics checked against authoritative sources + policy questions given argument points and a rubric | ⏳ Evals 9, 10 pending (profile and cases are in the repo) |
+
+Routing always starts from the same question: **can this subject's typical exercise be re-solved along a path independent of the solution's, and the results compared?** Mostly yes → `stem`. Mostly no (the answer rests on argument and perspective) → `humanities`. Half and half (models recompute, statistics can only be checked against their source) → `economics`.
+
+**Subjects that straddle the line** have their routing written into each profile's section 1:
+
+- **Language learning, law, accounting**: grammar rules, statutes, precedents and standards are deterministic, checkable facts — material dominated by rule-application exercises routes to `stem` (with "recompute" read as "look up the provision and compare"), material dominated by case argument and legal reasoning routes to `humanities`;
+- **Psychology, geography**: computational and empirical-data exercises route to `stem`, theory essays and policy discussion follow the `humanities` essay handling; textbooks shaped like economics (empirical data + statistical inference) can also borrow `economics` — it spells out the known differences to you before writing;
+- **Within economics**: mostly pure derivation (mathematical economics, financial engineering) → `stem`; mostly argument and texts (history of economic thought, comparative economic systems, political economy) → `humanities`; both kinds interleaved in one book (most principles, intermediate micro/macro and introductory econometrics textbooks) → `economics`;
+- **Cross-cutting topics** (history of science, digital humanities): whichever kind of exercise dominates picks the profile; the other kind follows the other profile's corresponding question type, with the split recorded in the design document.
+
+**Subjects beyond this list can still be written — just never by silently forcing a fit**: when stage 1 finds no matching profile, it tells you "no dedicated profile for this subject; proceeding under the closest one" and lists the known gaps (which question types have no defined verification method, whether the chapter structure needs adjusting), and you decide whether to continue or narrow the scope. The profile fixes the whole book's verification discipline and chapter structure — whether that approximation is acceptable is a call only someone who knows the subject can make.
+
 ## The three pitfalls it solves
 
 Telling an AI "write me a textbook" usually goes wrong in three specific ways. Every design decision here targets one of them.
