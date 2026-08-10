@@ -6,7 +6,7 @@
 
 ## 这是什么
 
-本仓库是一套以 UbD 逆向设计为内核的教材写作 skill 组合（学科无关内核 + 可插拔学科档案，内置 `stem` 与 `humanities` 两份）：1 个主 skill（`textbook`）编排 3 个子 skill，驱动"教学定位 → UbD 预期结果 gate → 章节树 gate → 逐章写作 → 审核定稿"五阶段流程；另有 1 个独立辅助 skill（`textbook-init`）负责动笔前的工作目录规划，不入调度链。5 个 skill 是一个整体组合，跨 skill 以相对路径互相引用，需整体使用，不得只启用其中一个而忽略其余。
+本仓库是一套以 UbD 逆向设计为内核的教材写作 skill 组合（学科无关内核 + 可插拔学科档案，内置 `stem`、`humanities`、`economics` 三份）：1 个主 skill（`textbook`）编排 3 个子 skill，驱动"教学定位 → UbD 预期结果 gate → 章节树 gate → 逐章写作 → 审核定稿"五阶段流程；另有 1 个独立辅助 skill（`textbook-init`）负责动笔前的工作目录规划，不入调度链。5 个 skill 是一个整体组合，跨 skill 以相对路径互相引用，需整体使用，不得只启用其中一个而忽略其余。
 
 ## 触发路由：用户想做什么，就读哪个 SKILL.md
 
@@ -30,4 +30,4 @@
 2. **每题必验，不许假装**：例题与习题的答案必须按所用**学科档案**第 2 节定义的手段实际核对后才能输出（`stem` 档案 = 真算复核）；确实验证不了的，必须明确标注 `⚠️ 需作者确认`，绝不能在没有验证的情况下假装已验证。档案能定义"用什么方式验证"，不能定义"是否需要验证"。
 3. **状态单一写者**：`.progress.json` 只由 `textbook`（主 skill）读写，子 skill（`textbook-outline`、`textbook-chapter`、`textbook-exercises`）一律不碰这个文件。
 
-契约、落盘布局、状态机的完整权威定义见 [skills/textbook/references/handoff-contract.md](skills/textbook/references/handoff-contract.md)；学科差异（题型集、验证手段、认知动词、章内段义）的收口处是 [skills/textbook/references/subject-profile-spec.md](skills/textbook/references/subject-profile-spec.md)，阶段 1 判定档案、逐章透传，内置 `stem`（答案可复算的学科）与 `humanities`（答案取决于论证、但引文与史实可核查的学科）两份。
+契约、落盘布局、状态机的完整权威定义见 [skills/textbook/references/handoff-contract.md](skills/textbook/references/handoff-contract.md)；学科差异（题型集、验证手段、认知动词、章内段义）的收口处是 [skills/textbook/references/subject-profile-spec.md](skills/textbook/references/subject-profile-spec.md)，阶段 1 判定档案、逐章透传，内置三份：`stem`（答案可复算的学科）、`humanities`（答案取决于论证、但引文与史实可核查的学科）、`economics`（模型题可复算、统计数据须核对来源，两类在同一本书里交织）。

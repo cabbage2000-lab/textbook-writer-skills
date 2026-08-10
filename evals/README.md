@@ -14,8 +14,10 @@
 | 6 | init-workspace-scaffold | M6 | textbook-init | ~5 分钟（含 1 次人工确认） |
 | 7 | humanities-outline-profile-routing | M7 | textbook-outline | ~10 分钟（含 2 次人工确认） |
 | 8 | humanities-chapter-citation-discipline | M7 | textbook-chapter | ~15 分钟（全自动） |
+| 9 | economics-outline-profile-routing | M8 | textbook-outline | ~10 分钟（含 2 次人工确认） |
+| 10 | economics-chapter-mixed-verification | M8 | textbook-chapter | ~15 分钟（全自动） |
 
-用例 7、8 走 `humanities` 学科档案，验证同一套内核在非 STEM 学科下的行为；判定时**不要用内容质量代替形式项**（见本文末「增改用例」）。
+用例 7、8 走 `humanities` 学科档案，验证同一套内核在非 STEM 学科下的行为；用例 9、10 走 `economics` 档案，验证**复算与核对来源两类手段在同一本教材里并存**——这是该档案区别于前两份的核心，因此用例 9 有一条断言专查题型分布是否同时覆盖两类，用例 10 的 prompt 硬性要求含一道真实统计数据题（不要求它就可能整章只出可复算的模型题，验不到新增的那半边）。判定时**不要用内容质量代替形式项**（见本文末「增改用例」）。
 
 ## 怎么跑
 

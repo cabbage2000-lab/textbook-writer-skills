@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 这是一个 agent skills/plugin 仓库（目标宿主：Claude Code / Codex / WorkBuddy）：产品本身是 `skills/` 下的 5 个 Markdown skill（"给模型看的程序"），没有传统应用代码。**改一行指令就可能改变 skill 的运行行为**，而结构校验和单元测试只能保证文件形态正确，行为质量必须靠 evals 真实运行来检验——这是本仓库三层防线设计的出发点。Python 只出现在质量保障脚本中（零第三方依赖，3.10+ 标准库）。
 
-领域：以 UbD 逆向设计为内核的教材写作流水线（学科无关内核 + 可插拔学科档案；内置 `stem`、`humanities` 两份档案，后者的大纲与单章两条路径已由 eval 7、8 实跑验证）。设计依据源自 PRD 与前期调研（本地 `docs/` 目录留存，不纳入版本库）；版本库内可查的架构决策摘要见 [docs/adr/](docs/adr/README.md)。
+领域：以 UbD 逆向设计为内核的教材写作流水线（学科无关内核 + 可插拔学科档案；内置 `stem`、`humanities`、`economics` 三份档案，`humanities` 的大纲与单章两条路径已由 eval 7、8 实跑验证，`economics` 的 eval 9、10 待跑）。设计依据源自 PRD 与前期调研（本地 `docs/` 目录留存，不纳入版本库）；版本库内可查的架构决策摘要见 [docs/adr/](docs/adr/README.md)。
 
 ## 常用命令
 
@@ -38,7 +38,7 @@ textbook-init（独立辅助）  不入调度链：动笔前规划并创建工�
 
 **[skills/textbook/references/handoff-contract.md](skills/textbook/references/handoff-contract.md) 是全项目唯一权威定义**——阶段间交接契约、教材项目落盘布局、`.progress.json` 状态机与重入规则、进度打印/gate 停点格式、上下文隔离原则，全部以它为准。5 个 SKILL.md 一律引用它，不得各自重复定义；契约字段名上下游**逐字一致**，同义改写（如"章节树"写成"章节列表"）即破坏契约。
 
-学科差异不在上述任何位置分支，而是收拢在**学科档案**里，规格见 [skills/textbook/references/subject-profile-spec.md](skills/textbook/references/subject-profile-spec.md)：随学科变化的只有四个可变点——题型集、验证手段、认知动词与层级示例、章内段义与载体扩展；每份档案 `profiles/<id>.md` 固定四节、每节恰有一个消费者（阶段 1 / exercises / outline / chapter）。**内核只写学科无关规则，档案只写本学科增量**（通用 Bloom 动词、三类题支撑纪律、四段式脚手架逻辑、通用文体规范都留内核，档案不复制）。支持新学科 = 加一份档案 + 索引登记一行，内核零改动；要改内核才能容纳的新学科，说明四点划分不够，先讨论再动手。
+学科差异不在上述任何位置分支，而是收拢在**学科档案**里，规格见 [skills/textbook/references/subject-profile-spec.md](skills/textbook/references/subject-profile-spec.md)：随学科变化的只有四个可变点——题型集、验证手段、认知动词与层级示例、章内段义与载体扩展；每份档案 `profiles/<id>.md` 固定四节、每节恰有一个消费者（阶段 1 / exercises / outline / chapter）。**内核只写学科无关规则，档案只写本学科增量**（通用 Bloom 动词、三类题支撑纪律、四段式脚手架逻辑、通用文体规范都留内核，档案不复制）。支持新学科 = 加一份档案 + 索引登记一行 + **回头改相邻档案第 1 节的分流规则**（新学科此前多半被某份档案当作"边界学科"收编了，旧规则还指着老去处，阶段 1 就会读到两套矛盾口径；校验脚本查不出这种矛盾），内核零改动；要改内核才能容纳的新学科，说明四点划分不够，先讨论再动手。
 
 理解运行时行为的关键机制（详见契约文档）：
 
@@ -77,6 +77,7 @@ textbook-init（独立辅助）  不入调度链：动笔前规划并创建工�
 | textbook-init | 6 |
 | `profiles/stem.md` | 1, 2, 3 |
 | `profiles/humanities.md` | 7, 8 |
+| `profiles/economics.md` | 9, 10 |
 
 用例 4 只验证中断-续写机制（写 1 章即中断、续 1 章即可判定，不写完全书），耗时 ~40-60 分钟；「整本书写完 + 阶段 5 自检 + 交付摘要」的验收职责在用例 5（数小时）。若改动专门涉及阶段 5 自检或交付摘要逻辑，额外补跑用例 5。
 
