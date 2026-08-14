@@ -10,8 +10,10 @@
 <位置>/<教材名>/           ← git 仓库根建在这一层（若要 git）
 ├── .gitignore             # init 创建
 ├── README.md              # 工作说明，init 创建
-├── 00-教材设计.md          # ↓ 以下均由 textbook 流水线创建，init 一律不建
+├── 00-前言.md              # ↓ 以下均由 textbook 流水线创建，init 一律不建
+├── 00-教材设计.md
 ├── 01-<章标题>.md …
+├── 98-参考答案.md
 ├── 99-表现性任务.md
 ├── 术语表.md
 └── .progress.json
@@ -77,10 +79,12 @@ Thumbs.db
 | 文件 | 谁创建/维护 | 说明 |
 | ---- | ----------- | ---- |
 | README.md、.gitignore | textbook-init | 本说明与版本管理配置 |
-| 00-教材设计.md | textbook-outline | 教学定位、UbD 五件套、章节树与梯度规划（两处 gate 确认后写入） |
-| 01-….md 等章文件 | textbook-chapter | 每章一个文件，四段式结构 |
+| 00-前言.md | textbook（主 skill） | **读者从这里进入**：本书写给谁、怎么用这本书、带链接的目录，阶段 5 定稿时生成 |
+| 00-教材设计.md | textbook-outline | 教学定位、UbD 五件套、章节树与梯度规划（两处 gate 确认后写入）——作者向设计文档，不必给读者 |
+| 01-….md 等章文件 | textbook-chapter | 每章一个文件，四段式结构；独立习题只留题干，答案在 98 |
+| 98-参考答案.md | textbook（主 skill） | 独立习题的答案与验证记录，逐章追加——与题目分开放，读者才能先做后对 |
 | 99-表现性任务.md | textbook（主 skill） | 综合任务与评分标准，阶段 5 定稿时生成 |
-| 术语表.md | textbook（主 skill） | 全书术语与符号约定，逐章追加 |
+| 术语表.md | textbook（主 skill） | 术语与符号约定两节，逐章追加——读者查词、查记号都在这里 |
 | .progress.json | textbook（主 skill） | 写作进度状态，断点续写的唯一依据，请勿手动编辑 |
 
 ## 注意

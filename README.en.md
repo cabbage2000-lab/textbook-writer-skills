@@ -72,6 +72,8 @@ An AI will happily list concepts chapter after chapter, like encyclopedia entrie
 
 **The fix — design first, write second.** Borrowing the established method *Understanding by Design* (UbD, backward design): before a word of prose gets written, the author has to answer "what should students walk away with?" The answer takes the form of five elements — Big Ideas, Enduring Understandings, Essential Questions, Transfer Goals, Learning Objectives. Only after the author confirms them does the skill work backwards to a chapter tree and a per-chapter exercise plan; chapters that don't serve the through-line get cut or reworked. Gradient discipline comes with it: every exercise is tagged with a cognitive level (the six Bloom levels: remember → understand → apply → analyze → evaluate → create) and the whole book gets an automatic gradient check — exercises piling up in a single level (≥60%) or a missing apply/analyze band raises a warning. Each chapter follows a fixed four-part rhythm (concept exposition → worked examples → guided practice → independent exercises), so you never end up with one chapter that's all theory and another that's all drills.
 
+**None of this counts as delivered until the reader can see it.** Learning objectives no longer live only in the design document: each chapter opens with a student-facing "after this chapter, you should be able to…" and closes with a self-check list that walks those same objectives one by one, pointing back to the section to reread and the exercise to try. At sign-off the pipeline also writes `00-前言.md` (who the book is for, how to use it, a linked table of contents) and a symbol-conventions section in the glossary — so a reader opening the directory knows where to start and where to look up an unfamiliar notation.
+
 Below: stages 1–3 for *Introduction to Linear Algebra* — scoping, the five UbD elements (Big Ideas), the chapter tree, with both gate stops clearly visible.
 
 ![Textbook design sample: scoping, the Big Ideas table of the five UbD elements, and the chapter tree, with the primary and secondary GATE stops marked](images/outline-preview.png)
@@ -108,8 +110,8 @@ One table for the whole picture: who does what at each stage, which file the out
 | **1 · Scoping** | `textbook-outline` | Subject / reader's starting point / depth / length, plus the subject profile derived from the subject | `00-教材设计.md` §「## 一、教学定位」 | No (one round of questions) | [eval 1](evals/evals.json) |
 | **2 · UbD desired results** | `textbook-outline` | Big Ideas, Enduring Understandings, Essential Questions, Transfer Goals, Learning Objectives | §「## 二、UbD 五件套（已确认）」 | **⏸ Yes (primary gate)** | [eval 1](evals/evals.json) |
 | **3 · Assessment & chapter design** | `textbook-outline` | Chapter tree + exercise plan + book-wide gradient report + performance task | §「## 三、章节树与梯度规划（已确认）」and §「## 四、表现性任务」 | **⏸ Yes (secondary gate)** | [eval 1](evals/evals.json) |
-| **4 · Chapter prose** | `textbook-chapter` → `textbook-exercises` | Four-part chapters (section titles come from the subject profile); every answer checked by the profile's method | `NN-<章标题>.md` × N + glossary increments | No | [eval 2, 3](evals/evals.json), [8](evals/evals.json) |
-| **5 · Review and sign-off** | `textbook` (orchestrator) | Full read-through self-check, derive the student-facing task | Self-check report + `99-表现性任务.md` + delivery summary | No | [eval 5](evals/evals.json) |
+| **4 · Chapter prose** | `textbook-chapter` → `textbook-exercises` | Four-part chapters (section titles come from the subject profile); every answer checked by the profile's method | `NN-<章标题>.md` × N + `98-参考答案.md` + glossary increments | No | [eval 2, 3](evals/evals.json), [8](evals/evals.json) |
+| **5 · Review and sign-off** | `textbook` (orchestrator) | Full read-through self-check, derive the student-facing task, generate the reader's front matter | Self-check report + `00-前言.md` + `99-表现性任务.md` + delivery summary | No | [eval 5](evals/evals.json) |
 
 Stages 1–5 are driven by the orchestrator `textbook`, and `.progress.json` is read and written by it alone — the interrupt-and-resume mechanism itself is guarded by [eval 4](evals/evals.json). Stage 0 sits outside the pipeline: `textbook-init` only creates the scaffold and hands you to `textbook`. Skipping it is fine — `textbook` will create a default directory on its own.
 
@@ -230,7 +232,8 @@ Open a fresh session and type:
 2. One round of questions settles the scoping: who it's for, how deep, how long;
 3. It produces the five UbD elements and stops at `⏸ 等待确认` ("awaiting confirmation") — the first gate, where you can confirm or ask for changes;
 4. Once confirmed, it produces the chapter tree and the book-wide Bloom gradient report — the second gate;
-5. Then it writes chapter by chapter, each landing as its own `.md` file, and finally does a full review pass and produces a student-facing performance task with its rubric.
+5. Then it writes chapter by chapter, each landing as its own `.md` file — each chapter opens with "after this chapter, you should be able to…" and closes with a self-check list; independent exercises keep only the question in the chapter, while answers and verification records collect in `98-参考答案.md` so readers can attempt first and check after;
+6. Finally it does a full review pass, produces a student-facing performance task with its rubric, and writes `00-前言.md` — who the book is for, how to use it, and a linked table of contents: the reader's way in.
 
 Interrupt at any point; typing the same sentence again resumes from the break.
 
@@ -240,9 +243,9 @@ Say what you want in your own words and the host will match the right skill; nam
 
 | What you'd say | Lands on | What you get back |
 | --- | --- | --- |
-| `用 textbook 写一本《线性代数入门》教材` | `textbook` | A textbook directory: `00-教材设计.md` + one `NN-<章标题>.md` per chapter + `术语表.md` + `99-表现性任务.md` + `.progress.json` |
+| `用 textbook 写一本《线性代数入门》教材` | `textbook` | A textbook directory: `00-前言.md` (the reader's way in: preface + how to use it + linked contents) + `00-教材设计.md` + one `NN-<章标题>.md` per chapter + `98-参考答案.md` + `术语表.md` (terms + symbol conventions) + `99-表现性任务.md` + `.progress.json` |
 | `用 textbook-outline 设计一份数据结构教材大纲` | `textbook-outline` | `00-教材设计.md`: scoping + the five UbD elements + chapter tree with exercise plan + book-wide Bloom gradient report |
-| `用 textbook-chapter 按大纲写第三章` (also works for a deep-dive technical article with full worked examples) | `textbook-chapter` | One `NN-<章标题>.md`: chapter intro → concept exposition → worked examples → guided practice → independent exercises → chapter summary |
+| `用 textbook-chapter 按大纲写第三章` (also works for a deep-dive technical article with full worked examples) | `textbook-chapter` | One `NN-<章标题>.md`: chapter intro → chapter objectives → concept exposition → worked examples → guided practice → independent exercises → chapter summary (with self-check) |
 | `用 textbook-exercises 出几道矩阵乘法的练习题` | `textbook-exercises` | Three kinds of exercises (worked / guided / independent) + Bloom level tags + a verification record per exercise (runnable recomputation code where the answer can be recomputed, sources and check notes where it can only be checked; under `economics` both kinds appear in one chapter) |
 | `用 textbook-init 初始化教材工作目录` | `textbook-init` | A directory scaffold (git version control and a README brief, both optional), then hands you to `textbook` to start writing |
 
@@ -271,7 +274,7 @@ English trigger phrases also work — each skill's `description` carries both Ch
  5. Chapter by chapter, each saved, answers checked → stage 4
     └ every chapter reads only four inputs: its outline slice, the UbD elements, the glossary, the previous summary
       (plus the subject-profile id, which fixes the section structure and the verification method)
- 6. Read-through self-check + student-facing task + delivery summary → stage 5
+ 6. Self-check + student-facing task + 00-前言.md → stage 5 (preface / how to use it / linked contents) + delivery summary
  ── Interrupt anywhere; the same sentence resumes from the break, finished chapters untouched ──
 ```
 
