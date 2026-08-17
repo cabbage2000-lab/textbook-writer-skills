@@ -2,13 +2,13 @@
 
 [![CI](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.5.0-blue.svg)](CHANGELOG.md)
 ![host](https://img.shields.io/badge/host-Claude%20Code%20%7C%20Codex%20%7C%20WorkBuddy-grey)
 ![subject profiles](https://img.shields.io/badge/subject%20profiles-stem%20%7C%20humanities%20%7C%20economics-grey)
 
 **简体中文** | [English](README.en.md)
 
-Textbook-Writer-Skills 是一套装进编程智能体（Claude Code / Codex / 国内 WorkBuddy）的教材写作 skill 组合。它把成熟的教学设计方法装进 AI 的工作流：先想清楚「学生学完该带走什么」，再倒推章节和习题，一章一章写出有主线、有梯度、题目答案可信的成体系教材——中途断了随时续写。当前 **v0.4.0**：5 个 skill（1 个主调度 + 3 个流水线子 skill + 1 个独立辅助）覆盖从工作目录规划到审核定稿的五阶段全流程，理科与人文社科都能写。
+Textbook-Writer-Skills 是一套装进编程智能体（Claude Code / Codex / 国内 WorkBuddy）的教材写作 skill 组合。它把成熟的教学设计方法装进 AI 的工作流：先想清楚「学生学完该带走什么」，再倒推章节和习题，一章一章写出有主线、有梯度、题目答案可信的成体系教材——中途断了随时续写。当前 **v0.5.0**：5 个 skill（1 个主调度 + 3 个流水线子 skill + 1 个独立辅助）覆盖从工作目录规划到审核定稿的五阶段全流程，理科、人文社科与经济学都能写。
 
 **一套内核，多个学科门类。** 学科差异不散落在流程里，而是收拢成可插拔的**学科档案**——随学科变化的只有四件事：题型集、验证手段、认知动词、章内段义。内置三份：`stem` 面向数学、物理、计算机等答案可复算的学科（已跑通全案回归）；`humanities` 面向历史、哲学、文学、政治学、社会学、艺术史等答案取决于论证的学科，把"真算复核"换成"核对来源"（大纲与单章两条路径已由 eval 7、8 实跑验证）；`economics` 面向经济学与金融学这类**混合**学科——模型题能复算、统计数据只能核来源、政策题两者都不适用而要给论证要点，三类手段在同一本教材里交织（eval 9、10 待跑）。三份档案共用同一套验证纪律，换的只是核的方式。支持一个新门类不需要改内核，只需加一份档案、在索引里登记一行。
 
@@ -316,10 +316,11 @@ python3 -m unittest discover -s tests    # ② 单元测试：校验逻辑本身
 | M6 | 工作目录初始化 skill（textbook-init）：规划并创建单本/多教材工作目录 | [eval 6](evals/evals.json) | ✅ 通过（6/6 断言，2026-08-03，须在本仓库外运行） |
 | M7 | 学科档案层：同一套内核 + 可插拔档案，跑通非 STEM 学科 | [eval 7, 8](evals/evals.json) | ✅ 通过（eval 7 6/6 + eval 8 7/7，2026-08-04）：大纲侧档案路由正确、题型与动词无 STEM 残留、梯度矩阵算术自洽；单章侧无史料时三处引文全部走降级路径、不逐字引用，引文台账落地。另首次覆盖 gate 修改分支 |
 | M8 | 混合可验证学科档案（`economics`）：复算与核对来源两类手段在同一本教材内并存 | [eval 9, 10](evals/evals.json) | ⏳ 待跑（档案与用例定义已入库，前两道防线通过；档案层验证的是内核零改动就能容纳第三种验证形态） |
+| M9 | 使用者侧成书要件：独立习题答案分离到 `98-参考答案.md`、读者向前页 `00-前言.md`、章首学生版学习目标与章末自检 | [eval 3, 4, 5](evals/evals.json) | ⏳ 待跑（前两道防线通过；答案分离的验收压在走完整调度链的 eval 4，前页与三列覆盖矩阵压在整本书的 eval 5） |
 
 逐条判定证据（断言、产物、判定记录）保存在 `evals/workspace/`（已 gitignore，不入库）；判定纪律、各用例耗时与跨宿主复跑口径见 [evals/README.md](evals/README.md)。
 
-M2–M6 的通过记录对应**加断言前**的用例定义：学科档案层给 eval 1、2 各补了一条断言，且改动触及全部 5 个 skill，按 [CONTRIBUTING](CONTRIBUTING.md) 映射表 eval 1–4 需重跑。**eval 2 已跑**（2026-08-04，三轮）：新增的档案声明断言通过，重构引入的一处漂移已修复并验证，但末轮撞上一处公式规范偶发违规（`\text{}` 内写中文），整体待下一轮复验；eval 1、3、4 仍待跑。`economics` 档案（M8）新增的 eval 9、10 同样待跑——该档案是**纯增量**：新增一个文件、在索引登记一行、把另两份档案第 1 节里"经济学怎么分流"那句改成指向它，内核与既有两份档案的题型集、段式、验证纪律一字未动，因此不影响 eval 1–8 的既有结论。
+**当前 evals 欠账（如实记录，未粉饰）**：0.5.0 这一轮动了契约本身（新增 `answer_layout` 与 `承载的学习目标编号[]`、落盘新增 `98-参考答案.md` 与 `00-前言.md`）、动了全部 5 个 skill 与三份档案，断言由 71 条增至 77 条，**10 个用例的断言无一未改**。按 [CONTRIBUTING](CONTRIBUTING.md) 映射表，需重跑的是全量 1–10；上表 M2–M7 的通过记录一律对应**改断言前**的旧定义，不能直接迁移到当前版本读。此前 0.4.0 遗留的 eval 1、3、4 待跑与 eval 2 待复验，也一并归入这笔欠账。发布流程本身不含 evals 强制 gate——带着欠账发版是明确选择而非遗漏（v0.2.0、v0.4.0 同例），代价是第三道防线当前对 0.5.0 的行为无发言权，下一轮工作从补跑开始。
 
 ## 仓库结构
 

@@ -7,8 +7,8 @@
   "plugins": [
     {
       "name": "textbook-writer",
-      "description": "UbD 逆向设计驱动的教材写作 skill 组合：教学定位 → UbD 预期结果 → 章节树 → 四段式逐章写作 → 每题按学科档案验证，产出有主线、有梯度、可评估的成体系教材；内置 STEM 与人文社科两份学科档案",
-      "version": "0.4.0",
+      "description": "UbD 逆向设计驱动的教材写作 skill 组合：教学定位 → UbD 预期结果 → 章节树 → 四段式逐章写作 → 每题按学科档案验证，产出有主线、有梯度、可评估的成体系教材；内置 STEM、人文社科、经济学三份学科档案",
+      "version": "0.5.0",
       "license": "MIT",
       "source": "./",
       "author": {

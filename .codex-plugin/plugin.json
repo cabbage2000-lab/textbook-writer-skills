@@ -1,7 +1,7 @@
 {
   "name": "textbook-writer",
-  "description": "UbD 逆向设计驱动的教材写作 skill 组合：教学定位 → UbD 预期结果 → 章节树 → 四段式逐章写作 → 每题按学科档案验证，产出有主线、有梯度、可评估的成体系教材；内置 STEM 与人文社科两份学科档案",
-  "version": "0.4.0",
+  "description": "UbD 逆向设计驱动的教材写作 skill 组合：教学定位 → UbD 预期结果 → 章节树 → 四段式逐章写作 → 每题按学科档案验证，产出有主线、有梯度、可评估的成体系教材；内置 STEM、人文社科、经济学三份学科档案",
+  "version": "0.5.0",
   "license": "MIT",
   "homepage": "https://github.com/cabbage2000-lab/textbook-writer-skills",
   "repository": "https://github.com/cabbage2000-lab/textbook-writer-skills.git",
@@ -22,8 +22,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Textbook-Writer-Skills 教材写作套件",
-    "shortDescription": "UbD 逆向设计驱动的教材写作流水线（STEM 与人文社科）",
-    "longDescription": "面向 STEM 与人文社科的中文教材写作 skill 组合（学科差异收拢在可插拔的学科档案里：STEM 每题真算复核，人文社科逐字核对引文出处，验证纪律相同）：1 个主 skill 调度 3 个子 skill，走完「教学定位 → UbD 预期结果 → 章节树与 Bloom 梯度 → 四段式逐章写作 → 审核定稿」五个阶段，另有 1 个独立辅助 skill 负责动笔前的工作目录规划。三条纪律贯穿全程：UbD 五件套与章节树必须作者明确确认才放行（双 gate），每题答案必须按所用学科档案定义的手段实际核过、验证不了的明确标注「需作者确认」，每章只读自己的输入契约且进度实时落盘——章数再多也写得完，中断随时可续。支持新学科门类只需加一份档案，内核零改动。",
+    "shortDescription": "UbD 逆向设计驱动的教材写作流水线（STEM、人文社科与经济学）",
+    "longDescription": "面向 STEM、人文社科与经济学的中文教材写作 skill 组合（学科差异收拢在可插拔的学科档案里：STEM 每题真算复核，人文社科逐字核对引文出处，经济学模型题复算、统计数据核来源，验证纪律相同）：1 个主 skill 调度 3 个子 skill，走完「教学定位 → UbD 预期结果 → 章节树与 Bloom 梯度 → 四段式逐章写作 → 审核定稿」五个阶段，另有 1 个独立辅助 skill 负责动笔前的工作目录规划。三条纪律贯穿全程：UbD 五件套与章节树必须作者明确确认才放行（双 gate），每题答案必须按所用学科档案定义的手段实际核过、验证不了的明确标注「需作者确认」，每章只读自己的输入契约且进度实时落盘——章数再多也写得完，中断随时可续。支持新学科门类只需加一份档案，内核零改动。",
     "developerName": "cabbage2000-lab",
     "category": "Productivity",
     "capabilities": [
