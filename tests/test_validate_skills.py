@@ -32,7 +32,7 @@ GOOD_PROFILE = """# 学科档案：demo
 | ------ | ------ | ---------- | ---------------- |
 | 计算 | 求和 | 用独立路径复算并比对 | 手算两遍交叉核对 |
 
-## 3 认知动词与层级示例
+## 3 认知动词、层级示例与章内分布
 
 补充动词：计算、求解。
 
@@ -240,10 +240,10 @@ class ValidateSubjectProfilesTest(TempDirTest):
         self.assertEqual(validate_subject_profiles(self.root), [])
 
     def test_missing_section_rejected(self):
-        broken = GOOD_PROFILE.replace("## 3 认知动词与层级示例", "## 3 动词表")
+        broken = GOOD_PROFILE.replace("## 3 认知动词、层级示例与章内分布", "## 3 动词表")
         make_profile_layer(self.root, {"demo": broken})
         errors = validate_subject_profiles(self.root)
-        self.assertTrue(any("认知动词与层级示例" in e for e in errors))
+        self.assertTrue(any("认知动词、层级示例与章内分布" in e for e in errors))
 
     def test_empty_verification_column_rejected(self):
         """档案不能定义「是否需要验证」——空的验证手段列即红线违规。"""

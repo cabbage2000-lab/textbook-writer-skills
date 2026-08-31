@@ -62,7 +62,7 @@ PROFILE_DIR_REL = Path("textbook/references/profiles")
 PROFILE_REQUIRED_SECTIONS = (
     "## 1 适用范围与判定",
     "## 2 题型集与验证方式",
-    "## 3 认知动词与层级示例",
+    "## 3 认知动词、层级示例与章内分布",
     "## 4 章内段义与载体扩展",
 )
 PROFILE_TABLE_HEADER = ("题型", "示例", "验证手段", "无法验证时的降级")

@@ -32,7 +32,7 @@
 | ---------------- | ------ | ---------- |
 | `## 1 适用范围与判定` | 哪些学科走这份档案，以及与相邻档案的分界线 | 阶段 1（选定档案） |
 | `## 2 题型集与验证方式` | 本学科的题型全集，每型的验证手段与降级路径 | textbook-exercises |
-| `## 3 认知动词与层级示例` | Bloom 六层的本学科特有动词 + 一组同知识点六层示例 | textbook-outline |
+| `## 3 认知动词、层级示例与章内分布` | Bloom 六层的本学科特有动词 + 一组同知识点六层示例 + 三类题的章内层级分布建议 | textbook-outline |
 | `## 4 章内段义与载体扩展` | 四段标题文案、后三段的教学动作、必配图示类型、术语表结构扩展、文体附加条款 | textbook-chapter |
 
 第 2 节的表格表头固定为：
@@ -49,7 +49,7 @@
 
 档案是内核的**增量补丁**，不是内核的学科特化副本。三条具体约束：
 
-- **第 3 节不复制通用动词**。[../../textbook-outline/references/bloom-levels.md](../../textbook-outline/references/bloom-levels.md) 第 2 节的通用动词基线（列举、解释、比较、论证……）对所有学科有效，档案只补本学科特有的动作动词，并给一组同知识点的六层示例。
+- **第 3 节不复制通用动词，也不重述梯度检查规则**。[../../textbook-outline/references/bloom-levels.md](../../textbook-outline/references/bloom-levels.md) 第 2 节的通用动词基线（列举、解释、比较、论证……）对所有学科有效，档案只补本学科特有的动作动词、一组同知识点的六层示例，以及本学科的**章内层级分布建议**。分布建议属于档案而非内核，是因为同一套「教 → 扶 → 放」脚手架在不同学科落到的认知高度不同（bloom-levels.md 第 7 节说明了理由）；而全书梯度的三条检查规则、先低后高的排列纪律仍属内核，档案不得改写。
 - **第 4 节不复制通用文体规范**。[../../textbook-chapter/references/writing-style.md](../../textbook-chapter/references/writing-style.md) 的单线结构、认知负荷控制、措辞禁忌、中文排版对所有学科有效，档案只写本学科附加的排版体例（如公式规范、引文体例）。
 - **第 2 节的题型表是全量**（题型集本身就是学科专属），但三类题定位、验证流程纪律、编号与输出格式在 [../../textbook-exercises/references/exercise-design.md](../../textbook-exercises/references/exercise-design.md)，档案不重述。
 
