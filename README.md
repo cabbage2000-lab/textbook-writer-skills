@@ -2,13 +2,13 @@
 
 [![CI](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.5.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)](CHANGELOG.md)
 ![host](https://img.shields.io/badge/host-Claude%20Code%20%7C%20Codex%20%7C%20WorkBuddy-grey)
 ![subject profiles](https://img.shields.io/badge/subject%20profiles-stem%20%7C%20humanities%20%7C%20economics-grey)
 
 **简体中文** | [English](README.en.md)
 
-Textbook-Writer-Skills 是一套装进编程智能体（Claude Code / Codex / 国内 WorkBuddy）的教材写作 skill 组合。它把成熟的教学设计方法装进 AI 的工作流：先想清楚「学生学完该带走什么」，再倒推章节和习题，一章一章写出有主线、有梯度、题目答案可信的成体系教材——中途断了随时续写。当前 **v0.5.0**：5 个 skill（1 个主调度 + 3 个流水线子 skill + 1 个独立辅助）覆盖从工作目录规划到审核定稿的五阶段全流程，理科、人文社科与经济学都能写。
+Textbook-Writer-Skills 是一套装进编程智能体（Claude Code / Codex / 国内 WorkBuddy）的教材写作 skill 组合。它把成熟的教学设计方法装进 AI 的工作流：先想清楚「学生学完该带走什么」，再倒推章节和习题，一章一章写出有主线、有梯度、题目答案可信的成体系教材——中途断了随时续写。当前 **v0.6.0**：5 个 skill（1 个主调度 + 3 个流水线子 skill + 1 个独立辅助）覆盖从工作目录规划到审核定稿的五阶段全流程，理科、人文社科与经济学都能写。
 
 **一套内核，多个学科门类。** 学科差异不散落在流程里，而是收拢成可插拔的**学科档案**——随学科变化的只有四件事：题型集、验证手段、认知动词、章内段义。内置三份：`stem` 面向数学、物理、计算机等答案可复算的学科（已跑通全案回归）；`humanities` 面向历史、哲学、文学、政治学、社会学、艺术史等答案取决于论证的学科，把"真算复核"换成"核对来源"（大纲与单章两条路径已由 eval 7、8 实跑验证）；`economics` 面向经济学与金融学这类**混合**学科——模型题能复算、统计数据只能核来源、政策题两者都不适用而要给论证要点，三类手段在同一本教材里交织（eval 9、10 待跑）。三份档案共用同一套验证纪律，换的只是核的方式。支持一个新门类不需要改内核，只需加一份档案、在索引里登记一行。
 
@@ -320,7 +320,7 @@ python3 -m unittest discover -s tests    # ② 单元测试：校验逻辑本身
 
 逐条判定证据（断言、产物、判定记录）保存在 `evals/workspace/`（已 gitignore，不入库）；判定纪律、各用例耗时与跨宿主复跑口径见 [evals/README.md](evals/README.md)。
 
-**当前 evals 欠账（如实记录，未粉饰）**：0.5.0 这一轮动了契约本身（新增 `answer_layout` 与 `承载的学习目标编号[]`、落盘新增 `98-参考答案.md` 与 `00-前言.md`）、动了全部 5 个 skill 与三份档案，断言由 71 条增至 77 条，**10 个用例的断言无一未改**。按 [CONTRIBUTING](CONTRIBUTING.md) 映射表，需重跑的是全量 1–10；上表 M2–M7 的通过记录一律对应**改断言前**的旧定义，不能直接迁移到当前版本读。此前 0.4.0 遗留的 eval 1、3、4 待跑与 eval 2 待复验，也一并归入这笔欠账。发布流程本身不含 evals 强制 gate——带着欠账发版是明确选择而非遗漏（v0.2.0、v0.4.0 同例），代价是第三道防线当前对 0.5.0 的行为无发言权，下一轮工作从补跑开始。
+**当前 evals 欠账（如实记录，未粉饰）**：0.6.0 这一轮清的是 0.4.0 遗留的规范缺口（章内 Bloom 分布下移各学科档案、阶段 1 新增条件性材料轮、题内局部 ⚠️ 边界、两份台账落位），**未动契约字段与落盘布局**——`.progress.json` 格式不变，存量项目照常续写。断言由 77 条增至 90 条，新增 13 条全部针对本轮新规范，含一条**反向**断言锁住「`stem` 不得触发材料轮」。**2026-08-31 首次真跑：eval 1、7、8、9、10 共 48 条断言，46 通过、2 未触发、0 不通过**（未触发的两条是单章用例的「题内局部 ⚠️」，逐题确认题干内确无局部标注）。跑法是 `claude -p` 起独立进程、全新上下文、只喂 prompt 原文，「新开会话」这条满足；**但判定人是本轮改动的作者本人，非独立第三方——所以这是预检不是正式验收，上表里程碑一格一律未回填**，正式验收需独立判定人复跑。**仍然欠着**：eval 2、3、4（本轮无新增断言落其上的回归位）与 eval 5、6（历史欠账）；0.5.0 那一轮动过契约、断言 71→77 全改过却一条没跑，其中 M9 压在 eval 3、4、5 上的验收至今未做。发布流程本身不含 evals 强制 gate——带着欠账发版是明确选择而非遗漏（v0.2.0、v0.4.0、v0.5.0 同例）。
 
 ## 仓库结构
 
