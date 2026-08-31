@@ -13,3 +13,6 @@ docs/*
 
 # MCP 工具运行缓存
 .playwright-mcp/
+
+# eval 跑测经 .claude/skills 软链写入的抓取缓存（skills/ 下只应有 .md）
+skills/*.txt
