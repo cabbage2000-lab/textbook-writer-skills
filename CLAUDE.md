@@ -62,7 +62,7 @@ textbook-init（独立辅助）  不入调度链：动笔前规划并创建工�
 
 - **一次只发一个 skill 文件夹**，本仓库要发 5 次，且 SkillHub 侧没有"整体安装"的概念。而本仓库有 45 条跨 skill 的 `../<skill-name>/references/` 引用、5 个 skill 构成全网状依赖，**用户只装其中一两个就会读到不存在的路径**。CLI 安装落盘为 `<install_root>/<slug>/`（同级目录），所以 `slug` 必须与目录名逐字相同、5 份 summary 都写明"需与其余 skill 同级安装"——这两条是断链的唯一防线，改 slug 等于批量制造坏安装；
 - **平台搜索只认 `slug` 与 `displayName` 两个字段**，`summary` / `description` / `tags` 一概不参与召回（实测：只写在 summary 里的"四段式""UbD"搜不到，别人 tags 里的 `k12` 也搜不到）；中文不分词、按整串子串匹配（`教材 写作` 带空格 0 命中），前缀匹配得分远高于中间子串。`slug` 又不可改（见上条），所以**检索能不能被搜到，全押在 `displayName` 上**——本仓库 5 个一律以「教材写作」开头、四个字连续不被分隔符打断（用 `·`，写成「教材·写作大纲」即前功尽弃）。新增 skill 沿用这条，校验脚本守不住它。排序 score 主要吃下载量，召回不足时平台拿热门 skill 填列表，这两点改不了，别在文案上使劲；
-- 发布前用 `skillhub publish skills/<name> --dry-run` 本地预检（不发 HTTP 请求，无需登录）。发布本身要求账号已实名认证 + API Token，且**限频约每分钟 3 次**（连发 3 个后剩下的报 429，隔 80 秒重试即成功）。平台列表页展示的 description 取自 frontmatter 的 `summary` 而非 `description`——断链警告写在 `summary` 里才对用户可见。
+- 发布前用 `skillhub publish skills/<name> --dry-run` 本地预检（不发 HTTP 请求，无需登录）。发布本身要求账号已实名认证 + API Token，且**限频约每分钟 3 次**（连发 3 个后剩下的报 429，隔 80 秒重试即成功）。**平台列表卡片与 skill 详情页展示的都是 frontmatter 的 `description`**（2026-09-02 实测，网页端逐项核对；`summary` 只出现在搜索 API 的拼接串里，卡片上看不到）——所以断链警告与人类可读的中文文案都得写进 `description`，它同时承担宿主触发与平台展示两个职责。
 
 2026-09-02 已上架 v0.6.0 全部 5 个（`@user_6733bad6` 命名空间），端到端实测通过：18 条唯一跨 skill 引用全部解析、装回来的内容与仓库逐字一致。安装侧有一个没写在官方文档里的坑：`skillhub install` **加 `--namespace` 会多套一层 `@<handle>/` 目录**，宿主只扫 `skills/*/SKILL.md` 这一层，多一层就一个都发现不到且无报错。详见 [ADR 0011](docs/adr/0011-skillhub-distribution-and-frontmatter-metadata.md)。
 

@@ -2,13 +2,13 @@
 
 [![CI](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.1-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.6.2-blue.svg)](CHANGELOG.md)
 ![host](https://img.shields.io/badge/host-Claude%20Code%20%7C%20Codex%20%7C%20WorkBuddy-grey)
 ![subject profiles](https://img.shields.io/badge/subject%20profiles-stem%20%7C%20humanities%20%7C%20economics-grey)
 
 **简体中文** | [English](README.en.md)
 
-Textbook-Writer-Skills 是一套装进编程智能体（Claude Code / Codex / 国内 WorkBuddy）的教材写作 skill 组合。它把成熟的教学设计方法装进 AI 的工作流：先想清楚「学生学完该带走什么」，再倒推章节和习题，一章一章写出有主线、有梯度、题目答案可信的成体系教材——中途断了随时续写。当前 **v0.6.1**：5 个 skill（1 个主调度 + 3 个流水线子 skill + 1 个独立辅助）覆盖从工作目录规划到审核定稿的五阶段全流程，理科、人文社科与经济学都能写。
+Textbook-Writer-Skills 是一套装进编程智能体（Claude Code / Codex / 国内 WorkBuddy）的教材写作 skill 组合。它把成熟的教学设计方法装进 AI 的工作流：先想清楚「学生学完该带走什么」，再倒推章节和习题，一章一章写出有主线、有梯度、题目答案可信的成体系教材——中途断了随时续写。当前 **v0.6.2**：5 个 skill（1 个主调度 + 3 个流水线子 skill + 1 个独立辅助）覆盖从工作目录规划到审核定稿的五阶段全流程，理科、人文社科与经济学都能写。
 
 **一套内核，多个学科门类。** 学科差异不散落在流程里，而是收拢成可插拔的**学科档案**——随学科变化的只有四件事：题型集、验证手段、认知动词、章内段义。内置三份：`stem` 面向数学、物理、计算机等答案可复算的学科（已跑通全案回归）；`humanities` 面向历史、哲学、文学、政治学、社会学、艺术史等答案取决于论证的学科，把"真算复核"换成"核对来源"（大纲与单章两条路径已由 eval 7、8 实跑验证）；`economics` 面向经济学与金融学这类**混合**学科——模型题能复算、统计数据只能核来源、政策题两者都不适用而要给论证要点，三类手段在同一本教材里交织（eval 9、10 待跑）。三份档案共用同一套验证纪律，换的只是核的方式。支持一个新门类不需要改内核，只需加一份档案、在索引里登记一行。
 
@@ -238,7 +238,7 @@ Codex 换 `~/.codex/skills`，WorkBuddy 换 `~/.workbuddy/skills`；只在单个
 >
 > **和上面两条路选一条就行**，别对同一个宿主混用——装的是同一套 skill，混用会装出两份。
 
-上架的是与本仓库 `skills/` 逐字一致的同一份内容（平台会额外塞一个记录版本号的 `_meta.json`）。当前上架版本 **v0.6.1**。
+上架的是与本仓库 `skills/` 逐字一致的同一份内容（平台会额外塞一个记录版本号的 `_meta.json`）。当前上架版本 **v0.6.2**。
 
 想在本仓库内开发或改着试跑，clone 后执行一次，把 `skills/` 软链为项目级 skills 目录（`.claude/` 已 gitignore，不入库）：
 

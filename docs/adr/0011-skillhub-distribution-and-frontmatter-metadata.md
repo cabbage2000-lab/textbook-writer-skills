@@ -21,7 +21,7 @@
 - frontmatter 白名单从"Claude Code 会读的字段"扩为**四宿主并集**:原 7 个之外加 `slug`、`displayName`、`summary`。这三个字段对其余三宿主无副作用(被静默忽略),白名单的原意是"防手误写入无效字段",而它们不是手误,是第四个渠道的必填项;
 - 5 个 `skills/*/SKILL.md` 写入 `slug` / `displayName` / `version` / `summary`。其中 **`slug` 必须与目录名逐字相同**:CLI 安装落盘为 `<install_root>/<slug>/`(同级目录),只有 slug 与目录名一致,`../<skill-name>/references/` 才解析得到。5 个 slug 上架时经查询全部未被占用,不需要为唯一性加 handle 后缀;
 - `version` 由新增的 `validate_skill_versions` 钉在 `.claude-plugin/plugin.json` 的 version 上,漏升任何一处即校验失败。SkillHub 从 SKILL.md 读版本号、其余三宿主从清单读,不锁住就会出现"清单升了、平台上还是旧版且无人报错";
-- 5 份 `summary` 一律写明"需与其余 skill 同级安装"。平台既然不能保证整体安装,这句文案就是断链的唯一提示;
+- 5 份 `summary` 一律写明"需与其余 skill 同级安装"。平台既然不能保证整体安装,这句文案就是断链的唯一提示;**2026-09-02 后续实测推翻了这条的落点**——平台卡片与详情页展示的都是 `description` 而非 `summary`,写在 summary 里的警告用户看不到,故该句已同时写进 5 份 `description`(见"后果"末尾);
 - 发布前一律先跑 `skillhub publish skills/<name> --dry-run`(不发 HTTP 请求、不需登录),校验 metadata 与打包。
 
 2026-09-02 首次上架后做了端到端实测(CLI 2026.8.5),上面关于安装布局的判断由源码推断升级为实证:5 个 skill 装进同一个 `--dir` 后,18 条唯一跨 skill 引用**全部解析成功**;装回来的内容与仓库 `skills/` **逐字一致**(平台只多塞一个记录 slug/version/ownerId 的 `_meta.json`),"发布物与仓库一致"这条理由成立。同时测出两个文档没写的坑:
