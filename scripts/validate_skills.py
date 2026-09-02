@@ -49,10 +49,13 @@ MIN_DESCRIPTION_LEN = 50
 MAX_DESCRIPTION_LEN = 1024
 MAX_SKILL_MD_LINES = 500
 MIN_REFERENCE_BYTES = 500
-# Claude Code 实际会读取的 frontmatter 字段；其余字段会被静默忽略，写了等于埋雷
+# 四个宿主会读取的 frontmatter 字段之并集；并集外的字段处处被静默忽略，写了等于埋雷。
+# 前 7 个是 Claude Code / Codex / WorkBuddy 读的；后 3 个是 SkillHub 发布必填/建议项
+# （slug 与 displayName 缺失会被 `skillhub publish` 直接拒绝），对其余宿主无副作用。
 ALLOWED_FRONTMATTER_KEYS = {
     "name", "description", "version", "license", "allowed-tools",
     "compatibility", "metadata",
+    "slug", "displayName", "summary",
 }
 REF_LINK_RE = re.compile(r"[(`]((?:\.\./)*(?:[\w-]+/)*references/[\w./-]+?\.md)[)`]")
 # 学科档案层：内核 skill 持有规格，各档案放 profiles/ 下（详见 subject-profile-spec.md）
@@ -315,6 +318,36 @@ def validate_manifests(repo_root: Path) -> list[str]:
             )
     errors += validate_codex_manifests(repo_root, plugin)
     errors += validate_codebuddy_manifests(repo_root, plugin)
+    errors += validate_skill_versions(repo_root, plugin)
+    return errors
+
+
+def validate_skill_versions(repo_root: Path, plugin: dict) -> list[str]:
+    """SkillHub 把版本号读在每个 SKILL.md 里，等于版本真相多了 5 个副本。
+
+    SkillHub 的 `skillhub publish` 以 SKILL.md frontmatter 的 version 为准（缺失
+    直接拒绝发布），而其余三个宿主读清单里的 version。同一次发版若只升了清单、
+    漏升某个 SKILL.md，SkillHub 上那个 skill 就会停在旧版本号且无人报错——
+    本函数把这 5 处钉在 plugin.json 的 version 上，让漏升变成校验失败。
+    """
+    errors: list[str] = []
+    expected = plugin.get("version")
+    skills_root = repo_root / "skills"
+    if not skills_root.is_dir():
+        return errors
+    for skill_dir in sorted(d for d in skills_root.iterdir() if d.is_dir()):
+        skill_md = skill_dir / "SKILL.md"
+        if not skill_md.is_file():
+            continue
+        fm = parse_frontmatter(skill_md.read_text(encoding="utf-8"))
+        if fm is None:
+            continue
+        actual = fm.get("version")
+        if actual != expected:
+            errors.append(
+                f"{skill_dir.name}/SKILL.md: version='{actual}' 与 plugin.json 的 "
+                f"'{expected}' 不一致（发版时六份清单与 5 个 SKILL.md 需一起升版）"
+            )
     return errors
 
 

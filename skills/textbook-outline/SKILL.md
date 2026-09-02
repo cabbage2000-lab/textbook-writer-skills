@@ -1,6 +1,10 @@
 ---
 name: textbook-outline
 description: Use when a textbook project needs its teaching design — 教学定位、UbD 预期结果五件套（大概念/持久理解/核心问题/迁移目标/学习目标）、章节树与例题 Bloom 梯度规划 — e.g. "设计教材大纲"、"教材规划"、"课程体系设计". Usually orchestrated by textbook; can run standalone to produce 00-教材设计.md. Not for writing chapter prose or generating exercises.
+slug: textbook-outline
+displayName: 教材大纲设计
+version: 0.6.0
+summary: 教材的教学设计阶段——教学定位、UbD 预期结果五件套、章节树与例题 Bloom 梯度，产出 00-教材设计.md。textbook 流水线的阶段 1–3，需与 textbook 系列其余 skill 同级安装。
 ---
 
 # textbook-outline

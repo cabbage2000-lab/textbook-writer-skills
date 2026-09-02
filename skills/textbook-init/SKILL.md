@@ -1,6 +1,10 @@
 ---
 name: textbook-init
 description: Use when starting a textbook project and the author wants to plan and scaffold the working directory before writing — 规划单本教材项目目录或多教材工作区，可选 git 版本管理与 README 工作说明 — e.g. "初始化教材项目"、"创建教材工作目录"、"规划教材工作区"、"建一个写教材的目录". Only creates the directory scaffold and hands off to textbook; never creates pipeline files (.progress.json、00-教材设计.md、术语表.md). Not for writing textbook content (use textbook — 不经 init 它也会自建默认目录), not for resuming an existing project (directly use textbook).
+slug: textbook-init
+displayName: 教材项目初始化
+version: 0.6.0
+summary: 动笔前规划并创建教材工作目录（可选 git 与 README 工作说明），只搭目录骨架、不碰流水线文件，产出交接给 textbook。需与 textbook 同级安装。
 ---
 
 # textbook-init

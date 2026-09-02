@@ -67,7 +67,7 @@ python3 -m unittest discover -s tests                 # 单元测试
 
 ## 写 skill 的规范
 
-- **frontmatter**：`name` 与目录名一致；`description` 承担全部触发职责——写清"何时用 + 干什么 + 何时不用"，带中文触发词示例，50–1024 字符；
+- **frontmatter**：`name` 与目录名一致；`description` 承担全部触发职责——写清"何时用 + 干什么 + 何时不用"，带中文触发词示例，50–1024 字符；另有 SkillHub 上架要的 `slug`（**必须逐字等于目录名**，它同时是用户机器上的安装目录名）、`displayName`、`version`（与 `.claude-plugin/plugin.json` 一致）、`summary`（写明"需与其余 skill 同级安装"），取舍见 [ADR 0011](docs/adr/0011-skillhub-distribution-and-frontmatter-metadata.md)；白名单外的字段一概不写；
 - **渐进披露**：SKILL.md 只放工作流骨架（目标 ≤ 500 行），操作细节、模板、查表下沉到 `references/`，并在正文明确指路"何时读哪个文件"；
 - **跨 skill 引用**：一律相对路径（`../<skill-name>/references/xxx.md`），校验脚本会检查存在性；5 个 skill 是整体组合，不得引入仓库外依赖；
 - **跨宿主中立**：核心路径只依赖通用 agent skills 标准（SKILL.md frontmatter + `references/` 分层加载 + 相对路径互引）。宿主专有能力只能作可选增强，且必须写明纯文本降级路径——现存两处是 Skill 工具调子 skill（降级为直接读对方 SKILL.md）与 AskUserQuestion 一轮提问（降级为编号提问）。三个宿主的装法与六份分发清单见 [README](README.md) 与 CLAUDE.md 的「分发与跨宿主」一节；
@@ -80,7 +80,8 @@ python3 -m unittest discover -s tests                 # 单元测试
 2. 在 [evals/evals.json](evals/evals.json) 为它追加至少 1 个带 assertions 的用例，并更新上面的映射表；
 3. 更新 README 架构图与目录结构小节；
 4. 若纳入 textbook 调度链，须在 handoff-contract.md 定义其输入/输出契约；
-5. 校验 + 测试 + 新用例跑通，CHANGELOG 记录。
+5. 校验 + 测试 + 新用例跑通，CHANGELOG 记录；
+6. 要一并上架 SkillHub 的，用 `skillhub publish skills/<new-skill> --dry-run` 预检后单独发一次（平台一次只收一个 skill 文件夹），并确认它引用的其他 skill 都已上架——否则用户装了它却读不到 `../<skill-name>/references/`。
 
 ## 新增学科档案清单
 
@@ -97,7 +98,7 @@ python3 -m unittest discover -s tests                 # 单元测试
 
 版本号语义：**MAJOR** = 契约或落盘格式不兼容变更（老项目的 `.progress.json` 不能续用）；**MINOR** = 新增 skill/新能力；**PATCH** = 指令修正与文档修补。
 
-1. 同步升版三宿主六份清单里带 `version` 的**五处**：`.claude-plugin/{plugin,marketplace}.json`、`.codex-plugin/plugin.json`、`.codebuddy-plugin/{plugin,marketplace}.json`（`.agents/plugins/marketplace.json` 按 Codex 规范不带 version，无需改；任一处不一致 CI 会拒绝）。README 的 version badge 也是同一份事实——v0.2.0 发版时它漏改过一次，别再漏；
+1. 同步升版带 `version` 的**十处**：三宿主六份清单里的五处——`.claude-plugin/{plugin,marketplace}.json`、`.codex-plugin/plugin.json`、`.codebuddy-plugin/{plugin,marketplace}.json`（`.agents/plugins/marketplace.json` 按 Codex 规范不带 version，无需改）——加上 5 个 `skills/*/SKILL.md` 的 frontmatter（SkillHub 从这里读版本号，见 [ADR 0011](docs/adr/0011-skillhub-distribution-and-frontmatter-metadata.md)）。任一处不一致 CI 会拒绝。README 的 version badge 也是同一份事实，但**没有脚本守着**——v0.2.0 发版时它漏改过一次，别再漏；
 2. CHANGELOG 的 Unreleased 段落固化为版本号 + 日期；
 3. 打 tag：`git tag v<version> && git push --tags`。
 4. push tag 后 GitHub Actions（[.github/workflows/release.yml](.github/workflows/release.yml)）会自动创建对应的 GitHub Release，说明文字取自 CHANGELOG 对应版本段；若需要给历史 tag 补建或更新 Release，手动触发 `gh workflow run release.yml -f tag=v<version>`。

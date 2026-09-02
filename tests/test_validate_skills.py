@@ -11,6 +11,7 @@ from validate_skills import (  # noqa: E402
     validate,
     validate_manifests,
     validate_repo_health,
+    validate_skill_versions,
     validate_subject_profiles,
 )
 
@@ -479,6 +480,36 @@ class ValidateRepoHealthTest(TempDirTest):
             "{}", encoding="utf-8")
         errors = validate_repo_health(self.root)
         self.assertTrue(any("只放清单文件" in e for e in errors))
+
+
+class ValidateSkillVersionsTest(TempDirTest):
+    """SkillHub 把 version 读在每个 SKILL.md 里，漏升一处就会静默停在旧版本。"""
+
+    PLUGIN = {"name": "demo", "version": "0.6.0", "description": "演示 plugin"}
+
+    def _make_skills(self, versions: dict[str, str | None]) -> None:
+        skills_root = self.root / "skills"
+        for name, version in versions.items():
+            extra = "" if version is None else f"version: {version}\n"
+            make_skill(skills_root, name, extra_frontmatter=extra)
+
+    def test_matching_versions_pass(self):
+        self._make_skills({"alpha": "0.6.0", "beta": "0.6.0"})
+        self.assertEqual(validate_skill_versions(self.root, self.PLUGIN), [])
+
+    def test_drifted_skill_version_detected(self):
+        self._make_skills({"alpha": "0.6.0", "beta": "0.5.0"})
+        errors = validate_skill_versions(self.root, self.PLUGIN)
+        self.assertTrue(any("beta/SKILL.md" in e and "0.5.0" in e for e in errors))
+        self.assertFalse(any("alpha" in e for e in errors))
+
+    def test_missing_skill_version_detected(self):
+        self._make_skills({"alpha": None})
+        errors = validate_skill_versions(self.root, self.PLUGIN)
+        self.assertTrue(any("alpha/SKILL.md" in e for e in errors))
+
+    def test_absent_skills_dir_is_not_an_error(self):
+        self.assertEqual(validate_skill_versions(self.root, self.PLUGIN), [])
 
 
 if __name__ == "__main__":

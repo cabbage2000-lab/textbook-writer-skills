@@ -58,7 +58,12 @@ textbook-init（独立辅助）  不入调度链：动笔前规划并创建工�
 | Codex | `.codex-plugin/plugin.json` + `.agents/plugins/marketplace.json` | `codex plugin marketplace add cabbage2000-lab/textbook-writer-skills` | `~/.codex/skills/` / `.codex/skills/`、`.agents/skills/` |
 | WorkBuddy | `.codebuddy-plugin/plugin.json` + `marketplace.json` | `/plugin marketplace add cabbage2000-lab/textbook-writer-skills` | `~/.workbuddy/skills/` / `.codebuddy/skills/`（注意项目级不是 `.workbuddy/`） |
 
-三套清单**不能合并**：Codex 的 plugin.json 多要 `skills: "./skills/"` 指针与一整块 `interface`（displayName / shortDescription / longDescription / developerName / category / capabilities / defaultPrompt 全必填），marketplace 条目的 `source` 是对象且必带 `policy`；CodeBuddy 与 Claude 版结构同构（skills 靠 plugin 根下的 `skills/` 自动发现），但清单目录、`owner.name` 必填这两点不同。六份清单的公共字段由 `validate_skills.py` 的 `validate_manifests` 守住不漂——发版时带 `version` 的**五处一起升版**（`.agents/plugins/marketplace.json` 按 Codex 规范不带 version）。
+第四个分发渠道 **SkillHub**（[skillhub.cn](https://skillhub.cn)）不走清单，走 CLI 逐个上传，元数据读的是 SKILL.md frontmatter 里的 `slug` / `displayName` / `version`（缺一个就拒绝发布）。它与上面三个宿主的差别有两处要记住：
+
+- **一次只发一个 skill 文件夹**，本仓库要发 5 次，且 SkillHub 侧没有"整体安装"的概念。而本仓库有 45 条跨 skill 的 `../<skill-name>/references/` 引用、5 个 skill 构成全网状依赖，**用户只装其中一两个就会读到不存在的路径**。CLI 安装落盘为 `<install_root>/<slug>/`（同级目录），所以 `slug` 必须与目录名逐字相同、5 份 summary 都写明"需与其余 skill 同级安装"——这两条是断链的唯一防线，改 slug 等于批量制造坏安装；
+- 发布前用 `skillhub publish skills/<name> --dry-run` 本地预检（不发 HTTP 请求，无需登录）。发布本身要求账号已实名认证 + API Token，跑法见 [ADR 0011](docs/adr/0011-skillhub-distribution-and-frontmatter-metadata.md)。
+
+三套清单**不能合并**：Codex 的 plugin.json 多要 `skills: "./skills/"` 指针与一整块 `interface`（displayName / shortDescription / longDescription / developerName / category / capabilities / defaultPrompt 全必填），marketplace 条目的 `source` 是对象且必带 `policy`；CodeBuddy 与 Claude 版结构同构（skills 靠 plugin 根下的 `skills/` 自动发现），但清单目录、`owner.name` 必填这两点不同。六份清单的公共字段由 `validate_skills.py` 的 `validate_manifests` 守住不漂——发版时带 `version` 的**十处一起升版**：六份清单里的五处（`.agents/plugins/marketplace.json` 按 Codex 规范不带 version）+ 5 个 SKILL.md 的 frontmatter（SkillHub 从这里读版本号）。后 5 处由 `validate_skill_versions` 钉在 `.claude-plugin/plugin.json` 上，漏升即校验失败。
 
 实测记录：Codex 侧 2026-08-03 在 codex-cli 0.146.0 上跑通（隔离 `CODEX_HOME` 做本地路径市场 → `codex plugin add` → 5 个 SKILL.md 与 8 个 references 全部装载，官方预检脚本 `~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py` 通过）；WorkBuddy 侧清单格式**已由作者在其他项目实测可用**，本仓库按同一格式编写（本仓库的清单未单独复测，差异仅在 name/description 等元信息）。
 
@@ -84,11 +89,11 @@ textbook-init（独立辅助）  不入调度链：动笔前规划并创建工�
 ## 校验脚本强制的硬约束（改 skill 前先知道）
 
 - SKILL.md ≤ 500 行——超限把细节下沉到 `references/`（渐进披露：SKILL.md 只放工作流骨架，并明确指路"何时读哪个文件"）；
-- frontmatter：`name` 与目录名一致；`description` 50–1024 字符，承担全部触发职责（写清"何时用 + 干什么 + 何时不用"，带中文触发词示例）；仅允许白名单字段（name/description/version/license/allowed-tools/compatibility/metadata），其余会被静默忽略；
+- frontmatter：`name` 与目录名一致；`description` 50–1024 字符，承担全部触发职责（写清"何时用 + 干什么 + 何时不用"，带中文触发词示例）；仅允许白名单字段——前 7 个是三宿主读的（name/description/version/license/allowed-tools/compatibility/metadata），后 3 个是 SkillHub 发布要的（slug/displayName/summary），白名单外的字段处处被静默忽略；`version` 必须与 `.claude-plugin/plugin.json` 一致（`validate_skill_versions` 守着，见下条）；
 - `skills/` 下所有 .md 禁止占位符词（TBD、TODO、FIXME、XXX、待补充、占位）；
 - `references/` 及其子目录下每个 .md ≥ 500 字节；**所有** .md 引用的 references 路径（含多级 `../` 跨 skill）必须真实存在；
 - 学科档案：每份 `profiles/<id>.md` 含规格第 3 节的四个固定小节；第 2 节题型表表头固定为 `| 题型 | 示例 | 验证手段 | 无法验证时的降级 |` 且**「验证手段」列不得为空或写"无"**（红线的结构性保障）；规格第 5 节索引表与实际档案文件一一对应；
-- 三宿主六份清单的 name/version/description/license 必须一致，Codex 侧另查 `skills` 指针、`interface` 必填字段、marketplace 条目的 source/policy 形状，CodeBuddy 侧另查 `owner.name` 与条目 `source: "./"`——发版时六处同步升版；
+- 三宿主六份清单的 name/version/description/license 必须一致，Codex 侧另查 `skills` 指针、`interface` 必填字段、marketplace 条目的 source/policy 形状，CodeBuddy 侧另查 `owner.name` 与条目 `source: "./"`；另有 `validate_skill_versions` 把 5 个 SKILL.md 的 `version` 钉在 `.claude-plugin/plugin.json` 上——发版时这十处一起升版；
 - `.gitignore` 不得忽略 `.claude-plugin`、`.codex-plugin`、`.codebuddy-plugin`、`.agents`（分发清单必须入库）；三个 `.*-plugin/` 里只放清单文件，`skills/` 必须在仓库根（放错位置装上后一个 skill 都加载不到）。
 
 写给模型的指令尽量讲清动机（"上下文膨胀会让长教材写不完"），而不是堆砌大写的 MUST。

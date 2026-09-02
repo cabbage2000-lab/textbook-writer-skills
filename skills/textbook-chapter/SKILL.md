@@ -1,6 +1,10 @@
 ---
 name: textbook-chapter
 description: Use when writing one textbook chapter following the fixed 四段式 structure (概念讲解 → 示范例题 → 引导练习 → 独立习题) from an outline slice plus UbD anchor — e.g. "写第三章"、"按大纲写这一章". Usually orchestrated by textbook; can run standalone for a deep-dive technical article with worked examples. Not for designing outlines or whole-book orchestration.
+slug: textbook-chapter
+displayName: 教材单章写作
+version: 0.6.0
+summary: 按四段式写一章正文——概念讲解、示范例题、引导练习、独立习题；只接收输入契约、不读其他章正文，长教材不爆上下文。需与 textbook 系列其余 skill 同级安装。
 ---
 
 # textbook-chapter
