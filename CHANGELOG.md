@@ -18,9 +18,15 @@
 - **5 个 skill 全部过审后补上 README 的 SkillHub 安装入口**，并把首次上架的端到端实测结论写进 ADR 0011 与 CLAUDE.md。实测（CLI 2026.8.5）确认了两件此前只从源码推断的事：5 个装进同一个 `--dir` 后 **18 条唯一跨 skill 引用全部解析成功**；装回来的内容与仓库 `skills/` **逐字一致**（平台只多塞一个记录 slug/version/ownerId 的 `_meta.json`），ADR 0011 拒绝"临时注入"那条路的理由由此成立。只装 2 个时 `../textbook-chapter/references/chapter-template.md` 当场解析失败——断链是实测可复现的默认结果，不是理论风险
 - 记下两个官方文档没写的坑：`skillhub install` **加 `--namespace` 会多套一层 `@<handle>/` 目录**，而宿主只扫 `skills/*/SKILL.md` 这一层，多一层就一个都发现不到且无任何报错（与 README 早先记下的 WorkBuddy「别把 `skills/` 整体套进去」同类）；重复安装报 `Target exists`，更新需 `--force` 或 `skillhub upgrade`
 
+- **4 个子 skill 的 `displayName` 统一改为「教材写作·」前缀**（`教材大纲设计` → `教材写作·大纲设计`，单章正文 / 习题生成 / 项目初始化同理；主 skill 保持 `教材写作流水线`）。上架后发现搜「教材写作」只搜得到主 skill 一个，其余 4 个连 top-100 都不进——直接探测 `api.skillhub.cn/api/v1/search` 测出了机制：**只有 `slug` 与 `displayName` 参与召回**（`summary`/`description`/`tags` 全部不参与，实测搜只写在 summary 里的「四段式」「UbD」「独立习题」「目录骨架」一律 0 命中，搜别人 tags 里的 `k12` 同样 0 命中），中文**不分词、按整串子串匹配**（`教材 写作` 带空格 0 命中，`教材写作技能` 也 0 命中），**前缀匹配得分远高于中间子串**（`写作流水线` 命中 textbook 但 score 0.038 排 #56，`教材写作` 前缀命中得 0.0486 排 #3）。所以能动的杠杆只有 `displayName` 一个——`slug` 按 ADR 0011 已发布不可改，改了所有已装用户的跨 skill 引用当场断链
+- 排序 score 主要吃下载量，召回不足时平台用热门 skill 填充列表（搜「教材写作」的 #1 是与教材无关、下载 115 万的 `self-improving-agent`）。按实测分数分布预测：改名后 5 个落在 #3 与 #7–#10，默认 20 条一屏可见。**两件做不到的写在这里免得下次重试**：那几个热度填充项挤不掉；搜「教材」仍进不了前 20（我们 dl=2~4，纯热度压制，只能靠真实使用量涨）。搜「写教材」也放弃了——要同时含「写教材」和「教材写作」两个连续串，名字会变得没法看
+- 由此新增一条命名规矩：**新增 skill 的 `displayName` 必须以「教材写作」开头，且这四个字连续不被分隔符打断**（用 `·`，写成「教材·写作大纲」即前功尽弃）。校验脚本没有守这条，靠 CLAUDE.md 与 ADR 0011 记着
+- `tags` 虽在 `skillhub publish` 的 payload 里（读 frontmatter 的 `tags` 列表），但实测不参与检索，**故未加**——为零收益给 frontmatter 白名单开第 11 个字段不划算。顺带记一笔：平台把主 skill 自动归到 `category: ai-agent`（其余 4 个是 `education`），分类浏览里找不到它，暂未处理
+
 ### Notes
 
 - 本轮未改任何 skill 的指令正文，`description` 与 `name` 一字未动，新增字段在三宿主处均被静默忽略——**无行为变更，故未重跑 evals**（按 CLAUDE.md 影响半径表，改动落在 `scripts/`、`docs/` 与元数据层，CI 绿即可）
+- `displayName` 改动同理**未重跑 evals**：该字段只被 SkillHub 读取用于展示与检索，三宿主静默忽略，既不参与 skill 行为也不参与宿主触发（宿主读的是 `name`/`description`，二者一字未动）
 
 ## [0.6.0] - 2026-08-31
 

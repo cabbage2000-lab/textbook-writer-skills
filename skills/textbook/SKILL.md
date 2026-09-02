@@ -3,7 +3,7 @@ name: textbook
 description: Use when the user wants to write a complete multi-chapter textbook or systematic course material with exercises — e.g. "写教材"、"写一本教材"、"编写课程讲义"、"系统教材"、"textbook". Orchestrates a five-stage UbD-driven pipeline (教学定位 → UbD 预期结果 gate → 章节树 gate → 逐章写作 → 审核定稿) with resumable progress via .progress.json. Not for single tutorials (use tutorial-writer), single chapters (use textbook-chapter), or exercise-only requests (use textbook-exercises).
 slug: textbook
 displayName: 教材写作流水线
-version: 0.6.0
+version: 0.6.1
 summary: UbD 逆向设计驱动的多章节教材写作主流程——五阶段调度、阶段 2/3 双 gate 作者确认、.progress.json 中断可续。需与 textbook-outline、textbook-chapter、textbook-exercises 装在同一 skills 目录下。
 ---
 

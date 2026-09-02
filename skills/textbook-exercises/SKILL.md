@@ -2,8 +2,8 @@
 name: textbook-exercises
 description: Use when generating verified STEM exercises with Bloom-level tags — 示范例题（完整解题过程）、引导练习（带提示）、独立习题（附参考答案）— e.g. "出几道矩阵乘法的练习题"、"给这一章生成例题". Every computational answer is actually verified (真算核对) before output. Usually called by textbook-chapter; can run standalone. Not for 文科论述题（stem 学科档案未为其定义验证手段）or exam paper assembly.
 slug: textbook-exercises
-displayName: 教材习题生成
-version: 0.6.0
+displayName: 教材写作·习题生成
+version: 0.6.1
 summary: 生成示范例题、引导练习、独立习题三类题并逐题验证答案（stem 学科档案下为真算复核），每题带 Bloom 层级标注。需与 textbook 系列其余 skill 同级安装。
 ---
 
