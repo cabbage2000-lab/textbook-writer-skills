@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-09-02
+
+**版本语义判断（每次发版重做一遍，不照抄上次）**：本轮**未改任何 skill 的指令正文，`name` 与 `description` 一字未动**，`.progress.json` 格式与落盘布局不变，存量教材项目照常续写 → 不是 MAJOR。含 SkillHub 第四个分发渠道接入，按 [0.2.0]（plugin 化分发）、[0.3.0]（新增 Codex 与 WorkBuddy 两宿主）的先例本可定 MINOR；**定 PATCH 是明确选择，记下依据备查**：那两轮改的是仓库如何被装载（新增六份清单、装法与目录对照全变），本轮 `skills/` 主体只多了四个在三宿主处被静默忽略的 frontmatter 字段，skill 能力零增量、用户侧行为完全不变；且十处版本号已随 displayName 修复升至 0.6.1 并在平台上架生效，改判 MINOR 需重发一轮审核。
+
 ### Added
 
 - **SkillHub（[skillhub.cn](https://skillhub.cn)）作为第四个分发渠道**——决策与被否决的替代方案见 [ADR 0011](docs/adr/0011-skillhub-distribution-and-frontmatter-metadata.md)。它与前三个宿主的机制不同：元数据只从 SKILL.md frontmatter 读（`slug`/`version`/`displayName` 缺一个就拒绝发布），且一次只发一个 skill 文件夹、平台侧没有"整体安装"概念。5 个 `skills/*/SKILL.md` 各加 `slug`/`displayName`/`version`/`summary` 四个字段；`skillhub publish` 对 5 个 skill 的 `--dry-run` 本地预检全部通过（`textbook@0.6.0` 等），**正式上架尚未执行**（需账号实名认证 + API Token，两步只能由人在浏览器完成）
