@@ -15,10 +15,12 @@
 - frontmatter 白名单从"Claude Code 会读的字段"扩为**四宿主并集**，加入 `slug`、`displayName`、`summary`。这三个字段对其余三宿主无副作用（被静默忽略）；白名单的原意是"防手误写入无效字段"，而它们不是手误，是第四个渠道的必填项
 - 发版流程的升版口径从"五处"改为"十处"（[CONTRIBUTING.md](CONTRIBUTING.md) 发版流程、CLAUDE.md 分发与硬约束两节同步）。README 的 version badge 仍是**唯一没有脚本守着**的那一处
 
+- **5 个 skill 全部过审后补上 README 的 SkillHub 安装入口**，并把首次上架的端到端实测结论写进 ADR 0011 与 CLAUDE.md。实测（CLI 2026.8.5）确认了两件此前只从源码推断的事：5 个装进同一个 `--dir` 后 **18 条唯一跨 skill 引用全部解析成功**；装回来的内容与仓库 `skills/` **逐字一致**（平台只多塞一个记录 slug/version/ownerId 的 `_meta.json`），ADR 0011 拒绝"临时注入"那条路的理由由此成立。只装 2 个时 `../textbook-chapter/references/chapter-template.md` 当场解析失败——断链是实测可复现的默认结果，不是理论风险
+- 记下两个官方文档没写的坑：`skillhub install` **加 `--namespace` 会多套一层 `@<handle>/` 目录**，而宿主只扫 `skills/*/SKILL.md` 这一层，多一层就一个都发现不到且无任何报错（与 README 早先记下的 WorkBuddy「别把 `skills/` 整体套进去」同类）；重复安装报 `Target exists`，更新需 `--force` 或 `skillhub upgrade`
+
 ### Notes
 
 - 本轮未改任何 skill 的指令正文，`description` 与 `name` 一字未动，新增字段在三宿主处均被静默忽略——**无行为变更，故未重跑 evals**（按 CLAUDE.md 影响半径表，改动落在 `scripts/`、`docs/` 与元数据层，CI 绿即可）
-- README 尚未加入 SkillHub 安装入口：上架仍在审核前，指向一个还不存在的详情页会误导读者，待审核通过后补
 
 ## [0.6.0] - 2026-08-31
 

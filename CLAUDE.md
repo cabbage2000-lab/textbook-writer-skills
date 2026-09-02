@@ -61,7 +61,9 @@ textbook-init（独立辅助）  不入调度链：动笔前规划并创建工�
 第四个分发渠道 **SkillHub**（[skillhub.cn](https://skillhub.cn)）不走清单，走 CLI 逐个上传，元数据读的是 SKILL.md frontmatter 里的 `slug` / `displayName` / `version`（缺一个就拒绝发布）。它与上面三个宿主的差别有两处要记住：
 
 - **一次只发一个 skill 文件夹**，本仓库要发 5 次，且 SkillHub 侧没有"整体安装"的概念。而本仓库有 45 条跨 skill 的 `../<skill-name>/references/` 引用、5 个 skill 构成全网状依赖，**用户只装其中一两个就会读到不存在的路径**。CLI 安装落盘为 `<install_root>/<slug>/`（同级目录），所以 `slug` 必须与目录名逐字相同、5 份 summary 都写明"需与其余 skill 同级安装"——这两条是断链的唯一防线，改 slug 等于批量制造坏安装；
-- 发布前用 `skillhub publish skills/<name> --dry-run` 本地预检（不发 HTTP 请求，无需登录）。发布本身要求账号已实名认证 + API Token，跑法见 [ADR 0011](docs/adr/0011-skillhub-distribution-and-frontmatter-metadata.md)。
+- 发布前用 `skillhub publish skills/<name> --dry-run` 本地预检（不发 HTTP 请求，无需登录）。发布本身要求账号已实名认证 + API Token，且**限频约每分钟 3 次**（连发 3 个后剩下的报 429，隔 80 秒重试即成功）。平台列表页展示的 description 取自 frontmatter 的 `summary` 而非 `description`——断链警告写在 `summary` 里才对用户可见。
+
+2026-09-02 已上架 v0.6.0 全部 5 个（`@user_6733bad6` 命名空间），端到端实测通过：18 条唯一跨 skill 引用全部解析、装回来的内容与仓库逐字一致。安装侧有一个没写在官方文档里的坑：`skillhub install` **加 `--namespace` 会多套一层 `@<handle>/` 目录**，宿主只扫 `skills/*/SKILL.md` 这一层，多一层就一个都发现不到且无报错。详见 [ADR 0011](docs/adr/0011-skillhub-distribution-and-frontmatter-metadata.md)。
 
 三套清单**不能合并**：Codex 的 plugin.json 多要 `skills: "./skills/"` 指针与一整块 `interface`（displayName / shortDescription / longDescription / developerName / category / capabilities / defaultPrompt 全必填），marketplace 条目的 `source` 是对象且必带 `policy`；CodeBuddy 与 Claude 版结构同构（skills 靠 plugin 根下的 `skills/` 自动发现），但清单目录、`owner.name` 必填这两点不同。六份清单的公共字段由 `validate_skills.py` 的 `validate_manifests` 守住不漂——发版时带 `version` 的**十处一起升版**：六份清单里的五处（`.agents/plugins/marketplace.json` 按 Codex 规范不带 version）+ 5 个 SKILL.md 的 frontmatter（SkillHub 从这里读版本号）。后 5 处由 `validate_skill_versions` 钉在 `.claude-plugin/plugin.json` 上，漏升即校验失败。
 

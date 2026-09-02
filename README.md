@@ -211,6 +211,35 @@ codex plugin add textbook-writer@textbook-writer-skills
 
 两条路装的是同一套 skill，**别对同一个宿主两种都用**——会装出两份。WorkBuddy 的插件清单格式已由作者在其他项目实测可用，本仓库按同一格式编写。
 
+#### 从 SkillHub 装（国内源，不用访问 GitHub）
+
+5 个 skill 已上架 [SkillHub](https://skillhub.cn)，好处是全程不必访问 GitHub。先装一次它的 CLI：
+
+```bash
+curl -fsSL https://skillhub.cn/install/install.sh | bash -s -- --cli-only
+export PATH="$HOME/.local/bin:$PATH"          # 建议同时写进 ~/.zshrc
+```
+
+然后一次装齐 5 个，`--dir` 换成你宿主的 skills 目录（下面以 Claude Code 用户级为例）：
+
+```bash
+for s in textbook textbook-outline textbook-chapter textbook-exercises textbook-init; do
+  skillhub install "$s" --dir ~/.claude/skills
+done
+```
+
+Codex 换 `~/.codex/skills`，WorkBuddy 换 `~/.workbuddy/skills`；只在单个项目里用就换成对应的项目级目录（见上面那条注释）。装完同样要**新开一个会话**。
+
+> **别加 `--namespace`。** 加了会多套一层 `@<作者>/` 目录，而宿主只扫 `skills/*/SKILL.md` 这一层——多一层就一个都发现不了，且没有任何报错。
+>
+> **5 个必须装进同一个 `--dir`。** 它们靠 `../<skill 名>/references/` 互引，只有互为同级才解析得到；少装一个，用到它的那条引用就是死链。
+>
+> **更新**：同一条命令加 `--force` 覆盖（不加会报 `Target exists`），或用 `skillhub upgrade`（不带 slug 则更新它记录过的全部 skill）。
+>
+> **和上面两条路选一条就行**，别对同一个宿主混用——装的是同一套 skill，混用会装出两份。
+
+上架的是与本仓库 `skills/` 逐字一致的同一份内容（平台会额外塞一个记录版本号的 `_meta.json`）。当前上架版本 **v0.6.0**。
+
 想在本仓库内开发或改着试跑，clone 后执行一次，把 `skills/` 软链为项目级 skills 目录（`.claude/` 已 gitignore，不入库）：
 
 ```bash

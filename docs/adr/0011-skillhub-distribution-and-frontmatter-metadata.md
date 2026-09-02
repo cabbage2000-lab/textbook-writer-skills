@@ -24,6 +24,13 @@
 - 5 份 `summary` 一律写明"需与其余 skill 同级安装"。平台既然不能保证整体安装,这句文案就是断链的唯一提示;
 - 发布前一律先跑 `skillhub publish skills/<name> --dry-run`(不发 HTTP 请求、不需登录),校验 metadata 与打包。
 
+2026-09-02 首次上架后做了端到端实测(CLI 2026.8.5),上面关于安装布局的判断由源码推断升级为实证:5 个 skill 装进同一个 `--dir` 后,18 条唯一跨 skill 引用**全部解析成功**;装回来的内容与仓库 `skills/` **逐字一致**(平台只多塞一个记录 slug/version/ownerId 的 `_meta.json`),"发布物与仓库一致"这条理由成立。同时测出两个文档没写的坑:
+
+- **`skillhub install` 加了 `--namespace` 会多套一层 `@<handle>/` 目录**(落盘 `<dir>/@user_xxx/<slug>/`)。宿主只扫 `skills/*/SKILL.md` 这一层,多一层就一个都发现不了且无任何报错——与 README 早先记下的 WorkBuddy"别把 `skills/` 整体套进去"是同一类错误。装到宿主目录**一律不带 `--namespace`**;带命名空间那层里 5 个仍互为同级,跨 skill 引用照样通,坏的只是宿主发现;
+- **重复安装会报 `Target exists`**,更新要加 `--force`,或用 `skillhub upgrade`。
+
+只装其中 2 个时,`../textbook-chapter/references/chapter-template.md` 当场解析失败——断链不是理论风险,是实测可复现的默认结果。
+
 ## 后果
 
 版本真相的副本从 5 处涨到 10 处。这是本决策最实在的代价,靠 `validate_skill_versions` 兜住;发版流程相应改口径,见 [CONTRIBUTING.md](../../CONTRIBUTING.md)。
