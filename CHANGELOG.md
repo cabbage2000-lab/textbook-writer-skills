@@ -10,7 +10,7 @@
 
 ### Added
 
-- **SkillHub（[skillhub.cn](https://skillhub.cn)）作为第四个分发渠道**——决策与被否决的替代方案见 [ADR 0011](docs/adr/0011-skillhub-distribution-and-frontmatter-metadata.md)。它与前三个宿主的机制不同：元数据只从 SKILL.md frontmatter 读（`slug`/`version`/`displayName` 缺一个就拒绝发布），且一次只发一个 skill 文件夹、平台侧没有"整体安装"概念。5 个 `skills/*/SKILL.md` 各加 `slug`/`displayName`/`version`/`summary` 四个字段；`skillhub publish` 对 5 个 skill 的 `--dry-run` 本地预检全部通过（`textbook@0.6.0` 等），**正式上架尚未执行**（需账号实名认证 + API Token，两步只能由人在浏览器完成）
+- **SkillHub（[skillhub.cn](https://skillhub.cn)）作为第四个分发渠道**——决策与被否决的替代方案见 [ADR 0011](docs/adr/0011-skillhub-distribution-and-frontmatter-metadata.md)。它与前三个宿主的机制不同：元数据只从 SKILL.md frontmatter 读（`slug`/`version`/`displayName` 缺一个就拒绝发布），且一次只发一个 skill 文件夹、平台侧没有"整体安装"概念。5 个 `skills/*/SKILL.md` 各加 `slug`/`displayName`/`version`/`summary` 四个字段；`skillhub publish` 对 5 个 skill 的 `--dry-run` 本地预检全部通过（`textbook@0.6.0` 等），**2026-09-02 5 个全部上架并过审生效**（`@user_6733bad6` 命名空间；发布依赖账号实名认证与 API Token，这两步只能由人在浏览器完成，无法纳入 CI）
 - **`slug` 必须逐字等于目录名**，这是本轮唯一不可逆的约定。CLI 安装落盘为 `<install_root>/<slug>/`（同级目录），只有 slug 与目录名一致，仓库里 45 条 `../<skill-name>/references/xxx.md` 跨 skill 引用才解析得到；5 个 slug 上架前经查询全部未被占用，不需要加 handle 后缀。ADR 0008 的"整体安装不可拆分"在该平台无法由机制保证，降级为 5 份 `summary` 里的一句"需与其余 skill 同级安装"——这是接受该渠道的已知代价
 - `validate_skills.py` 新增 `validate_skill_versions`：把 5 个 SKILL.md 的 `version` 钉在 `.claude-plugin/plugin.json` 上。版本真相的副本因此从 5 处涨到 10 处（SkillHub 从 SKILL.md 读、其余三宿主从清单读），不锁住就会出现"清单升了、SkillHub 上还是旧版且无人报错"。配套 4 个单测（版本一致 / 单个漂移 / 缺 version / 无 skills 目录不报错），单测总数 52 → 56
 
