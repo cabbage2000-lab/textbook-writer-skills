@@ -16,3 +16,6 @@ docs/*
 
 # eval 跑测经 .claude/skills 软链写入的抓取缓存（skills/ 下只应有 .md）
 skills/*.txt
+
+# SkillHub CLI 运行产物
+.skills_store_lock.json
