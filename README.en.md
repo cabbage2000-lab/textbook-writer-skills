@@ -249,7 +249,24 @@ Say what you want in your own words and the host will match the right skill; nam
 | `用 textbook-exercises 出几道矩阵乘法的练习题` | `textbook-exercises` | Three kinds of exercises (worked / guided / independent) + Bloom level tags + a verification record per exercise (runnable recomputation code where the answer can be recomputed, sources and check notes where it can only be checked; under `economics` both kinds appear in one chapter) |
 | `用 textbook-init 初始化教材工作目录` | `textbook-init` | A directory scaffold (git version control and a README brief, both optional), then hands you to `textbook` to start writing |
 
-Existing material can be the starting point: “write chapter 3 from `./notes/lecture-3.docx`”, “revise my existing chapter from `./draft/03-hash-tables.md`”, or “make exercises from `./sources/elasticity.md`”. A full book records a source index and chapter mapping in `00-教材设计.md`; each chapter receives only relevant excerpts. Answers still receive a fresh check by the subject profile's method. Accessible Markdown, plain text, and local Word `.docx` body/table text are supported; other attachments need reliable text extraction by the host. Provide text or OCR for scanned pages. See the [source workflow](skills/textbook/references/source-material-workflow.md) for the Word extraction method and limits.
+### Starting from a Word document, notes, or an existing draft
+
+Include a **local file path** in your request, relative to the current working directory. The repo includes a [sample Word handout](evals/fixtures/source-material/matrix-notes.docx) with an intentionally wrong old answer. Try it directly:
+
+```text
+Using ./evals/fixtures/source-material/matrix-notes.docx, create one worked example and one independent exercise for beginners. Cite the source paragraph for each question and verify each answer independently.
+```
+
+Replace the path with your own material for these tasks:
+
+| Goal | Example request |
+| --- | --- |
+| Plan and write a full book from lecture notes | “Write an introductory, roughly eight-chapter linear algebra textbook for beginners using `./notes/linear-algebra-course.docx`. Save the project in `./books/linear-algebra/`.” |
+| Write one chapter | “Write a beginner chapter on matrix multiplication from `./notes/lecture-3.docx`. Keep the handout’s row-by-column explanation and add examples, practice, and a self-check.” |
+| Revise a chapter in an existing book | “In the textbook project `./books/linear-algebra/`, revise chapter 3 using `./notes/lecture-3.docx`. Preserve its teaching approach, check the examples, and re-verify changed exercises.” |
+| Generate exercises from a source | “Use `./sources/price-elasticity.md` to create two worked examples, one guided exercise, and three independent exercises for beginners. Cite the source passages and check each answer.” |
+
+A full book records its source index and chapter mapping in `00-教材设计.md`; you still confirm the UbD design and chapter tree at the two gates. Each chapter receives only relevant excerpts. Single-chapter writing, revision, and standalone exercises use the files you name. **Answers already present in a source still need a fresh check.** Accessible Markdown, plain text, and local Word `.docx` body and table text are supported. Scanned pages, images, comments, footnotes, and legacy `.doc` files need text or OCR first. See the [source workflow](skills/textbook/references/source-material-workflow.md) for the Word extraction method and limits.
 
 English requests can also be routed by intent, but the Chinese prompts above are the ones exercised by the behavioral test suite, and the output is Chinese either way.
 
