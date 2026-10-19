@@ -3,7 +3,7 @@ name: textbook-init
 description: 动笔写教材前要先规划并创建工作目录时用它：规划单本教材项目目录或多教材工作区，可选 git 版本管理与 README 工作说明，建好后把产出交接给 textbook。触发语如"初始化教材项目"、"创建教材工作目录"、"规划教材工作区"、"建一个写教材的目录"。只搭目录骨架，不创建流水线文件（.progress.json、00-教材设计.md、术语表.md）。写正文用 textbook（不经 init 它也会自建默认目录），续写已有项目直接用 textbook。需与 textbook 系列其余 skill 装在同一 skills 目录下。
 slug: textbook-init
 displayName: 教材写作·项目初始化
-version: 0.6.2
+version: 0.7.0
 summary: 动笔前规划并创建教材工作目录（可选 git 与 README 工作说明），只搭目录骨架、不碰流水线文件，产出交接给 textbook。需与 textbook 同级安装。
 ---
 

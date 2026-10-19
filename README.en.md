@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/cabbage2000-lab/textbook-writer-skills/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.7.0-blue.svg)](CHANGELOG.md)
 ![host](https://img.shields.io/badge/host-Claude%20Code%20%7C%20Codex%20%7C%20WorkBuddy-grey)
 ![subject profiles](https://img.shields.io/badge/subject%20profiles-stem%20%7C%20humanities%20%7C%20economics-grey)
 
@@ -32,7 +32,7 @@ The authoritative definition of the stage handoff contracts, the on-disk layout 
 | --- | --- |
 | Settle the scoping in one round of questions, then produce the five UbD elements | Decide the scoping or which chapters make the cut for you (both gates stop and wait) |
 | Work backwards to a chapter tree and run a book-wide Bloom gradient check | Take a side for you where the scholarship genuinely disagrees (it lays out the main positions and asks you) |
-| Write chapters in the four-part structure and keep the glossary consistent | Turn your existing lecture material into a course |
+| Write or revise chapters from existing notes and lecture material in the four-part structure, keeping the glossary consistent | Reconstruct quotations, data, or facts from memory when the source cannot be accessed |
 | Generate three kinds of exercises, each answer checked by its profile's method (recomputation for STEM, source and citation checks for the humanities) | Ship an answer it couldn't verify while pretending it did; invent a citation, source, or date from memory |
 | Persist progress to `.progress.json` and resume from the break | Online course platform and LMS integration |
 | Plan and create the working directory before you start (git optional) | Generate figures automatically |
@@ -98,7 +98,7 @@ Budget for one thing on the humanities side: whether a citation can be checked d
 
 Cram a 10+ chapter textbook into one conversation and the context will blow up: by chapter 8 it has forgotten chapter 2's notation, terminology drifts, and a dropped connection means starting over.
 
-**The fix — write each chapter in isolation, persist progress to disk.** Writing a chapter takes only four lightweight inputs: that chapter's outline slice, the book-wide five UbD elements, the glossary, and the previous chapter's summary — plus a subject-profile id that fixes the chapter's section structure and verification methods. It never reads another chapter's prose, so the context stays flat no matter how many chapters there are. Progress is written to `.progress.json` as it goes; interrupt at any point and one sentence resumes from the break, with finished chapters left untouched.
+**The fix — write each chapter in isolation, persist progress to disk.** Writing a chapter takes its outline slice, the book-wide five UbD elements, the glossary, the previous chapter's summary, and optional source excerpts mapped to that chapter — plus a subject-profile id that fixes the chapter's section structure and verification methods. It never reads another chapter's prose, so the context stays flat no matter how many chapters there are. Progress is written to `.progress.json` as it goes; interrupt at any point and one sentence resumes from the break, with finished chapters left untouched.
 
 ## The five-stage pipeline × skill capabilities
 
@@ -249,7 +249,9 @@ Say what you want in your own words and the host will match the right skill; nam
 | `用 textbook-exercises 出几道矩阵乘法的练习题` | `textbook-exercises` | Three kinds of exercises (worked / guided / independent) + Bloom level tags + a verification record per exercise (runnable recomputation code where the answer can be recomputed, sources and check notes where it can only be checked; under `economics` both kinds appear in one chapter) |
 | `用 textbook-init 初始化教材工作目录` | `textbook-init` | A directory scaffold (git version control and a README brief, both optional), then hands you to `textbook` to start writing |
 
-English trigger phrases also work — each skill's `description` carries both Chinese and English trigger terms — but the Chinese prompts above are the ones exercised by the behavioral test suite, and the output is Chinese either way.
+Existing material can be the starting point: “write chapter 3 from `./notes/lecture-3.docx`”, “revise my existing chapter from `./draft/03-hash-tables.md`”, or “make exercises from `./sources/elasticity.md`”. A full book records a source index and chapter mapping in `00-教材设计.md`; each chapter receives only relevant excerpts. Answers still receive a fresh check by the subject profile's method. Accessible Markdown, plain text, and local Word `.docx` body/table text are supported; other attachments need reliable text extraction by the host. Provide text or OCR for scanned pages. See the [source workflow](skills/textbook/references/source-material-workflow.md) for the Word extraction method and limits.
+
+English requests can also be routed by intent, but the Chinese prompts above are the ones exercised by the behavioral test suite, and the output is Chinese either way.
 
 **Switching subject doesn't change how you ask.** `写一本《中国近代史纲要》教材` ("write a textbook on modern Chinese history") and `写一本《线性代数入门》教材` run the same pipeline through the same skill. The only difference lands at stage 1: it decides the subject profile once and prints it (`学科档案：humanities`), then passes it through unchanged chapter by chapter — in-chapter section structure, question types, cognitive verbs and verification method all switch with it, and it is never re-decided mid-book (switching profiles means switching verification discipline and section structure, so already-written chapters would no longer match the ones that follow). You don't pick the profile; if it picked wrong, say so at stage 1. A subject that straddles two families doesn't force a choice either — the `economics` profile already puts recomputation and source-checking side by side in one book.
 
@@ -261,7 +263,6 @@ English trigger phrases also work — each skill's `description` carries both Ch
 | "Skip the UbD step and go straight to chapters" | The two gates are a red line; bypassing them lands you back at a pile of topics | → Confirming can be quick, but it can't be skipped; if you disagree with the draft, just ask for changes — changes take precedence over confirmation |
 | "While writing chapter 8, look back at chapter 2's prose" | Reading other chapters' prose is exactly what blows up the context on a long book | → Cross-chapter consistency travels through three lightweight carriers: the glossary, the previous chapter's summary, and the five UbD elements |
 | "Write me some humanities essay / case-analysis questions" | The `humanities` profile defines how to verify them: no answer key, but citations and facts still get checked | → You get essay questions with argument points and a rubric, tagged as open-ended; quotations carry their source, and anything it couldn't check is tagged `⚠️ 需作者确认（引文未核）` |
-| "Turn this pile of lecture notes into a course" | v1 does backward design from scratch, not source-material reassembly | → Explicitly out of scope for v1, along with LMS integration and automatic figure generation |
 
 ### End to end: one textbook from start to finish
 
@@ -272,7 +273,7 @@ English trigger phrases also work — each skill's `description` carries both Ch
  3. ⏸ the five UbD elements await your OK           → stage 2, primary gate (confirm, or ask for changes)
  4. ⏸ chapter tree + Bloom gradient report await OK → stage 3, secondary gate
  5. Chapter by chapter, each saved, answers checked → stage 4
-    └ every chapter reads only four inputs: its outline slice, the UbD elements, the glossary, the previous summary
+    └ every chapter reads its outline slice, the UbD elements, the glossary, the previous summary, and optional source excerpts
       (plus the subject-profile id, which fixes the section structure and the verification method)
  6. Self-check + student-facing task + 00-前言.md → stage 5 (preface / how to use it / linked contents) + delivery summary
  ── Interrupt anywhere; the same sentence resumes from the break, finished chapters untouched ──

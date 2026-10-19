@@ -201,6 +201,95 @@
         "数据来源台账随章落盘：独立触发时附在「## 本章小结」之后，二级标题写 '## 数据来源台账'，含指标、来源与发布机构、口径/基期/单位、核对状态各列",
         "若出现题内局部 ⚠️（题干某统计值未核但整题判 ✅），该项须就地标注并写明「不参与本题结论」，且满足硬条件——把该数值整个删掉后设问依然成立；不满足则整题必须是 '⚠️ 需作者确认（数据未核）'"
       ]
+    },
+    {
+      "id": 11,
+      "name": "source-based-exercises",
+      "milestone": "M10",
+      "skill": "textbook-exercises",
+      "prompt": "用 textbook-exercises 根据 ./evals/fixtures/source-material/matrix-notes.md 出 1 道示范例题、1 道引导练习、1 道独立习题，给零基础线性代数学生。讲义第三节有旧答案，请逐题重新验证。",
+      "expected_output": "依据讲义定义和示例出三类题，来源定位可追溯；识别旧答案错误，计算题走独立复算，每题有 Bloom 与验证记录。",
+      "files": [
+        "evals/fixtures/source-material/matrix-notes.md"
+      ],
+      "assertions": [
+        "恰好给出 1 道示范例题、1 道引导练习、1 道独立习题；各有 Bloom 标注和验证状态行，独立模式答案内嵌",
+        "使用讲义第二节的矩阵时，AB 的结果为 [[4, 4], [10, 8]]；不得把第三节的旧答案 [[4, 4], [10, 9]] 标为已验证",
+        "涉及讲义示例的题目能回指素材文件与第二节或第三节位置；素材依据不替代答案验证过程",
+        "每道计算题的验证过程可独立运行，实际复算路径与解答不同；题目数等于验证行数",
+        "全部行内和行间公式不含中文字符或中文标点，题面中的“给出的结果”等说明放在公式外，遵守 writing-style.md 第 13.4 节"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "revise-existing-chapter-from-source",
+      "milestone": "M10",
+      "skill": "textbook-chapter",
+      "prompt": "用 textbook-chapter 独立修订 ./evals/fixtures/source-material/matrix-draft.md，依据 ./evals/fixtures/source-material/matrix-notes.md；输出到 ./evals/workspace/source-material-revision/，面向零基础学生，保留“行与列配对”的教学视角，并修正旧例题。",
+      "expected_output": "在输出目录生成修订章，不改 fixture 原件；保留原稿教学视角，补齐四段式、学习目标与自检，修正并重新验证错误例题，报告素材使用与实质改动。",
+      "files": [
+        "evals/fixtures/source-material/matrix-draft.md",
+        "evals/fixtures/source-material/matrix-notes.md"
+      ],
+      "assertions": [
+        "原始 fixture 文件未被覆盖；输出中保留“行与列配对”的教学视角，章首目标和章末自检均存在",
+        "按 stem 档案写出四段式，示范例题、引导练习、独立习题各有完整题目与验证状态，不沿用旧稿悬空练习",
+        "修正旧例题结果为 [[4, 4], [10, 8]]，更动题目后重新验证；没有把旧稿无验证的结果标为已验证",
+        "交付回报含实质改动、与素材冲突或待核事项、素材使用记录；独立模式不生成 98-参考答案.md"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "outline-source-index-and-gates",
+      "milestone": "M10",
+      "skill": "textbook-outline",
+      "prompt": "用 textbook-outline 基于 ./evals/fixtures/source-material/matrix-notes.md 设计《矩阵与线性变换入门》教材大纲。读者零基础，入门深度，6-8 章，落盘到 ./evals/workspace/source-material-outline/。",
+      "expected_output": "教学定位含可回访的素材索引；五件套和章节树仍分别经过作者确认；章节树给出按章素材片段映射，未覆盖章明确标出无指定素材。",
+      "files": [
+        "evals/fixtures/source-material/matrix-notes.md"
+      ],
+      "assertions": [
+        "00-教材设计.md 的「## 一、教学定位」含「### 素材索引」，能找到来源 ID、文件路径、SHA-256 指纹与原文定位，四个固定二级标题未改变",
+        "UbD 五件套完整呈现后停在阶段 2 gate；作者明确确认前不生成章节树",
+        "阶段 3 的章节树按章标注素材片段引用，矩阵乘法相关章映射到讲义第一节和第二节；素材未覆盖的章明确记为空而不虚构素材",
+        "阶段 3 的章节树与梯度规划完整呈现后再次等待作者确认；讲义旧答案没有被当作已核实的教学结论"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "book-source-handoff-first-chapter",
+      "milestone": "M10",
+      "skill": "textbook",
+      "prompt": "用 textbook 基于 ./evals/fixtures/source-material/matrix-notes.md 写一本《矩阵乘法入门》教材，读者零基础、入门深度、6–8 章，项目目录用 ./evals/workspace/source-material-book/。完成两个作者确认 gate 后写完第 1 章就中断；第 1 章请安排矩阵乘法的基本含义与讲义第二节的示例。",
+      "expected_output": "双 gate 各等待明确确认，阶段 1 登记素材，阶段 3 映射当前章片段，阶段 4 只传当前章素材并写入使用记录；第 1 章重新验证错误旧答案，状态机在一章完成后正确落盘。",
+      "files": [
+        "evals/fixtures/source-material/matrix-notes.md"
+      ],
+      "assertions": [
+        "阶段 1 的 00-教材设计.md「## 一、教学定位」记录素材路径与第一至第三节定位；阶段 2 和阶段 3 分别等待作者明确确认，确认前不推进",
+        "阶段 3 第 1 章的素材片段引用指向讲义第一、二节；其余无素材覆盖的章记空数组，不把整份讲义或其他章正文传给单章",
+        "第 1 章使用讲义示例时结果为 [[4, 4], [10, 8]]，旧答案 [[4, 4], [10, 9]] 未被当作已验证；相关题目仍有独立验证过程",
+        "00-教材设计.md 的素材索引下能找到第 1 章的素材使用记录；章内题目与 98-参考答案.md 的题号、验证行、过程对账一致",
+        "写完第 1 章即更新 .progress.json：chapters.done=[1]、chapters.next=2；只有主 skill 写状态，后续章节未被误写"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "word-docx-source-exercises",
+      "milestone": "M10",
+      "skill": "textbook-exercises",
+      "prompt": "用 textbook-exercises 根据 ./evals/fixtures/source-material/matrix-notes.docx 给零基础线性代数学生出 1 道示范例题、1 道独立习题。Word 文档里有一个旧答案，请先提取并定位原文，再逐题验证。",
+      "expected_output": "从本地 Word 正文提取文字，按段落位置回指题目依据，发现并纠正未经核对的旧答案；两题均独立验证。",
+      "files": [
+        "evals/fixtures/source-material/matrix-notes.docx"
+      ],
+      "assertions": [
+        "实际读取 .docx 的正文并能指出 P 段落定位；未把二进制文件当纯文本或假装已读取",
+        "恰好 1 道示范例题和 1 道独立习题，均有素材依据、Bloom 层级与验证状态",
+        "使用 Word 中的 A、B 时乘积为 [[4, 4], [10, 8]]，不把旧答案 [[4, 4], [10, 9]] 当成验证结果",
+        "每道计算题附实际执行的独立复算过程，逐题验证而非仅照抄 Word 答案",
+        "所有公式用 $...$ 或 $$...$$ 定界，无 \\(...\\)、\\[...\\] 或公式内中文"
+      ]
     }
   ]
 }

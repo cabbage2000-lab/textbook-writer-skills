@@ -59,6 +59,7 @@ python3 -m unittest discover -s tests                 # 单元测试
    | `profiles/stem.md` | 1, 2, 3 |
    | `profiles/humanities.md` | 7, 8 |
    | `profiles/economics.md` | 9, 10 |
+   | 素材索引 / 按章切片 / 基于素材写作与出题 | 11, 12, 13, 14, 15；涉及主 skill 修订回写时另跑 4, 5 |
 
    用例 4 只验证中断-续写机制（不写完全书），若改动专门涉及阶段 5 自检或交付摘要逻辑，额外补跑用例 5（该场景的验收职责已移交 eval 5，见 evals/README.md）。
 

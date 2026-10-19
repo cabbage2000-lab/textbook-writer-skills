@@ -19,6 +19,7 @@
 | [0009](0009-unified-skill-naming.md) | skill 命名统一为 textbook- 名词族 | 主 skill 名即公共前缀,补全聚族;动作语义由 description 承担,plugin 名不变 |
 | [0010](0010-pluggable-subject-profiles.md) | 学科差异收拢为可插拔学科档案 | 四个可变点进档案,内核学科无关;加一个学科 = 加一个文件,红线由结构守住 |
 | [0011](0011-skillhub-distribution-and-frontmatter-metadata.md) | SkillHub 渠道与 frontmatter 元数据 | 白名单扩为四宿主并集;slug 必须等于目录名,否则跨 skill 引用断链 |
+| [0012](0012-source-material-chapter-slices.md) | 已有素材按章切片进入写作流水线 | 教学定位登记来源、章节树映射片段、单章与出题只读当前章素材；双 gate 与逐题验证不变 |
 
 ## 何时新增一篇 ADR
 

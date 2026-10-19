@@ -4,6 +4,23 @@
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-19
+
+### Added
+
+- 支持作者提供现有讲义、笔记或章稿：`textbook-outline` 登记素材与章节映射，`textbook` 逐章传入相关片段，`textbook-chapter` 据此写作或修订指定章，`textbook-exercises` 可直接依据材料出题。每章回报素材使用记录，整本教材写回设计文档。
+- 新增 [素材工作流](skills/textbook/references/source-material-workflow.md) 与 [ADR 0012](docs/adr/0012-source-material-chapter-slices.md)，限定来源追溯、修订回写和输入范围；新行为用例覆盖独立出题、单章修订和整本教材素材映射。
+- 本地 Word `.docx` 可用随主 skill 分发的零依赖脚本提取正文和表格文字，并保留段落/单元格定位，供写作、修订及出题引用。
+
+### Changed
+
+- 扩展跨 skill 契约，新增可选的 `素材片段[]`、`素材片段引用[]` 与 `素材使用记录[]`；普通无素材项目传空数组，`.progress.json` schema 不变。修订已完成章时替换该章关联产物并重跑检查，仍由主 skill 独占状态文件。
+- README 中“已有讲义不支持”的旧边界改为素材输入示例；双 gate 与逐题验证保持原规则。
+
+### Verification
+
+- 2026-10-19：结构校验通过，58 项单元测试通过，`git diff --check` 通过；5 个 SkillHub 包本地预检通过。Codex 行为验收中，用例 11（素材出题与旧答案复算）、12（基于素材修订单章）、15（Word 提取、定位与逐题复算）通过；用例 13 验证了两个 gate 的停点与章节素材映射，但第二次确认后的最终落盘因 Codex 连接超时未完成。用例 14 及旧用例 1–4 尚未重跑。
+
 ## [0.6.2] - 2026-09-02
 
 **版本语义判断（每次发版重做一遍，不照抄上次）**：本轮**未新增契约字段、未改落盘布局、`.progress.json` 格式不变**，存量教材项目照常续写 → 不是 MAJOR；**未新增 skill、未新增能力**，5 个 SKILL.md 的正文一字未动 → 不是 MINOR。改的是 5 份 frontmatter `description`（触发文案兼平台展示文案）与一处边界收紧，属"指令修正" → PATCH。

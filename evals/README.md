@@ -16,8 +16,15 @@
 | 8 | humanities-chapter-citation-discipline | M7 | textbook-chapter | ~15 分钟（全自动） |
 | 9 | economics-outline-profile-routing | M8 | textbook-outline | ~10 分钟（含 2 次人工确认） |
 | 10 | economics-chapter-mixed-verification | M8 | textbook-chapter | ~15 分钟（全自动） |
+| 11 | source-based-exercises | M10 | textbook-exercises | ~5 分钟（全自动） |
+| 12 | revise-existing-chapter-from-source | M10 | textbook-chapter | ~15 分钟（全自动） |
+| 13 | outline-source-index-and-gates | M10 | textbook-outline | ~10 分钟（含 2 次人工确认） |
+| 14 | book-source-handoff-first-chapter | M10 | textbook | ~30 分钟（含 2 次人工确认，写完第 1 章即停） |
+| 15 | word-docx-source-exercises | M10 | textbook-exercises | ~5 分钟（全自动） |
 
 用例 7、8 走 `humanities` 学科档案，验证同一套内核在非 STEM 学科下的行为；用例 9、10 走 `economics` 档案，验证**复算与核对来源两类手段在同一本教材里并存**——这是该档案区别于前两份的核心，因此用例 9 有一条断言专查题型分布是否同时覆盖两类，用例 10 的 prompt 硬性要求含一道真实统计数据题（不要求它就可能整章只出可复算的模型题，验不到新增的那半边）。判定时**不要用内容质量代替形式项**（见本文末「增改用例」）。
+
+用例 11–15 使用 `evals/fixtures/source-material/` 下的 Markdown / Word 讲义和旧章稿。讲义故意含一个错误旧答案，用来检验“素材中的现成答案不等于已验证”。用例 12 的输出写入 `evals/workspace/`，原 fixture 必须保持不变；用例 13、14 两次 gate 均需真实等待作者确认。用例 14 只验收到第 1 章的跨 skill 传递与状态落盘；用例 15 验证本地 `.docx` 提取后的来源定位与出题。
 
 ## 怎么跑
 
